@@ -2,7 +2,7 @@
 %define oname ALTMediaWriter
 
 Name:           altmediawriter
-Version:        0.1.0
+Version:        0.2.0
 Release:        alt1
 Summary:        ALT Media Writer
 Group:          System/Configuration/Other
@@ -60,5 +60,13 @@ appstream-util validate-relax --nonet %buildroot/%_datadir/appdata/%name.appdata
 
 
 %changelog
+* Fri Feb 28 2020 Dmitry Degtyarev <kvelyognaut@gmail.com> 0.2.0-alt1
+- Fixed Russian translation
+- Added translation source files
+- Added automatic metadata generation from getalt.org sources
+- Improved win builds
+- Changed win build to create 32bit executable
+- Removed unneeded Raspberry Pi board drop-down menu
+
 * Tue Nov 05 2019 Evgeny Sinelnikov <sin@altlinux.org> 0.1.0-alt1
 - Initial build for Sisyphus
