@@ -2,7 +2,7 @@
 %define oname ALTMediaWriter
 
 Name:           altmediawriter
-Version:        0.2.0
+Version:        0.3.0
 Release:        alt1
 Summary:        ALT Media Writer
 Group:          System/Configuration/Other
@@ -58,6 +58,15 @@ appstream-util validate-relax --nonet %buildroot/%_datadir/appdata/%name.appdata
 
 
 %changelog
+* Tue Mar 10 2020 Dmitry Degtyarev <kvelyognaut@gmail.com> 0.3.0-alt1
+- Added generate_releases.sh
+- Cleaned up releasesmanager.h by removing unused and unneded fields/logic
+- Maked local json loading more obvious
+- Added Simply variant
+- Increased frontpage row height for Russian text that can span 4 lines
+- Added info about rootfs'able image types
+- Added a check of whether an image type is supported
+
 * Fri Feb 28 2020 Dmitry Degtyarev <kvelyognaut@gmail.com> 0.2.0-alt1
 - Fixed Russian translation
 - Added translation source files
