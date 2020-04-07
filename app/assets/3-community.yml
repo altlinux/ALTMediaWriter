@@ -9,23 +9,23 @@ members:
    code: simply
    img: simply
    descr_ru: |
-     Операционная система для каждого из вас. Она легка в использовании,
-     не требовательна к ресурсам, функциональна и надежна.
+     Операционная система для каждого. Она легка в использовании,
+     нетребовательна к ресурсам, функциональна и надежна.
    descr_en: |
-     An operating system for everyone. Easy to use and doesn't demand
-     much resources, functional and secure.
+     Operating system for everyone. Easy to use and lightweight,
+     functional and secure.
    descr_full_ru: |
      <a href="http://altlinux.org/simply"><b>Симпли Линукс</b></a> —
      это простая в установке и удобная в работе операционная система,
      дающая возможность пользователю решать все повседневные задачи,
      не опасаясь вирусов и не затрачивая время на поиск необходимых
-     программ в сети Интернет и на полках магазинов.
+     программ в сети Интернет и магазинах.
      <p>
 
      <p>
-     Загруженная версия доступна конечным пользователям,
+     Загруженная версия доступна конечным пользователям
      в соответствии с
-     <a href="http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/license.ru.html">лицензионным договором</a>,
+     <a href="http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/license.ru.html">лицензионным договором</a>
      без права на распространение. Системным интеграторам, дистрибьюторам и
      OEM-производителям для получения прав на распространение следует обращаться
      в ООО «Базальт СПО» по адресу <b>sales@basealt.ru</b> для заключения письменного договора.
@@ -34,16 +34,16 @@ members:
    descr_full_en: |
      <p>
      <a href="http://en.altlinux.org/simply"><b>Simply Linux</b></a>
-     is an easy to install and easy to use operating system,
-     enabling the user to solve all everyday tasks, without fear
-     of viruses and without wasting time finding the necessary
-     programs on the Internet and on store shelves.
+     is easy to install and use operating system that
+     enables users to perform all of their day-to-day tasks
+     without fearing virii or wasting their time searching
+     the Internet or stores for all the necessary software.
 
      <p>
-     The downloaded version is available to end users,
-     in accordance with a
-     <a href="http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/license.en.html">license agreement</a>,
-     without the right to distribute. Systems integrators, distributors and
+     The downloadable version is available for end users
+     in accordance to the
+     <a href="http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/license.en.html">license agreement</a>
+     without redistribution permission. Systems integrators, distributors and
      OEM vendors should contact BaseALT Ltd at <b>sales@basealt.ru</b> for a written
      distribution contract.
      </p>
