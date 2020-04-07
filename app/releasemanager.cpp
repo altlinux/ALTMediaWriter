@@ -1059,7 +1059,7 @@ ReleaseArchitecture ReleaseArchitecture::m_all[] = {
     {{"armv7hl", "armhfp", "armh"}, QT_TR_NOOP("ARM v7")},
     {{"aarch64"}, QT_TR_NOOP("AArch64")},
     {{"mipsel"}, QT_TR_NOOP("MIPS")},
-    {{"riscv"}, QT_TR_NOOP("RiscV")},
+    {{"riscv", "riscv64"}, QT_TR_NOOP("RiscV64")},
     {{"e2k"}, QT_TR_NOOP("Elbrus")},
     {{"ppc64le"}, QT_TR_NOOP("PowerPC")},
     {{"", "unknown"}, QT_TR_NOOP("Unknown architecture")},
@@ -1145,7 +1145,12 @@ ReleaseBoard ReleaseBoard::m_all[] = {
     {{"RPi4"}, QT_TR_NOOP("RaspberryPi 4")},
     {{"POWER8/9"}, QT_TR_NOOP("Power8/9")},
     {{"ARM64 UEFI"}, QT_TR_NOOP("ARM64 UEFI")},
+    {{"RiscV64 QEmu", "RiscV64 QEmu Preview"}, QT_TR_NOOP("RiscV64 QEmu")},
     {{"Nvidia Jetson Nano"}, QT_TR_NOOP("Jetson Nano")},
+    {{"Baikal-M ITX", "Baikal-M ITX Preview"}, QT_TR_NOOP("Baikal-M ITX")},
+    {{"Baikal-M DBM", "Baikal-M DBM Preview"}, QT_TR_NOOP("Baikal-M DBM")},
+    {{"MK150-02", "MK150-02 Preview"}, QT_TR_NOOP("MK150-02")},
+    {{"HiFive Unleashed", "HiFive Unleashed Preview"}, QT_TR_NOOP("HiFive Unleashed")},
 };
 
 ReleaseBoard::ReleaseBoard(const QStringList &abbreviation, const char *description)

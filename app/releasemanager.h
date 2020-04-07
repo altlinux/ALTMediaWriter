@@ -476,7 +476,7 @@ public:
         AARCH64,
         // NOTE: can't use just 'MIPSEL' because it's a predefined macro on mipsel
         MIPSEL_arch,
-        RISCV,
+        RISCV64,
         E2K,
         PPC64LE,
         UNKNOWN,
@@ -529,7 +529,12 @@ public:
         RPI4,
         POWERPC,
         ARM64,
+        RISCV64QEMU,
         JETSON_NANO,
+        BAIKAL_M_ITX,
+        BAIKAL_M_DBM,
+        MK150_02,
+        HIFIVE_UNLEASHED,
         _BOARDCOUNT,
     };
     Q_ENUMS(Id);
