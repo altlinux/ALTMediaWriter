@@ -1,7 +1,7 @@
 ---
 
 entries:
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/aarch64/slinux-9.0-aarch64.iso
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/aarch64/slinux-9.0-aarch64.iso
     platform: p9
     solution: simply
     importance: 0
@@ -9,7 +9,7 @@ entries:
     type: iso
     board: ARM64 UEFI
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/aarch64/slinux-live-9.0-aarch64.iso
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/aarch64/slinux-live-9.0-aarch64.iso
     platform: p9
     solution: simply
     importance: 0
@@ -17,7 +17,7 @@ entries:
     type: iso
     board: ARM64 UEFI Live
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/aarch64/slinux-9.0-aarch64.tar.xz
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/aarch64/slinux-9.0-aarch64.tar.xz
     platform: p9
     solution: simply
     importance: 0
@@ -25,7 +25,7 @@ entries:
     type: archive
     board: RPi3
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/aarch64/slinux-rpi4-9.0-aarch64.img.xz
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/aarch64/slinux-rpi4-9.0-aarch64.img.xz
     platform: p9
     solution: simply
     importance: 0
@@ -33,14 +33,14 @@ entries:
     type: image
     board: RPi4
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/i586/slinux-9.0-i586.iso
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/i586/slinux-9.0-i586.iso
     platform: p9
     solution: simply
     importance: 0
     arch: i586
     type: iso
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/i586/slinux-live-9.0-i586.iso
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/i586/slinux-live-9.0-i586.iso
     platform: p9
     solution: simply
     importance: 0
@@ -48,21 +48,21 @@ entries:
     type: iso
     board: i586 Live
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/aarch64/slinux-tegra-9.0-aarch64.tar.xz
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/aarch64/slinux-tegra-9.0-aarch64.tar.xz
     platform: p9
     solution: simply
     importance: 0
     type: archive
     board: Nvidia Jetson Nano
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/x86_64/slinux-9.0-x86_64.iso
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/x86_64/slinux-9.0-x86_64.iso
     platform: p9
     solution: simply
     importance: 1
     arch: x86-64
     type: iso
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/x86_64/slinux-live-9.0-x86_64.iso
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/x86_64/slinux-live-9.0-x86_64.iso
     platform: p9
     solution: simply
     importance: 1
@@ -70,7 +70,7 @@ entries:
     type: iso
     board: x86-64 Live
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/mipsel/tavolga-slinux-9.0-mipsel.recovery.tar
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/mipsel/tavolga-slinux-9.0-mipsel.recovery.tar
     platform: p9
     solution: simply
     importance: 0
@@ -78,7 +78,7 @@ entries:
     type: archive
     board: Tavolga Terminal
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/mipsel/mk150-slinux-preview-9.0-mipsel.tar.xz
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/mipsel/mk150-slinux-preview-9.0-mipsel.tar.xz
     platform: p9
     solution: simply
     importance: 0
@@ -102,7 +102,7 @@ entries:
     type: image
     board: RiscV64 QEmu Preview
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/aarch64/simply-baikal_m-itx-20200326-preview-aarch64.img.xz
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/aarch64/simply-baikal_m-itx-20200326-preview-aarch64.img.xz
     platform: p9
     solution: simply
     importance: 0
@@ -110,7 +110,7 @@ entries:
     type: image
     board: Baikal-M ITX Preview
 
-  - link: http://ftp.altlinux.org/pub/distributions/ALTLinux/p9/images/simply/aarch64/simply-baikal_m-dbm-20200326-preview-aarch64.img.xz
+  - link: https://mirror.yandex.ru/altlinux/p9/images/simply/aarch64/simply-baikal_m-dbm-20200326-preview-aarch64.img.xz
     platform: p9
     solution: simply
     importance: 0
