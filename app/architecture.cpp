@@ -87,7 +87,7 @@ Architecture architecture_from_filename(const QString &filename) {
     for (const Architecture architecture : architecture_all()) {
         const QStringList strings = architecture_strings(architecture);
         
-        for (auto string : strings) {
+        for (const QString &string : strings) {
             if (filename.contains(string, Qt::CaseInsensitive)) {
                 return architecture;
             }

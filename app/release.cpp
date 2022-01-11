@@ -53,7 +53,7 @@ void Release::addVariant(Variant *variant) {
     const int insert_index =
     [this, variant]() {
         int out = 0;
-        for (auto current : m_variants) {
+        for (const Variant *current : m_variants) {
             if (current->arch() > variant->arch()) {
                 return out;
             }
@@ -87,7 +87,7 @@ void Release::setLocalFile(const QUrl &fileUrl) {
     qDebug() << "Setting local file to: " << filePath;
 
     // Delete old custom variant (there's really only one, but iterate anyway)
-    for (auto variant : m_variants) {
+    for (Variant *variant : m_variants) {
         variant->deleteLater();
     }
     m_variants.clear();

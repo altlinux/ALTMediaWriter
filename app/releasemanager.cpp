@@ -49,7 +49,7 @@ ReleaseManager::ReleaseManager(QObject *parent)
     filterModel = new ReleaseFilterModel(sourceModel, this);
 
     // Add custom release to first position
-    auto customRelease = Release::custom(this);
+    Release *customRelease = Release::custom(this);
     addReleaseToModel(0, customRelease);
     setSelectedIndex(0);
 
@@ -74,7 +74,7 @@ void ReleaseManager::downloadMetadata() {
         QHash<QString, QNetworkReply *> out;
         const QList<QString> all_urls = section_urls + image_urls;
 
-        for (const auto url : all_urls) {
+        for (const QString &url : all_urls) {
             QNetworkReply *reply = makeNetworkRequest(url, 5000);
 
             out[url] = reply;
@@ -88,7 +88,7 @@ void ReleaseManager::downloadMetadata() {
     const auto onReplyFinished =
     [this, replies, section_urls, image_urls]() {
         // Only proceed if this is the last reply
-        for (auto reply : replies) {
+        for (const QNetworkReply *reply : replies) {
             if (!reply->isFinished()) {
                 return;
             }
@@ -96,7 +96,7 @@ void ReleaseManager::downloadMetadata() {
 
         // Check that all replies suceeded
         // If not, retry
-        for (auto reply : replies.values()) {
+        for (const QNetworkReply *reply : replies.values()) {
             // NOTE: ignore ContentNotFoundError since it can happen if one of the files was moved or renamed
             const QNetworkReply::NetworkError error = reply->error();
             const bool download_failed = (error != QNetworkReply::NoError && error != QNetworkReply::ContentNotFoundError);
@@ -114,7 +114,7 @@ void ReleaseManager::downloadMetadata() {
         // Collect results
         QHash<QString, QString> url_to_file;
 
-        for (auto url : replies.keys()) {
+        for (const QString &url : replies.keys()) {
             QNetworkReply *reply = replies[url];
 
             if (reply->error() == QNetworkReply::NoError) {
@@ -129,7 +129,7 @@ void ReleaseManager::downloadMetadata() {
         const QList<QString> sectionsFiles =
         [section_urls, url_to_file]() {
             QList<QString> out;
-            for (const auto section_url : section_urls) {
+            for (const QString &section_url : section_urls) {
                 const QString section = url_to_file[section_url];
                 out.append(section);
             }
@@ -143,7 +143,7 @@ void ReleaseManager::downloadMetadata() {
         const QList<QString> imagesFiles =
         [image_urls, url_to_file]() {
             QList<QString> out;
-            for (const auto image_url : image_urls) {
+            for (const QString &image_url : image_urls) {
                 const QString image = url_to_file[image_url];
                 out.append(image);
             }
@@ -152,18 +152,18 @@ void ReleaseManager::downloadMetadata() {
 
         qDebug() << "Loading variants";
 
-        for (auto imagesFile : imagesFiles) {
+        for (const QString &imagesFile : imagesFiles) {
             loadVariants(imagesFile);
         }
 
-        for (auto reply : replies.values()) {
+        for (QNetworkReply *reply : replies.values()) {
             reply->deleteLater();
         }
 
         setDownloadingMetadata(false);
     };
 
-    for (const auto reply : replies) {
+    for (QNetworkReply *reply : replies) {
         connect(
             reply, &QNetworkReply::finished,
             onReplyFinished);
@@ -210,7 +210,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
         return;
     }
 
-    for (auto variantData : variants["entries"]) {
+    for (const YAML::Node &variantData : variants["entries"]) {
         const QString url = yml_get(variantData, "link");
         if (url.isEmpty()) {
             qDebug() << "Variant has no url";
@@ -303,7 +303,7 @@ QStringList ReleaseManager::fileTypeFilters() const {
     const QList<FileType> fileTypes = file_type_all();
 
     QStringList filters;
-    for (const auto type : fileTypes) {
+    for (const FileType &type : fileTypes) {
         const QString extensions =
         [type]() {
             const QStringList strings = file_type_strings(type);
@@ -314,7 +314,7 @@ QStringList ReleaseManager::fileTypeFilters() const {
             QString out;
             out += "(";
 
-            for (const auto e : strings) {
+            for (const QString &e : strings) {
                 if (strings.indexOf(e) > 0) {
                     out += " ";
                 }
@@ -343,7 +343,7 @@ QStringList ReleaseManager::fileTypeFilters() const {
 }
 
 void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
-    for (auto sectionFile : sectionsFiles) {
+    for (const QString &sectionFile : sectionsFiles) {
         const YAML::Node section = YAML::Load(sectionFile.toStdString());
 
         if (!section["members"]) {

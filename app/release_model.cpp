@@ -92,7 +92,7 @@ bool ReleaseFilterModel::filterAcceptsRow(int source_row, const QModelIndex &) c
                 return true;
             }
 
-            for (auto variant : release->variantList()) {
+            for (const Variant *variant : release->variantList()) {
                 if (variant->arch() == filterArch) {
                     return true;
                 }

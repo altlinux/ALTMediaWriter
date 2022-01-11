@@ -28,7 +28,7 @@
 
 void Notifications::notify(const QString &title, const QString &body) {
     QDBusInterface notifications("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications", QDBusConnection::sessionBus());
-    auto reply = notifications.call("Notify", "ALT Media Writer", 0U, "mediawriter", title, body, QStringList{}, QVariantMap{}, -1);
+    const QDBusMessage reply = notifications.call("Notify", "ALT Media Writer", 0U, "mediawriter", title, body, QStringList{}, QVariantMap{}, -1);
     if (reply.type() == QDBusMessage::ErrorMessage)
         qDebug() << "Couldn't send a notification:" << reply.errorName() << "-" << reply.errorMessage();
 }

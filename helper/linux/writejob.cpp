@@ -70,7 +70,7 @@ QDBusUnixFileDescriptor WriteJob::getDescriptor() {
         QDBusArgument arg = qvariant_cast<QDBusArgument>(message.arguments().first());
         DBusIntrospection objects;
         arg >> objects;
-        for (auto i : objects.keys()) {
+        for (const QDBusObjectPath &i : objects.keys()) {
             if (objects[i].contains("org.freedesktop.UDisks2.Filesystem")) {
                 QString currentDrivePath = qvariant_cast<QDBusObjectPath>(objects[i]["org.freedesktop.UDisks2.Block"]["Drive"]).path();
                 if (currentDrivePath == drivePath) {

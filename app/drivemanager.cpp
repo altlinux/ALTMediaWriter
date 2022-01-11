@@ -68,7 +68,7 @@ QString getHelperPath() {
         appPath + "/../../helper/" + platform + "/debug/" + executable,
     };
 
-    for (const auto path: possiblePaths) {
+    for (const QString &path : possiblePaths) {
         if (QFile::exists(path)) {
             return path;
         }
@@ -173,7 +173,7 @@ void DriveManager::setLastRestoreable(Drive *d) {
 
 void DriveManager::onDriveConnected(Drive *d) {
     int position = 0;
-    for (auto i : m_drives) {
+    for (const Drive *i : m_drives) {
         if (d->size() < i->size())
             break;
         position++;

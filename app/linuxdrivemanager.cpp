@@ -123,7 +123,7 @@ void LinuxDriveProvider::init(QDBusPendingCallWatcher *w) {
     }
 
     DBusIntrospection introspection = reply.argumentAt<0>();
-    for (auto i : introspection.keys()) {
+    for (const QDBusObjectPath &i : introspection.keys()) {
         if (!i.path().startsWith("/org/freedesktop/UDisks2/block_devices"))
             continue;
 
@@ -132,7 +132,7 @@ void LinuxDriveProvider::init(QDBusPendingCallWatcher *w) {
             newPaths.insert(path);
     }
 
-    for (auto i : oldPaths - newPaths) {
+    for (const QDBusObjectPath &i : oldPaths - newPaths) {
         emit driveRemoved(m_drives[i]);
         m_drives[i]->deleteLater();
         m_drives.remove(i);
