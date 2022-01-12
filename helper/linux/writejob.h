@@ -64,6 +64,4 @@ private:
     QFileSystemWatcher watcher;
 };
 
-std::tuple<std::unique_ptr<char[]>, char*, std::size_t> pageAlignedBuffer(std::size_t pages = 1024);
-
 #endif // WRITEJOB_H
