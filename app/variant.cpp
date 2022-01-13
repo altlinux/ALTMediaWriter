@@ -115,8 +115,9 @@ void Variant::setDelayedWrite(const bool value) {
 }
 
 Variant::Status Variant::status() const {
-    if (m_status == READY_FOR_WRITING && DriveManager::instance()->isBackendBroken())
+    if (m_status == READY_FOR_WRITING && DriveManager::instance()->isBackendBroken()) {
         return WRITING_NOT_POSSIBLE;
+    }
     return m_status;
 }
 

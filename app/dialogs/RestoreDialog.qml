@@ -38,8 +38,9 @@ Dialog {
     Connections {
         target: drives
         onLastRestoreableChanged: {
-            if (drives.lastRestoreable == null)
+            if (drives.lastRestoreable == null) {
                 root.close()
+            }
         }
     }
 
@@ -51,8 +52,9 @@ Dialog {
         color: palette.window
 
         Keys.onEscapePressed: {
-            if (drives.lastRestoreable.restoreStatus != Drive.RESTORING)
+            if (drives.lastRestoreable.restoreStatus != Drive.RESTORING) {
                 root.close()
+            }
         }
 
         Item {
@@ -166,10 +168,11 @@ Dialog {
                     textColor: "white"
                     enabled: !drives.lastRestoreable || drives.lastRestoreable.restoreStatus != Drive.RESTORING
                     onClicked: {
-                        if (drives.lastRestoreable && drives.lastRestoreable.restoreStatus == Drive.CONTAINS_LIVE)
+                        if (drives.lastRestoreable && drives.lastRestoreable.restoreStatus == Drive.CONTAINS_LIVE) {
                             drives.lastRestoreable.restore()
-                        else
+                        } else {
                             root.visible = false
+                        }
                     }
                 }
             }

@@ -126,8 +126,9 @@ bool WriteJob::removeMountPoints(uint diskNumber) {
                     }
                 }
             }
-            if (hDevice)
+            if (hDevice) {
                 CloseHandle(hDevice);
+            }
         }
     }
 
@@ -246,10 +247,11 @@ bool WriteJob::write() {
         return false;
     }
 
-    if (what.endsWith(".xz"))
+    if (what.endsWith(".xz")) {
         return writeCompressed(drive);
-    else
+    } else {
         return writePlain(drive);
+    }
 }
 
 bool WriteJob::writeCompressed(HANDLE drive) {
@@ -305,8 +307,9 @@ bool WriteJob::writeCompressed(HANDLE drive) {
                 return false;
             }
 
-            if (osWrite.Offset + BLOCK_SIZE < osWrite.Offset)
+            if (osWrite.Offset + BLOCK_SIZE < osWrite.Offset) {
                 osWrite.OffsetHigh++;
+            }
             osWrite.Offset += BLOCK_SIZE;
 
             CloseHandle(drive);
@@ -342,8 +345,9 @@ bool WriteJob::writeCompressed(HANDLE drive) {
                 return false;
             }
 
-            if (osWrite.Offset + BLOCK_SIZE < osWrite.Offset)
+            if (osWrite.Offset + BLOCK_SIZE < osWrite.Offset) {
                 osWrite.OffsetHigh++;
+            }
             osWrite.Offset += BLOCK_SIZE;
 
             strm.next_out = outBuffer;
@@ -375,15 +379,17 @@ bool WriteJob::writePlain(HANDLE drive) {
             return false;
         }
 
-        if (osWrite.Offset + BLOCK_SIZE < osWrite.Offset)
+        if (osWrite.Offset + BLOCK_SIZE < osWrite.Offset) {
             osWrite.OffsetHigh++;
+        }
         osWrite.Offset += BLOCK_SIZE;
         cnt += buffer.size();
         out << cnt << "\n";
         out.flush();
 
-        if (buffer.size() != BLOCK_SIZE || isoFile.atEnd())
+        if (buffer.size() != BLOCK_SIZE || isoFile.atEnd()) {
             break;
+        }
     }
 
     CloseHandle(drive);
@@ -393,8 +399,9 @@ bool WriteJob::writePlain(HANDLE drive) {
 
 void WriteJob::onFileChanged(const QString &path) {
     const bool still_downloading = QFile::exists(path);
-    if (still_downloading)
+    if (still_downloading) {
         return;
+    }
 
     const bool downloaded_file_exists = QFile::exists(what);
     if (!downloaded_file_exists) {

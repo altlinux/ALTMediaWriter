@@ -90,18 +90,21 @@ DriveManager::DriveManager(QObject *parent)
 }
 
 DriveManager *DriveManager::instance() {
-    if (!_self)
+    if (!_self) {
         _self = new DriveManager();
+    }
     return _self;
 }
 
 QVariant DriveManager::headerData(int section, Qt::Orientation orientation, int role) const {
     Q_UNUSED(section); Q_UNUSED(orientation);
 
-    if (role == Qt::UserRole + 1)
+    if (role == Qt::UserRole + 1) {
         return "drive";
-    if (role == Qt::UserRole + 2)
+    }
+    if (role == Qt::UserRole + 2) {
         return "display";
+    }
 
     return QVariant();
 }
@@ -119,21 +122,25 @@ int DriveManager::rowCount(const QModelIndex &parent) const {
 }
 
 QVariant DriveManager::data(const QModelIndex &index, int role) const {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return QVariant();
+    }
 
-    if (role == Qt::UserRole + 1)
+    if (role == Qt::UserRole + 1) {
         return QVariant::fromValue(m_drives[index.row()]);
+    }
 
-    if (role == Qt::UserRole + 2)
+    if (role == Qt::UserRole + 2) {
         return QVariant::fromValue(m_drives[index.row()]->name());
+    }
 
     return QVariant();
 }
 
 Drive *DriveManager::selected() const {
-    if (m_selectedIndex >= 0 && m_selectedIndex < m_drives.count())
+    if (m_selectedIndex >= 0 && m_selectedIndex < m_drives.count()) {
         return m_drives[m_selectedIndex];
+    }
     return nullptr;
 }
 
@@ -174,8 +181,9 @@ void DriveManager::setLastRestoreable(Drive *d) {
 void DriveManager::onDriveConnected(Drive *d) {
     int position = 0;
     for (const Drive *i : m_drives) {
-        if (d->size() < i->size())
+        if (d->size() < i->size()) {
             break;
+        }
         position++;
     }
     beginInsertRows(QModelIndex(), position, position);

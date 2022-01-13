@@ -30,10 +30,11 @@ RestoreJob::RestoreJob(const QString &where)
 {
     bool ok = false;
     m_where = where.toInt(&ok);
-    if (!ok)
+    if (!ok) {
         qApp->exit(1);
-    else
+    } else {
         QTimer::singleShot(0, this, &RestoreJob::work);
+    }
 }
 
 void RestoreJob::work() {

@@ -47,8 +47,9 @@ FocusScope {
         anchors.fill: parent
         acceptedButtons: Qt.ForwardButton
         onClicked: {
-            if (lastIndex >= 0 && mouse.button == Qt.ForwardButton)
+            if (lastIndex >= 0 && mouse.button == Qt.ForwardButton) {
                 stepForward(lastIndex)
+            }
         }
     }
 

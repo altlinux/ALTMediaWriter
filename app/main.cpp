@@ -77,9 +77,12 @@ int main(int argc, char **argv)
 
 #ifdef __linux
     // qt x11 scaling is broken
-    if (QX11Info::isPlatformX11())
-#endif
+    if (QX11Info::isPlatformX11()) {
         QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    }
+#else
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
 
     qInstallMessageHandler(myMessageOutput);
 

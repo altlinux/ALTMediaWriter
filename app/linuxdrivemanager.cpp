@@ -63,8 +63,9 @@ QDBusObjectPath LinuxDriveProvider::handleObject(const QDBusObjectPath &object_p
     QDBusInterface driveInterface("org.freedesktop.UDisks2", driveId.path(), "org.freedesktop.UDisks2.Drive", QDBusConnection::systemBus());
 
     if ((numberRE.indexIn(object_path.path()) >= 0 && !object_path.path().startsWith("/org/freedesktop/UDisks2/block_devices/mmcblk")) ||
-            mmcRE.indexIn(object_path.path()) >= 0)
+            mmcRE.indexIn(object_path.path()) >= 0) {
         return QDBusObjectPath();
+    }
 
     if (!driveId.path().isEmpty() && driveId.path() != "/") {
         bool portable = driveInterface.property("Removable").toBool();
@@ -79,16 +80,19 @@ QDBusObjectPath LinuxDriveProvider::handleObject(const QDBusObjectPath &object_p
         bool isoLayout = interfaces_and_properties["org.freedesktop.UDisks2.Block"]["IdType"].toString() == "iso9660";
 
         QString name;
-        if (vendor.isEmpty())
+        if (vendor.isEmpty()) {
             if (model.isEmpty())
                 name = interfaces_and_properties["org.freedesktop.UDisks2.Block"]["Device"].toByteArray();
             else
                 name = model;
-        else
-            if (model.isEmpty())
+        } else {
+            if (model.isEmpty()) {
                 name = vendor;
-            else
+            }
+            else {
                 name = QString("%1 %2").arg(vendor).arg(model);
+            }
+        }
 
         qDebug() << this->metaObject()->className() << "New drive" << driveId.path() << "-" << name << "(" << size << "bytes;" << (isValid ? "removable;" : "nonremovable;") << connectionBus << ")";
 
@@ -124,12 +128,14 @@ void LinuxDriveProvider::init(QDBusPendingCallWatcher *w) {
 
     DBusIntrospection introspection = reply.argumentAt<0>();
     for (const QDBusObjectPath &i : introspection.keys()) {
-        if (!i.path().startsWith("/org/freedesktop/UDisks2/block_devices"))
+        if (!i.path().startsWith("/org/freedesktop/UDisks2/block_devices")) {
             continue;
+        }
 
         QDBusObjectPath path = handleObject(i, introspection[i]);
-        if (!path.path().isEmpty())
+        if (!path.path().isEmpty()) {
             newPaths.insert(path);
+        }
     }
 
     for (const QDBusObjectPath &i : oldPaths - newPaths) {
@@ -191,11 +197,13 @@ LinuxDrive::~LinuxDrive() {
 bool LinuxDrive::write(Variant *variant) {
     qDebug() << this->metaObject()->className() << "Will now write" << variant->fileName() << "to" << this->m_device;
 
-    if (!Drive::write(variant))
+    if (!Drive::write(variant)) {
         return false;
+    }
 
-    if (!m_process)
+    if (!m_process) {
         m_process = new QProcess(this);
+    }
 
     const QString helperPath = getHelperPath();
     if (!helperPath.isEmpty()) {
@@ -241,8 +249,9 @@ void LinuxDrive::cancel() {
 void LinuxDrive::restore() {
     qDebug() << this->metaObject()->className() << "Will now restore" << this->m_device;
 
-    if (!m_process)
+    if (!m_process) {
         m_process = new QProcess(this);
+    }
 
     m_restoreStatus = RESTORING;
     emit restoreStatusChanged();
@@ -269,8 +278,9 @@ void LinuxDrive::restore() {
 }
 
 void LinuxDrive::onReadyRead() {
-    if (!m_process)
+    if (!m_process) {
         return;
+    }
 
     m_progress->setCurrent(NAN);
 
@@ -293,8 +303,9 @@ void LinuxDrive::onReadyRead() {
         else {
             bool ok = false;
             qreal val = line.toULongLong(&ok);
-            if (ok && val > 0.0)
+            if (ok && val > 0.0) {
                 m_progress->setCurrent(val);
+            }
         }
     }
 }
@@ -302,8 +313,9 @@ void LinuxDrive::onReadyRead() {
 void LinuxDrive::onFinished(int exitCode, QProcess::ExitStatus status) {
     qDebug() << this->metaObject()->className() << "Helper process finished with status" << status;
 
-    if (!m_process)
+    if (!m_process) {
         return;
+    }
 
     if (exitCode != 0) {
         QString errorMessage = m_process->readAllStandardError();
@@ -329,10 +341,11 @@ void LinuxDrive::onRestoreFinished(int exitCode, QProcess::ExitStatus status) {
     qDebug() << this->metaObject()->className() << "Helper process finished with status" << status;
 
     if (exitCode != 0) {
-        if (m_process)
+        if (m_process) {
             qDebug() << "Drive restoration failed:" << m_process->readAllStandardError();
-        else
+        } else {
             qDebug() << "Drive restoration failed";
+        }
         m_restoreStatus = RESTORE_ERROR;
     }
     else {
@@ -347,8 +360,9 @@ void LinuxDrive::onRestoreFinished(int exitCode, QProcess::ExitStatus status) {
 
 void LinuxDrive::onErrorOccurred(QProcess::ProcessError e) {
     Q_UNUSED(e);
-    if (!m_process)
+    if (!m_process) {
         return;
+    }
 
     QString errorMessage = m_process->errorString();
     qDebug() << "Restoring failed:" << errorMessage;

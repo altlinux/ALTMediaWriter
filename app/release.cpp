@@ -129,8 +129,9 @@ QStringList Release::screenshots() const {
 }
 
 Variant *Release::selectedVariant() const {
-    if (m_selectedVariant >= 0 && m_selectedVariant < m_variants.count())
+    if (m_selectedVariant >= 0 && m_selectedVariant < m_variants.count()) {
         return m_variants[m_selectedVariant];
+    }
     return nullptr;
 }
 

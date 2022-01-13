@@ -81,12 +81,14 @@ AdwaitaRectangle {
     }
 
     Keys.onUpPressed: {
-        if (currentIndex > 0)
+        if (currentIndex > 0) {
             currentIndex--
+        }
     }
     Keys.onDownPressed: {
-        if (currentIndex < count - 1)
+        if (currentIndex < count - 1) {
             currentIndex++
+        }
     }
     Keys.onSpacePressed: mouse.action()
 
@@ -167,10 +169,11 @@ AdwaitaRectangle {
                     action()
                 }
                 onContainsMouseChanged: {
-                    if (containsMouse)
+                    if (containsMouse) {
                         options.itemContainsMouse = true
-                    else
+                    } else {
                         options.itemContainsMouse = false
+                    }
                 }
             }
         }

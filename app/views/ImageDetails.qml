@@ -51,8 +51,9 @@ Item {
         anchors.fill: parent
         acceptedButtons: Qt.BackButton
         onClicked:
-            if (mouse.button == Qt.BackButton)
+            if (mouse.button == Qt.BackButton) {
                 toMainScreen()
+            }
     }
 
     ScrollView {
@@ -89,8 +90,9 @@ Item {
                         color: "#628fcf"
                         textColor: "white"
                         onClicked: {
-                            if (dlDialog.visible)
+                            if (dlDialog.visible) {
                                 return
+                            }
                             deviceNotification.open = false
                             otherVariantsPopover.open = false
                             dlDialog.visible = true
@@ -206,8 +208,9 @@ Item {
                                                     exclusiveGroup: otherVariantsExclusiveGroup
                                                     checked: index == releases.selected.variantIndex
                                                     onCheckedChanged: {
-                                                        if (checked)
+                                                        if (checked) {
                                                             releases.selected.variantIndex = index
+                                                        }
                                                         otherVariantsPopover.open = false
                                                     }
                                                 }

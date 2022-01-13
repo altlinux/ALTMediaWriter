@@ -113,10 +113,11 @@ QDBusUnixFileDescriptor WriteJob::getDescriptor() {
 }
 
 bool WriteJob::write(int fd) {
-    if (what.endsWith(".xz"))
+    if (what.endsWith(".xz")) {
         return writeCompressed(fd);
-    else
+    } else {
         return writePlain(fd);
+    }
 }
 
 bool WriteJob::writeCompressed(int fd) {
@@ -256,8 +257,9 @@ try_again:
 void WriteJob::work() {
     // have to keep the QDBus wrapper, otherwise the file gets closed
     fd = getDescriptor();
-    if (fd.fileDescriptor() < 0)
+    if (fd.fileDescriptor() < 0) {
         return;
+    }
 
     const bool delayed_write =
     [&]() {
@@ -289,8 +291,9 @@ void WriteJob::work() {
 
 void WriteJob::onFileChanged(const QString &path) {
     const bool still_downloading = QFile::exists(path);
-    if (still_downloading)
+    if (still_downloading) {
         return;
+    }
 
     const bool downloaded_file_exists = QFile::exists(what);
     if (!downloaded_file_exists) {
