@@ -51,7 +51,7 @@ FileType file_type_from_filename(const QString &filename) {
     const QFileInfo file_info = QFileInfo(filename);
     const QString file_suffix = file_info.completeSuffix();
 
-    for (const FileType type : file_type_all) {
+    for (const FileType &type : file_type_all) {
         const QStringList strings = file_type_strings(type);
 
         const bool match = strings.contains(file_suffix);

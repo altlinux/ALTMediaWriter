@@ -70,7 +70,7 @@ QString architecture_name(const Architecture architecture) {
 }
 
 Architecture architecture_from_string(const QString &string) {
-    for (const Architecture architecture : architecture_all) {
+    for (const Architecture &architecture : architecture_all) {
         const QStringList strings = architecture_strings(architecture);
 
         if (strings.contains(string, Qt::CaseInsensitive)) {
@@ -81,7 +81,7 @@ Architecture architecture_from_string(const QString &string) {
 }
 
 Architecture architecture_from_filename(const QString &filename) {
-    for (const Architecture architecture : architecture_all) {
+    for (const Architecture &architecture : architecture_all) {
         const QStringList strings = architecture_strings(architecture);
 
         for (const QString &string : strings) {

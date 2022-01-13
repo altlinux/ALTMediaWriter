@@ -284,7 +284,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
 
 QStringList ReleaseManager::architectures() const {
     QStringList out;
-    for (const Architecture architecture : architecture_all) {
+    for (const Architecture &architecture : architecture_all) {
         if (architecture != Architecture_UNKNOWN) {
             const QString name = architecture_name(architecture);
             out.append(name);
