@@ -31,6 +31,8 @@
 
 LinuxDriveProvider::LinuxDriveProvider(DriveManager *parent)
 : DriveProvider(parent) {
+    m_objManager = nullptr;
+
     qDebug() << this->metaObject()->className() << "construction";
     qDBusRegisterMetaType<InterfacesAndProperties>();
     qDBusRegisterMetaType<DBusIntrospection>();
@@ -184,6 +186,7 @@ void LinuxDriveProvider::onPropertiesChanged(const QString &interface_name, cons
 LinuxDrive::LinuxDrive(LinuxDriveProvider *parent, QString device, QString name, uint64_t size, bool isoLayout)
 : Drive(parent, name, size, isoLayout)
 , m_device(device) {
+    m_process = nullptr;
 }
 
 LinuxDrive::~LinuxDrive() {

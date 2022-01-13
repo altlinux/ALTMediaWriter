@@ -255,6 +255,7 @@ WinDrive::WinDrive(WinDriveProvider *parent, const QString &name, uint64_t size,
 : Drive(parent, name, size, containsLive)
 , m_device(device)
 , m_serialNo(serialNumber) {
+    m_child = nullptr;
 }
 
 WinDrive::~WinDrive() {

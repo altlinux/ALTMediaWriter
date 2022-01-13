@@ -24,7 +24,6 @@
 #define RESTOREJOB_H
 
 #include <QObject>
-#include <QTextStream>
 
 class RestoreJob : public QObject {
     Q_OBJECT
@@ -34,9 +33,6 @@ public slots:
     void work();
 
 private:
-    QTextStream out{stdout};
-    QTextStream err{stderr};
-
     QString where;
 };
 

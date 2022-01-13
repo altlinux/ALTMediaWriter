@@ -25,7 +25,6 @@
 
 #include <QObject>
 #include <QProcess>
-#include <QTextStream>
 
 class RestoreJob : public QObject {
     Q_OBJECT
@@ -38,9 +37,6 @@ private slots:
     void work();
 
 private:
-    QTextStream out{stdout};
-    QTextStream err{stderr};
-
     QProcess m_diskpart;
     int m_where;
 };

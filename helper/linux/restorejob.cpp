@@ -45,6 +45,8 @@ RestoreJob::RestoreJob(const QString &where)
 }
 
 void RestoreJob::work() {
+    QTextStream err(stderr);
+
     QDBusInterface device("org.freedesktop.UDisks2", where, "org.freedesktop.UDisks2.Block", QDBusConnection::systemBus(), this);
     QString drivePath = qvariant_cast<QDBusObjectPath>(device.property("Drive")).path();
     QDBusInterface drive("org.freedesktop.UDisks2", drivePath, "org.freedesktop.UDisks2.Drive", QDBusConnection::systemBus(), this);

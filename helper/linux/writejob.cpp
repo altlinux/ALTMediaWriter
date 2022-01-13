@@ -66,6 +66,9 @@ WriteJob::WriteJob(const QString &what, const QString &where)
     qDBusRegisterMetaType<Properties>();
     qDBusRegisterMetaType<InterfacesAndProperties>();
     qDBusRegisterMetaType<DBusIntrospection>();
+
+    fd = QDBusUnixFileDescriptor(-1);
+
     connect(
         &watcher, &QFileSystemWatcher::fileChanged,
         this, &WriteJob::onFileChanged);
@@ -73,6 +76,8 @@ WriteJob::WriteJob(const QString &what, const QString &where)
 }
 
 QDBusUnixFileDescriptor WriteJob::getDescriptor() {
+    QTextStream err(stderr);
+
     QDBusInterface device("org.freedesktop.UDisks2", where, "org.freedesktop.UDisks2.Block", QDBusConnection::systemBus(), this);
     QString drivePath = qvariant_cast<QDBusObjectPath>(device.property("Drive")).path();
     QDBusInterface manager("org.freedesktop.UDisks2", "/org/freedesktop/UDisks2", "org.freedesktop.DBus.ObjectManager", QDBusConnection::systemBus());
@@ -120,6 +125,9 @@ bool WriteJob::write(int fd) {
 }
 
 bool WriteJob::writeCompressed(int fd) {
+    QTextStream out(stdout);
+    QTextStream err(stderr);
+
     qint64 totalRead = 0;
 
     lzma_stream strm = LZMA_STREAM_INIT;
@@ -205,6 +213,9 @@ bool WriteJob::writeCompressed(int fd) {
 }
 
 bool WriteJob::writePlain(int fd) {
+    QTextStream out(stdout);
+    QTextStream err(stderr);
+
     QFile inFile(what);
     const bool open_success = inFile.open(QIODevice::ReadOnly);
     if (!open_success) {
@@ -254,6 +265,9 @@ bool WriteJob::writePlain(int fd) {
 }
 
 void WriteJob::work() {
+    QTextStream out(stdout);
+    QTextStream err(stderr);
+
     // have to keep the QDBus wrapper, otherwise the file gets closed
     fd = getDescriptor();
     if (fd.fileDescriptor() < 0) {

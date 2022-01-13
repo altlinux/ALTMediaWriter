@@ -80,6 +80,10 @@ DriveManager *DriveManager::_self = nullptr;
 DriveManager::DriveManager(QObject *parent)
 : QAbstractListModel(parent)
 , m_provider(DriveProvider::create(this)) {
+    m_selectedIndex = 0;
+    m_lastRestoreable = nullptr;
+    m_provider = nullptr;
+
     qDebug() << this->metaObject()->className() << "construction";
 
     connect(m_provider, &DriveProvider::driveConnected, this, &DriveManager::onDriveConnected);
@@ -242,6 +246,7 @@ bool DriveProvider::initialized() const {
 
 DriveProvider::DriveProvider(DriveManager *parent)
 : QObject(parent) {
+    m_initialized = true;
 }
 
 Drive::Drive(DriveProvider *parent, const QString &name, uint64_t size, bool containsLive)
@@ -250,6 +255,8 @@ Drive::Drive(DriveProvider *parent, const QString &name, uint64_t size, bool con
 , m_name(name)
 , m_size(size)
 , m_restoreStatus(containsLive ? CONTAINS_LIVE : CLEAN) {
+    m_variant = nullptr;
+    m_size = 0;
 }
 
 Progress *Drive::progress() const {

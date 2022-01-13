@@ -56,7 +56,7 @@ private:
     QDBusObjectPath handleObject(const QDBusObjectPath &path, const InterfacesAndProperties &interface);
 
 private:
-    QDBusInterface *m_objManager{nullptr};
+    QDBusInterface *m_objManager;
     QHash<QDBusObjectPath, LinuxDrive *> m_drives;
 };
 
@@ -82,7 +82,7 @@ private slots:
 private:
     QString m_device;
 
-    QProcess *m_process{nullptr};
+    QProcess *m_process;
 };
 
 #endif // LINUXDRIVEMANAGER_H

@@ -35,6 +35,8 @@
 
 #include <lzma.h>
 
+const int BLOCK_SIZE = 512 * 128;
+
 WriteJob::WriteJob(const QString &what, const QString &where)
 : QObject(nullptr)
 , what(what) {
@@ -49,6 +51,8 @@ WriteJob::WriteJob(const QString &what, const QString &where)
 }
 
 HANDLE WriteJob::openDrive(int physicalDriveNumber) {
+    QTextStream err(stderr);
+
     HANDLE hVol;
     QString drivePath = QString("\\\\.\\PhysicalDrive%0").arg(physicalDriveNumber);
 
@@ -66,6 +70,8 @@ HANDLE WriteJob::openDrive(int physicalDriveNumber) {
 }
 
 bool WriteJob::lockDrive(HANDLE drive) {
+    QTextStream err(stderr);
+
     int attempts = 0;
     DWORD status;
 
@@ -92,6 +98,8 @@ bool WriteJob::lockDrive(HANDLE drive) {
 }
 
 bool WriteJob::removeMountPoints(uint diskNumber) {
+    QTextStream err(stderr);
+
     DWORD drives = ::GetLogicalDrives();
 
     for (char i = 0; i < 26; i++) {
@@ -161,6 +169,8 @@ bool WriteJob::cleanDrive(uint driveNumber) {
 }
 
 bool WriteJob::writeBlock(HANDLE drive, OVERLAPPED *overlap, char *data, uint size) {
+    QTextStream err(stderr);
+
     DWORD bytesWritten;
 
     if (!WriteFile(drive, data, size, &bytesWritten, overlap)) {
@@ -186,6 +196,8 @@ bool WriteJob::writeBlock(HANDLE drive, OVERLAPPED *overlap, char *data, uint si
 }
 
 void WriteJob::unlockDrive(HANDLE drive) {
+    QTextStream err(stderr);
+
     DWORD status;
     if (!DeviceIoControl(drive, FSCTL_UNLOCK_VOLUME, NULL, 0, NULL, 0, &status, NULL)) {
         TCHAR message[256];
@@ -196,6 +208,9 @@ void WriteJob::unlockDrive(HANDLE drive) {
 }
 
 void WriteJob::work() {
+    QTextStream out(stdout);
+    QTextStream err(stdout);
+
     const bool delayed_write = [&]() {
         const QString part_path = what + ".part";
 
@@ -251,6 +266,9 @@ bool WriteJob::write() {
 }
 
 bool WriteJob::writeCompressed(HANDLE drive) {
+    QTextStream out(stdout);
+    QTextStream err(stderr);
+
     qint64 totalRead = 0;
 
     lzma_stream strm = LZMA_STREAM_INIT;
@@ -353,6 +371,9 @@ bool WriteJob::writeCompressed(HANDLE drive) {
 }
 
 bool WriteJob::writePlain(HANDLE drive) {
+    QTextStream out(stdout);
+    QTextStream err(stdout);
+
     OVERLAPPED osWrite;
     memset(&osWrite, 0, sizeof(osWrite));
     osWrite.hEvent = 0;

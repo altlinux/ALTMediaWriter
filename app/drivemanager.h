@@ -93,11 +93,11 @@ private:
     explicit DriveManager(QObject *parent = 0);
 
     static DriveManager *_self;
-    QList<Drive *> m_drives{};
-    int m_selectedIndex{0};
-    Drive *m_lastRestoreable{nullptr};
-    DriveProvider *m_provider{nullptr};
-    QString m_errorString{};
+    QList<Drive *> m_drives;
+    int m_selectedIndex;
+    Drive *m_lastRestoreable;
+    DriveProvider *m_provider;
+    QString m_errorString;
 };
 
 /**
@@ -127,7 +127,7 @@ signals:
 protected:
     DriveProvider(DriveManager *parent);
 
-    bool m_initialized{true};
+    bool m_initialized;
 };
 
 /**
@@ -182,12 +182,12 @@ signals:
     void restoreStatusChanged();
 
 protected:
-    Variant *m_variant{nullptr};
-    Progress *m_progress{nullptr};
-    QString m_name{};
-    uint64_t m_size{0};
-    RestoreStatus m_restoreStatus{CLEAN};
-    QString m_error{};
+    Variant *m_variant;
+    Progress *m_progress;
+    QString m_name;
+    uint64_t m_size;
+    RestoreStatus m_restoreStatus;
+    QString m_error;
 };
 
 #endif // DRIVEMANAGER_H

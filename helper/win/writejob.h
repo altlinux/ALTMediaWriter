@@ -25,7 +25,6 @@
 
 #include <QFileSystemWatcher>
 #include <QObject>
-#include <QTextStream>
 
 #include <windows.h>
 
@@ -62,11 +61,7 @@ private:
     QString what;
     uint where;
 
-    QTextStream out{stdout};
-    QTextStream err{stderr};
     QFileSystemWatcher watcher;
-
-    const int BLOCK_SIZE{512 * 128};
 };
 
 #endif // WRITEJOB_H

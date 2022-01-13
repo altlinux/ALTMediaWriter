@@ -37,6 +37,8 @@ RestoreJob::RestoreJob(const QString &where)
 }
 
 void RestoreJob::work() {
+    QTextStream err(stderr);
+
     m_diskpart.setProgram("diskpart.exe");
     m_diskpart.setProcessChannelMode(QProcess::ForwardedChannels);
 

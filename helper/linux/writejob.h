@@ -28,7 +28,6 @@
 #include <QFileSystemWatcher>
 #include <QObject>
 #include <QProcess>
-#include <QTextStream>
 
 #include <unistd.h>
 
@@ -58,9 +57,7 @@ private slots:
 private:
     QString what;
     QString where;
-    QTextStream out{stdout};
-    QTextStream err{stderr};
-    QDBusUnixFileDescriptor fd{-1};
+    QDBusUnixFileDescriptor fd;
     QFileSystemWatcher watcher;
 };
 
