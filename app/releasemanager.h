@@ -56,7 +56,7 @@ public:
 
     Release *selected() const;
     int selectedIndex() const;
-    void setSelectedIndex(const int o);
+    void setSelectedIndex(const int index);
 
     ReleaseFilterModel *getFilterModel() const;
 

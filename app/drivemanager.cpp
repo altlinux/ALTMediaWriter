@@ -151,9 +151,9 @@ int DriveManager::selectedIndex() const {
     return m_selectedIndex;
 }
 
-void DriveManager::setSelectedIndex(const int o) {
-    if (m_selectedIndex != o && o < m_drives.count() && o >= 0) {
-        m_selectedIndex = o;
+void DriveManager::setSelectedIndex(const int index) {
+    if (m_selectedIndex != index && index < m_drives.count() && index >= 0) {
+        m_selectedIndex = index;
         emit selectedChanged();
     }
 }
@@ -174,23 +174,23 @@ QString DriveManager::errorString() {
     return m_errorString;
 }
 
-void DriveManager::setLastRestoreable(Drive *d) {
-    if (m_lastRestoreable != d) {
-        m_lastRestoreable = d;
+void DriveManager::setLastRestoreable(Drive *drive) {
+    if (m_lastRestoreable != drive) {
+        m_lastRestoreable = drive;
         emit restoreableDriveChanged();
     }
 }
 
-void DriveManager::onDriveConnected(Drive *d) {
+void DriveManager::onDriveConnected(Drive *drive) {
     int position = 0;
     for (const Drive *i : m_drives) {
-        if (d->size() < i->size()) {
+        if (drive->size() < i->size()) {
             break;
         }
         position++;
     }
     beginInsertRows(QModelIndex(), position, position);
-    m_drives.insert(position, d);
+    m_drives.insert(position, drive);
     endInsertRows();
     emit drivesChanged();
 
@@ -202,13 +202,13 @@ void DriveManager::onDriveConnected(Drive *d) {
         emit selectedChanged();
     }
 
-    if (d->restoreStatus() == Drive::CONTAINS_LIVE) {
-        setLastRestoreable(d);
+    if (drive->restoreStatus() == Drive::CONTAINS_LIVE) {
+        setLastRestoreable(drive);
     }
 }
 
-void DriveManager::onDriveRemoved(Drive *d) {
-    int i = m_drives.indexOf(d);
+void DriveManager::onDriveRemoved(Drive *drive) {
+    int i = m_drives.indexOf(drive);
     if (i >= 0) {
         beginRemoveRows(QModelIndex(), i, i);
         m_drives.removeAt(i);
@@ -219,7 +219,7 @@ void DriveManager::onDriveRemoved(Drive *d) {
         }
         emit selectedChanged();
 
-        if (d == m_lastRestoreable) {
+        if (drive == m_lastRestoreable) {
             setLastRestoreable(nullptr);
         }
     }
@@ -323,13 +323,13 @@ void Drive::cancel() {
     emit restoreStatusChanged();
 }
 
-bool Drive::operator==(const Drive &o) const {
-    return name() == o.name() && size() == o.size();
+bool Drive::operator==(const Drive &other) const {
+    return name() == other.name() && size() == other.size();
 }
 
-void Drive::setRestoreStatus(const Drive::RestoreStatus o) {
-    if (m_restoreStatus != o) {
-        m_restoreStatus = o;
+void Drive::setRestoreStatus(const Drive::RestoreStatus status) {
+    if (m_restoreStatus != status) {
+        m_restoreStatus = status;
         emit restoreStatusChanged();
     }
 }

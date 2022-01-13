@@ -183,8 +183,10 @@ int ReleaseManager::selectedIndex() const {
     return m_selectedIndex;
 }
 
-void ReleaseManager::setSelectedIndex(const int row_proxy) {
-    const QModelIndex index_proxy = filterModel->index(row_proxy, 0);
+// NOTE: index arg refers to proxy, so have to convert
+// it to source
+void ReleaseManager::setSelectedIndex(const int index) {
+    const QModelIndex index_proxy = filterModel->index(index, 0);
     const QModelIndex index_source = filterModel->mapToSource(index_proxy);
 
     const int row_source = index_source.row();

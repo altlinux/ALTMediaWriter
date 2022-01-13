@@ -234,9 +234,9 @@ bool Variant::erase() {
     }
 }
 
-void Variant::setStatus(Status s) {
-    if (m_status != s) {
-        m_status = s;
+void Variant::setStatus(const Status status) {
+    if (m_status != status) {
+        m_status = status;
         emit statusChanged();
     }
 }
@@ -245,9 +245,9 @@ QString Variant::errorString() const {
     return m_error;
 }
 
-void Variant::setErrorString(const QString &o) {
-    if (m_error != o) {
-        m_error = o;
+void Variant::setErrorString(const QString &error) {
+    if (m_error != error) {
+        m_error = error;
         emit errorStringChanged();
     }
 }

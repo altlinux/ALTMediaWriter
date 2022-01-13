@@ -47,7 +47,7 @@ public:
 
 private slots:
     void delayedConstruct();
-    void init(QDBusPendingCallWatcher *w);
+    void init(QDBusPendingCallWatcher *watcher);
     void onInterfacesAdded(const QDBusObjectPath &object_path, const InterfacesAndProperties &interfaces_and_properties);
     void onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces);
     void onPropertiesChanged(const QString &interface_name, const QVariantMap &changed_properties, const QStringList &invalidated_properties);

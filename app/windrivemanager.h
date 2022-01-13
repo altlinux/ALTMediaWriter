@@ -58,7 +58,7 @@ public:
 
     QString serialNumber() const;
 
-    bool operator==(const WinDrive &o) const;
+    bool operator==(const WinDrive &other) const;
 
 private slots:
     void onFinished(const int exitCode, const QProcess::ExitStatus exitStatus);

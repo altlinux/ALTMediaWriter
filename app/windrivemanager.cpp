@@ -342,8 +342,8 @@ QString WinDrive::serialNumber() const {
     return m_serialNo;
 }
 
-bool WinDrive::operator==(const WinDrive &o) const {
-    return (o.serialNumber() == serialNumber()) && Drive::operator==(o);
+bool WinDrive::operator==(const WinDrive &other) const {
+    return (other.serialNumber() == serialNumber()) && Drive::operator==(other);
 }
 
 void WinDrive::onFinished(const int exitCode, const QProcess::ExitStatus exitStatus) {

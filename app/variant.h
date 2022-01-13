@@ -111,9 +111,9 @@ public:
 
     Status status() const;
     QString statusString() const;
-    void setStatus(Status s);
+    void setStatus(const Status status);
     QString errorString() const;
-    void setErrorString(const QString &o);
+    void setErrorString(const QString &error);
 
     Q_INVOKABLE bool erase();
 

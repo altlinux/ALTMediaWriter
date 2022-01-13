@@ -66,7 +66,7 @@ public:
 
     Drive *selected() const;
     int selectedIndex() const;
-    void setSelectedIndex(int o);
+    void setSelectedIndex(const int index);
 
     int length() const;
 
@@ -76,11 +76,11 @@ public:
     QString errorString();
 
 protected:
-    void setLastRestoreable(Drive *d);
+    void setLastRestoreable(Drive *drive);
 
 private slots:
-    void onDriveConnected(Drive *d);
-    void onDriveRemoved(Drive *d);
+    void onDriveConnected(Drive *drive);
+    void onDriveRemoved(Drive *drive);
     void onBackendBroken(const QString &message);
 
 signals:
@@ -118,8 +118,8 @@ public:
     bool initialized() const;
 
 signals:
-    void driveConnected(Drive *d);
-    void driveRemoved(Drive *d);
+    void driveConnected(Drive *drive);
+    void driveRemoved(Drive *drive);
     void backendBroken(const QString &message);
 
     void initializedChanged();
@@ -173,10 +173,10 @@ public:
     Q_INVOKABLE virtual void cancel();
     Q_INVOKABLE virtual void restore() = 0;
 
-    bool operator==(const Drive &o) const;
+    bool operator==(const Drive &other) const;
 
 public slots:
-    void setRestoreStatus(const RestoreStatus o);
+    void setRestoreStatus(const RestoreStatus status);
 
 signals:
     void restoreStatusChanged();

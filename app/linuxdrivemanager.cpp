@@ -113,10 +113,10 @@ QDBusObjectPath LinuxDriveProvider::handleObject(const QDBusObjectPath &object_p
     return QDBusObjectPath();
 }
 
-void LinuxDriveProvider::init(QDBusPendingCallWatcher *w) {
+void LinuxDriveProvider::init(QDBusPendingCallWatcher *watcher) {
     qDebug() << this->metaObject()->className() << "Got a reply to GetManagedObjects, parsing";
 
-    QDBusPendingReply<DBusIntrospection> reply = *w;
+    QDBusPendingReply<DBusIntrospection> reply = *watcher;
     QSet<QDBusObjectPath> oldPaths = m_drives.keys().toSet();
     QSet<QDBusObjectPath> newPaths;
 
