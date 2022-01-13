@@ -39,7 +39,8 @@ enum FileType {
     FileType_COUNT,
 };
 
-QList<FileType> file_type_all();
+extern const QList<FileType> file_type_all;
+
 QStringList file_type_strings(const FileType file_type);
 QString file_type_name(const FileType file_type);
 FileType file_type_from_filename(const QString &filename);

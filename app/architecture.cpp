@@ -24,19 +24,16 @@
 
 #include <QObject>
 
-QList<Architecture> architecture_all() {
-    static QList<Architecture> list =
-    []() {
-        QList<Architecture> out; 
-        for (int i = 0; i < Architecture_COUNT; i++) {
-            const Architecture architecture = (Architecture) i;
-            list.append(architecture);
-        }
-        return out;
-    }();
-    
-    return list;
-}
+const QList<Architecture> architecture_all = []() {
+    QList<Architecture> out; 
+
+    for (int i = 0; i < Architecture_COUNT; i++) {
+        const Architecture architecture = (Architecture) i;
+        out.append(architecture);
+    }
+
+    return out;
+}();
 
 QStringList architecture_strings(const Architecture architecture) {
     switch (architecture) {
@@ -73,7 +70,7 @@ QString architecture_name(const Architecture architecture) {
 }
 
 Architecture architecture_from_string(const QString &string) {
-    for (const Architecture architecture : architecture_all()) {
+    for (const Architecture architecture : architecture_all) {
         const QStringList strings = architecture_strings(architecture);
 
         if (strings.contains(string, Qt::CaseInsensitive)) {
@@ -84,7 +81,7 @@ Architecture architecture_from_string(const QString &string) {
 }
 
 Architecture architecture_from_filename(const QString &filename) {
-    for (const Architecture architecture : architecture_all()) {
+    for (const Architecture architecture : architecture_all) {
         const QStringList strings = architecture_strings(architecture);
         
         for (const QString &string : strings) {

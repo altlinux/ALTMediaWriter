@@ -40,7 +40,8 @@ enum Architecture {
     Architecture_COUNT,
 };
 
-QList<Architecture> architecture_all();
+extern const QList<Architecture> architecture_all;
+
 QStringList architecture_strings(const Architecture architecture);
 QString architecture_name(const Architecture architecture);
 Architecture architecture_from_string(const QString &string);

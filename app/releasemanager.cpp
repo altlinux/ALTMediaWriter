@@ -290,7 +290,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
 
 QStringList ReleaseManager::architectures() const {
     QStringList out;
-    for (const Architecture architecture : architecture_all()) {
+    for (const Architecture architecture : architecture_all) {
         if (architecture != Architecture_UNKNOWN) {
             const QString name = architecture_name(architecture);
             out.append(name);
@@ -300,7 +300,7 @@ QStringList ReleaseManager::architectures() const {
 }
 
 QStringList ReleaseManager::fileTypeFilters() const {
-    const QList<FileType> fileTypes = file_type_all();
+    const QList<FileType> fileTypes = file_type_all;
 
     QStringList filters;
     for (const FileType &type : fileTypes) {

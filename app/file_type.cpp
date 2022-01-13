@@ -3,19 +3,16 @@
 
 #include <QObject>
 
-QList<FileType> file_type_all() {
-    static QList<FileType> list =
-    []() {
-        QList<FileType> out; 
-        for (int i = 0; i < FileType_COUNT; i++) {
-            const FileType architecture = (FileType) i;
-            list.append(architecture);
-        }
-        return out;
-    }();
-    
-    return list;
-}
+const QList<FileType> file_type_all = []() {
+    QList<FileType> out;
+
+    for (int i = 0; i < FileType_COUNT; i++) {
+        const FileType architecture = (FileType) i;
+        out.append(architecture);
+    }
+
+    return out;
+}();
 
 QStringList file_type_strings(const FileType file_type) {
     switch (file_type) {
@@ -53,7 +50,7 @@ FileType file_type_from_filename(const QString &filename) {
     FileType matching_type = FileType_UNKNOWN;
     QString matching_string = QString();
 
-    for (const FileType type : file_type_all()) {
+    for (const FileType type : file_type_all) {
         const QStringList strings = file_type_strings(type);
 
         for (const QString string : strings) {
