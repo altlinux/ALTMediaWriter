@@ -85,8 +85,7 @@ bool ReleaseFilterModel::filterAcceptsRow(int source_row, const QModelIndex &) c
         }
 
         // Otherwise filter by arch
-        const bool releaseHasVariantWithArch =
-        [this, release]() {
+        const bool releaseHasVariantWithArch = [this, release]() {
             // If filtering for all, accept all architectures
             if (filterArch == Architecture_ALL) {
                 return true;

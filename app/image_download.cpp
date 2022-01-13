@@ -97,8 +97,7 @@ void ImageDownload::onImageDownloadReadyRead() {
             emit progress(file->size());
         } else {
             QStorageInfo storage(file->fileName());
-            const QString errorString =
-            [storage]() {
+            const QString errorString = [storage]() {
                 if (storage.bytesAvailable() < 5L * 1024L * 1024L) {
                     return tr("You ran out of space in your Downloads folder.");
                 } else {
@@ -154,8 +153,7 @@ void ImageDownload::onMd5DownloadFinished() {
         if (reply->error() == QNetworkReply::NoError) {
             qDebug() << this->metaObject()->className() << "Downloaded MD5SUM successfully";
 
-            md5 =
-            [this, reply]() {
+            md5 = [this, reply]() {
                 const QByteArray md5sumBytes = reply->readAll();
                 const QString md5sumContents(md5sumBytes);
 
@@ -246,8 +244,7 @@ void ImageDownload::startImageDownload() {
 }
 
 void ImageDownload::checkMd5(const QString &computedMd5) {
-    const bool checkPassed =
-    [this, computedMd5]() {
+    const bool checkPassed = [this, computedMd5]() {
         if (md5.isEmpty()) {
             // Can fail to download md5 sum if:
             // 1) Failed to download MD5SUM file

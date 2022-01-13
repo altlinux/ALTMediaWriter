@@ -37,8 +37,7 @@
 
 // NOTE: when installed, helper will be in the same directory as the mediawriter executable, so this is just for running from a build directory where they are in separate dirs.
 QString getHelperPath() {
-    const QString platform =
-    []() {
+    const QString platform = []() {
         #ifdef __linux__
         return "linux";
         #endif // __linux__
@@ -47,8 +46,7 @@ QString getHelperPath() {
         return "win";
         #endif // _WIN32
     }();
-    const QString executable =
-    []() {
+    const QString executable = []() {
         #ifdef __linux__
         return "helper";
         #endif // __linux__

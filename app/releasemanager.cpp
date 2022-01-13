@@ -69,8 +69,7 @@ void ReleaseManager::downloadMetadata() {
 
     // Create requests to download all release files and
     // collect the replies
-    const QHash<QString, QNetworkReply *> replies =
-    [section_urls, image_urls]() {
+    const QHash<QString, QNetworkReply *> replies = [section_urls, image_urls]() {
         QHash<QString, QNetworkReply *> out;
         const QList<QString> all_urls = section_urls + image_urls;
 
@@ -85,8 +84,7 @@ void ReleaseManager::downloadMetadata() {
 
     // This will run when all the replies are finished (or
     // technically, the last one)
-    const auto onReplyFinished =
-    [this, replies, section_urls, image_urls]() {
+    const auto onReplyFinished = [this, replies, section_urls, image_urls]() {
         // Only proceed if this is the last reply
         for (const QNetworkReply *reply : replies) {
             if (!reply->isFinished()) {
@@ -126,8 +124,7 @@ void ReleaseManager::downloadMetadata() {
             }
         }
 
-        const QList<QString> sectionsFiles =
-        [section_urls, url_to_file]() {
+        const QList<QString> sectionsFiles = [section_urls, url_to_file]() {
             QList<QString> out;
             for (const QString &section_url : section_urls) {
                 const QString section = url_to_file[section_url];
@@ -140,8 +137,7 @@ void ReleaseManager::downloadMetadata() {
 
         loadReleases(sectionsFiles);
 
-        const QList<QString> imagesFiles =
-        [image_urls, url_to_file]() {
+        const QList<QString> imagesFiles = [image_urls, url_to_file]() {
             QList<QString> out;
             for (const QString &image_url : image_urls) {
                 const QString image = url_to_file[image_url];
@@ -224,8 +220,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
         }
 
         const QString arch_string = yml_get(variantData, "arch");
-        const Architecture arch =
-        [arch_string, url]() -> Architecture  {
+        const Architecture arch = [arch_string, url]() -> Architecture  {
             if (!arch_string.isEmpty()) {
                 return architecture_from_string(arch_string);
             } else {
@@ -238,8 +233,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
         }
 
         // NOTE: yml file doesn't define "board" for pc32/pc64, so default to "PC"
-        const QString board =
-        [variantData]() -> QString {
+        const QString board = [variantData]() -> QString {
             const QString out = yml_get(variantData, "board");
             if (!out.isEmpty()) {
                 return out;
@@ -254,8 +248,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
             continue;
         }
 
-        const bool live =
-        [variantData]() {
+        const bool live = [variantData]() {
             const QString live_string = yml_get(variantData, "live");
             if (!live_string.isEmpty()) {
                 return (live_string == "1");
@@ -267,8 +260,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
         // qDebug() << QUrl(url).fileName() << releaseName << architecture_name(arch) << board << file_type_name(fileType) << (live ? "LIVE" : "");
 
         // Find a release that has the same name as this variant
-        Release *release =
-        [this, releaseName]() -> Release *{
+        Release *release = [this, releaseName]() -> Release *{
             for (int i = 0; i < sourceModel->rowCount(); i++) {
                 Release *release = sourceModel->get(i);
 
@@ -304,8 +296,7 @@ QStringList ReleaseManager::fileTypeFilters() const {
 
     QStringList filters;
     for (const FileType &type : fileTypes) {
-        const QString extensions =
-        [type]() {
+        const QString extensions = [type]() {
             const QStringList strings = file_type_strings(type);
             if (strings.isEmpty()) {
                 return QString();
@@ -359,8 +350,7 @@ void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
                 continue;
             }
 
-            const QString language =
-            []() {
+            const QString language = []() {
                 if (QLocale().language() == QLocale::Russian) {
                     return "_ru";
                 } else {
@@ -413,8 +403,7 @@ void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
             // workstation first after custom release and
             // server second, so that they are both on the
             // frontpage.
-            const int index =
-            [this, release]() {
+            const int index = [this, release]() {
                 const QString release_name = release->name();
                 const bool is_workstation = (release_name == "alt-workstation");
                 const bool is_kworkstation = (release_name == "alt-kworkstation");

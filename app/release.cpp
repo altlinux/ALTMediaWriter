@@ -50,8 +50,7 @@ Release *Release::custom(QObject *parent) {
 
 void Release::addVariant(Variant *variant) {
     // Sort variants by architecture
-    const int insert_index =
-    [this, variant]() {
+    const int insert_index = [this, variant]() {
         int out = 0;
         for (const Variant *current : m_variants) {
             if (current->arch() > variant->arch()) {

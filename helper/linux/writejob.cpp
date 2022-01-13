@@ -261,8 +261,7 @@ void WriteJob::work() {
         return;
     }
 
-    const bool delayed_write =
-    [&]() {
+    const bool delayed_write = [&]() {
         const QString part_path = what + ".part";
 
         return (QFile::exists(part_path) && !QFile::exists(what));
