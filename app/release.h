@@ -87,7 +87,7 @@ public:
     QList<Variant *> variantList() const;
     Variant *selectedVariant() const;
     int selectedVariantIndex() const;
-    void setSelectedVariantIndex(int o);
+    void setSelectedVariantIndex(const int o);
 
 signals:
     void variantsChanged();

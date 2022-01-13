@@ -64,7 +64,7 @@ class LinuxDrive : public Drive {
     Q_OBJECT
     Q_PROPERTY(QString devicePath READ devicePath CONSTANT)
 public:
-    LinuxDrive(LinuxDriveProvider *parent, QString device, QString name, uint64_t size, bool isoLayout);
+    LinuxDrive(LinuxDriveProvider *parent, const QString &device, const QString &name, const uint64_t size, const bool isoLayout);
     ~LinuxDrive();
 
     Q_INVOKABLE virtual bool write(Variant *variant) override;
@@ -75,8 +75,8 @@ public:
 
 private slots:
     void onReadyRead();
-    void onFinished(int exitCode, QProcess::ExitStatus status);
-    void onRestoreFinished(int exitCode, QProcess::ExitStatus status);
+    void onFinished(const int exitCode, const QProcess::ExitStatus status);
+    void onRestoreFinished(const int exitCode, const QProcess::ExitStatus status);
     void onErrorOccurred(QProcess::ProcessError e);
 
 private:

@@ -183,7 +183,7 @@ void LinuxDriveProvider::onPropertiesChanged(const QString &interface_name, cons
     }
 }
 
-LinuxDrive::LinuxDrive(LinuxDriveProvider *parent, QString device, QString name, uint64_t size, bool isoLayout)
+LinuxDrive::LinuxDrive(LinuxDriveProvider *parent, const QString &device, const QString &name, const uint64_t size, const bool isoLayout)
 : Drive(parent, name, size, isoLayout) {
     m_device = device;
     m_process = nullptr;
@@ -310,7 +310,7 @@ void LinuxDrive::onReadyRead() {
     }
 }
 
-void LinuxDrive::onFinished(int exitCode, QProcess::ExitStatus status) {
+void LinuxDrive::onFinished(const int exitCode, const QProcess::ExitStatus status) {
     qDebug() << this->metaObject()->className() << "Helper process finished with status" << status;
 
     if (!m_process) {
@@ -336,7 +336,7 @@ void LinuxDrive::onFinished(int exitCode, QProcess::ExitStatus status) {
     }
 }
 
-void LinuxDrive::onRestoreFinished(int exitCode, QProcess::ExitStatus status) {
+void LinuxDrive::onRestoreFinished(const int exitCode, const QProcess::ExitStatus status) {
     qDebug() << this->metaObject()->className() << "Helper process finished with status" << status;
 
     if (exitCode != 0) {
@@ -356,7 +356,7 @@ void LinuxDrive::onRestoreFinished(int exitCode, QProcess::ExitStatus status) {
     emit restoreStatusChanged();
 }
 
-void LinuxDrive::onErrorOccurred(QProcess::ProcessError e) {
+void LinuxDrive::onErrorOccurred(const QProcess::ProcessError e) {
     Q_UNUSED(e);
     if (!m_process) {
         return;

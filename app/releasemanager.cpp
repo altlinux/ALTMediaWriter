@@ -183,7 +183,7 @@ int ReleaseManager::selectedIndex() const {
     return m_selectedIndex;
 }
 
-void ReleaseManager::setSelectedIndex(int row_proxy) {
+void ReleaseManager::setSelectedIndex(const int row_proxy) {
     const QModelIndex index_proxy = filterModel->index(row_proxy, 0);
     const QModelIndex index_source = filterModel->mapToSource(index_proxy);
 

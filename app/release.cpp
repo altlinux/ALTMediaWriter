@@ -137,7 +137,7 @@ int Release::selectedVariantIndex() const {
     return m_selectedVariant;
 }
 
-void Release::setSelectedVariantIndex(int o) {
+void Release::setSelectedVariantIndex(const int o) {
     if (m_selectedVariant != o && m_selectedVariant >= 0 && m_selectedVariant < m_variants.count()) {
         m_selectedVariant = o;
         emit selectedVariantChanged();

@@ -40,8 +40,8 @@ public slots:
     void checkDrives();
 
 private:
-    QSet<int> findPhysicalDrive(char driveLetter);
-    bool describeDrive(int driveNumber, bool hasLetter, bool verbose);
+    QSet<int> findPhysicalDrive(const char driveLetter);
+    bool describeDrive(const int driveNumber, const bool hasLetter, const bool verbose);
 
     QMap<int, WinDrive *> m_drives;
 };
@@ -49,7 +49,7 @@ private:
 class WinDrive : public Drive {
     Q_OBJECT
 public:
-    WinDrive(WinDriveProvider *parent, const QString &name, uint64_t size, bool containsLive, int device, const QString &serialNumber);
+    WinDrive(WinDriveProvider *parent, const QString &name, const uint64_t size, const bool containsLive, const int device, const QString &serialNumber);
     ~WinDrive();
 
     Q_INVOKABLE virtual bool write(Variant *variant) override;
@@ -61,8 +61,8 @@ public:
     bool operator==(const WinDrive &o) const;
 
 private slots:
-    void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    void onRestoreFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void onFinished(const int exitCode, const QProcess::ExitStatus exitStatus);
+    void onRestoreFinished(const int exitCode, const QProcess::ExitStatus exitStatus);
     void onReadyRead();
 
 private:

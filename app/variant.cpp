@@ -33,7 +33,7 @@
 #include <QFileInfo>
 #include <QStandardPaths>
 
-Variant::Variant(QString url, Architecture arch, const FileType fileType, QString board, const bool live, QObject *parent)
+Variant::Variant(const QString &url, const Architecture arch, const FileType fileType, const QString &board, const bool live, QObject *parent)
 : QObject(parent) {
     m_url = url;
     m_fileName = QUrl(url).fileName();

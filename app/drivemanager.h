@@ -160,7 +160,7 @@ public:
     };
     Q_ENUMS(RestoreStatus)
 
-    Drive(DriveProvider *parent, const QString &name, uint64_t size, bool containsLive = false);
+    Drive(DriveProvider *parent, const QString &name, const uint64_t size, const bool containsLive = false);
 
     Progress *progress() const;
 
@@ -176,7 +176,7 @@ public:
     bool operator==(const Drive &o) const;
 
 public slots:
-    void setRestoreStatus(RestoreStatus o);
+    void setRestoreStatus(const RestoreStatus o);
 
 signals:
     void restoreStatusChanged();

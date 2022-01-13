@@ -151,7 +151,7 @@ int DriveManager::selectedIndex() const {
     return m_selectedIndex;
 }
 
-void DriveManager::setSelectedIndex(int o) {
+void DriveManager::setSelectedIndex(const int o) {
     if (m_selectedIndex != o && o < m_drives.count() && o >= 0) {
         m_selectedIndex = o;
         emit selectedChanged();
@@ -249,7 +249,7 @@ DriveProvider::DriveProvider(DriveManager *parent)
     m_initialized = true;
 }
 
-Drive::Drive(DriveProvider *parent, const QString &name, uint64_t size, bool containsLive)
+Drive::Drive(DriveProvider *parent, const QString &name, const uint64_t size, const bool containsLive)
 : QObject(parent) {
     m_progress = new Progress(this);
     m_name = name;
@@ -327,7 +327,7 @@ bool Drive::operator==(const Drive &o) const {
     return name() == o.name() && size() == o.size();
 }
 
-void Drive::setRestoreStatus(Drive::RestoreStatus o) {
+void Drive::setRestoreStatus(const Drive::RestoreStatus o) {
     if (m_restoreStatus != o) {
         m_restoreStatus = o;
         emit restoreStatusChanged();

@@ -72,7 +72,7 @@ void WinDriveProvider::checkDrives() {
     QTimer::singleShot(2500, this, &WinDriveProvider::checkDrives);
 }
 
-QSet<int> WinDriveProvider::findPhysicalDrive(char driveLetter) {
+QSet<int> WinDriveProvider::findPhysicalDrive(const char driveLetter) {
     static QMap<char, char> warningMap;
     QSet<int> ret;
 
@@ -117,7 +117,7 @@ QSet<int> WinDriveProvider::findPhysicalDrive(char driveLetter) {
     return ret;
 }
 
-bool WinDriveProvider::describeDrive(int nDriveNumber, bool hasLetter, bool verbose) {
+bool WinDriveProvider::describeDrive(const int driveNumber, const bool hasLetter, const bool verbose) {
     BOOL removable;
     QString productVendor;
     QString productId;
@@ -251,7 +251,7 @@ bool WinDriveProvider::describeDrive(int nDriveNumber, bool hasLetter, bool verb
     return true;
 }
 
-WinDrive::WinDrive(WinDriveProvider *parent, const QString &name, uint64_t size, bool containsLive, int device, const QString &serialNumber)
+WinDrive::WinDrive(WinDriveProvider *parent, const QString &name, const uint64_t size, const bool containsLive, const int device, const QString &serialNumber)
 : Drive(parent, name, size, containsLive) {
     m_device = device;
     m_serialNo = serialNumber;
@@ -346,7 +346,7 @@ bool WinDrive::operator==(const WinDrive &o) const {
     return (o.serialNumber() == serialNumber()) && Drive::operator==(o);
 }
 
-void WinDrive::onFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+void WinDrive::onFinished(const int exitCode, const QProcess::ExitStatus exitStatus) {
     if (!m_child) {
         return;
     }
@@ -366,7 +366,7 @@ void WinDrive::onFinished(int exitCode, QProcess::ExitStatus exitStatus) {
     m_child = nullptr;
 }
 
-void WinDrive::onRestoreFinished(int exitCode, QProcess::ExitStatus exitStatus) {
+void WinDrive::onRestoreFinished(const int exitCode, const QProcess::ExitStatus exitStatus) {
     if (!m_child) {
         return;
     }
