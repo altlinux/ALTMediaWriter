@@ -101,7 +101,7 @@ private:
     QString m_icon;
     QStringList m_screenshots;
     QList<Variant *> m_variants;
-    int m_selectedVariant = 0;
+    int m_selectedVariant;
     bool m_isCustom;
 };
 

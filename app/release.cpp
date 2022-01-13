@@ -36,6 +36,7 @@ Release::Release(const QString &name, const QString &display_name, const QString
     m_icon = icon;
     m_screenshots = screenshots;
     m_isCustom = false;
+    m_selectedVariant = 0;
 }
 
 Release *Release::custom(QObject *parent) {

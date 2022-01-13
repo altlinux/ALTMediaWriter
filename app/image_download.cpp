@@ -32,9 +32,13 @@
 
 ImageDownload::ImageDownload(const QUrl &url_arg, const QString &filePath_arg)
 : QObject()
-, url(url_arg)
-, filePath(filePath_arg)
 , hash(QCryptographicHash::Md5) {
+    url = url_arg;
+    filePath = filePath_arg;
+    file = nullptr;
+    startingImageDownload = false;
+    wasCancelled = false;
+
     qDebug() << this->metaObject()->className() << "created for" << url;
 
     QNetworkProxyFactory::setUseSystemConfiguration(true);

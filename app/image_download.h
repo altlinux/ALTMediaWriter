@@ -93,13 +93,13 @@ private:
     Result m_result;
     QString m_errorString;
 
-    const QUrl url;
-    const QString filePath;
-    QFile *file = nullptr;
-    bool startingImageDownload = false;
-    bool wasCancelled = false;
-
+    QUrl url;
+    QString filePath;
+    QFile *file;
+    bool startingImageDownload;
+    bool wasCancelled;
     QCryptographicHash hash;
+
     QString md5;
 
     QString getFilePath() const;
