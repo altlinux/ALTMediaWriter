@@ -45,10 +45,10 @@
 #include "architecture.h"
 #include "file_type.h"
 
-#include <QObject>
-#include <QList>
-#include <QString>
 #include <QHash>
+#include <QList>
+#include <QObject>
+#include <QString>
 
 class Progress;
 
@@ -59,7 +59,7 @@ class Variant final : public QObject {
     Q_PROPERTY(QString fileName READ fileName CONSTANT)
     Q_PROPERTY(QString fileTypeName READ fileTypeName CONSTANT)
     Q_PROPERTY(bool canWrite READ canWrite CONSTANT)
-    Q_PROPERTY(Progress* progress READ progress CONSTANT)
+    Q_PROPERTY(Progress *progress READ progress CONSTANT)
 
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString statusString READ statusString NOTIFY statusChanged)
@@ -92,7 +92,7 @@ public:
         {WRITING_FAILED, tr("Error")},
     };
 
-    Variant(QString url, Architecture arch, const FileType fileType, QString board, const bool live, QObject *parent);
+    Variant(const QString &url, const Architecture arch, const FileType fileType, const QString &board, const bool live, QObject *parent);
 
     // Constructor for local file
     Variant(const QString &path, QObject *parent);
@@ -111,9 +111,9 @@ public:
 
     Status status() const;
     QString statusString() const;
-    void setStatus(Status s);
+    void setStatus(const Status status);
     QString errorString() const;
-    void setErrorString(const QString &o);
+    void setErrorString(const QString &error);
 
     Q_INVOKABLE bool erase();
 
@@ -130,13 +130,13 @@ public slots:
     void onImageDownloadFinished();
 
 private:
-    const QString m_url;
-    const QString m_fileName;
-    const QString m_filePath;
-    const QString m_board;
-    const bool m_live;
-    const Architecture m_arch;
-    const FileType m_fileType;
+    QString m_url;
+    QString m_fileName;
+    QString m_filePath;
+    QString m_board;
+    bool m_live;
+    Architecture m_arch;
+    FileType m_fileType;
     Status m_status;
     QString m_error;
     bool delayedWrite;

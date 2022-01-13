@@ -20,24 +20,27 @@
 #include "image_download.h"
 #include "network.h"
 
+#include <QDir>
+#include <QFile>
+#include <QNetworkAccessManager>
 #include <QNetworkProxyFactory>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-#include <QNetworkAccessManager>
 #include <QStandardPaths>
 #include <QStorageInfo>
-#include <QDir>
 #include <QTimer>
-#include <QFile>
 
 ImageDownload::ImageDownload(const QUrl &url_arg, const QString &filePath_arg)
 : QObject()
-, url(url_arg)
-, filePath(filePath_arg)
-, hash(QCryptographicHash::Md5)
-{
+, hash(QCryptographicHash::Md5) {
+    url = url_arg;
+    filePath = filePath_arg;
+    file = nullptr;
+    startingImageDownload = false;
+    wasCancelled = false;
+
     qDebug() << this->metaObject()->className() << "created for" << url;
-    
+
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     const QString tempFilePath = filePath + ".part";
@@ -70,7 +73,7 @@ void ImageDownload::cancel() {
 
 void ImageDownload::onImageDownloadReadyRead() {
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    
+
     if (startingImageDownload) {
         qDebug() << "Request started successfully";
         startingImageDownload = false;
@@ -97,8 +100,7 @@ void ImageDownload::onImageDownloadReadyRead() {
             emit progress(file->size());
         } else {
             QStorageInfo storage(file->fileName());
-            const QString errorString =
-            [storage]() {
+            const QString errorString = [storage]() {
                 if (storage.bytesAvailable() < 5L * 1024L * 1024L) {
                     return tr("You ran out of space in your Downloads folder.");
                 } else {
@@ -124,7 +126,7 @@ void ImageDownload::onImageDownloadFinished() {
 
         const QString md5sumUrl = url.adjusted(QUrl::RemoveFilename).toString() + "/MD5SUM";
         QNetworkReply *md5Reply = makeNetworkRequest(md5sumUrl);
-        
+
         connect(
             md5Reply, &QNetworkReply::finished,
             this, &ImageDownload::onMd5DownloadFinished);
@@ -154,8 +156,7 @@ void ImageDownload::onMd5DownloadFinished() {
         if (reply->error() == QNetworkReply::NoError) {
             qDebug() << this->metaObject()->className() << "Downloaded MD5SUM successfully";
 
-            md5 =
-            [this, reply]() {
+            md5 = [this, reply]() {
                 const QByteArray md5sumBytes = reply->readAll();
                 const QString md5sumContents(md5sumBytes);
 
@@ -181,7 +182,7 @@ void ImageDownload::onMd5DownloadFinished() {
 
         if (md5.isEmpty()) {
             checkMd5(QString());
-        } else { 
+        } else {
             file->close();
             const bool open_success = file->open(QIODevice::ReadOnly);
             if (open_success) {
@@ -203,7 +204,7 @@ void ImageDownload::computeMd5() {
 
     const QByteArray bytes = file->read(64L * 1024L);
     const bool read_success = (bytes.size() > 0);
-    
+
     if (read_success) {
         hash.addData(bytes);
         emit progress(file->pos());
@@ -246,8 +247,7 @@ void ImageDownload::startImageDownload() {
 }
 
 void ImageDownload::checkMd5(const QString &computedMd5) {
-    const bool checkPassed =
-    [this, computedMd5]() {
+    const bool checkPassed = [this, computedMd5]() {
         if (md5.isEmpty()) {
             // Can fail to download md5 sum if:
             // 1) Failed to download MD5SUM file

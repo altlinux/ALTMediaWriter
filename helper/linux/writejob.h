@@ -23,12 +23,11 @@
 #ifndef WRITEJOB_H
 #define WRITEJOB_H
 
-#include <QObject>
-#include <QTextStream>
-#include <QProcess>
-#include <QFile>
 #include <QDBusUnixFileDescriptor>
+#include <QFile>
 #include <QFileSystemWatcher>
+#include <QObject>
+#include <QProcess>
 
 #include <unistd.h>
 
@@ -38,11 +37,10 @@
 
 #ifndef MEDIAWRITER_LZMA_LIMIT
 // 256MB memory limit for the decompressor
-# define MEDIAWRITER_LZMA_LIMIT (1024*1024*256)
+#define MEDIAWRITER_LZMA_LIMIT (1024 * 1024 * 256)
 #endif
 
-class WriteJob : public QObject
-{
+class WriteJob : public QObject {
     Q_OBJECT
 public:
     explicit WriteJob(const QString &what, const QString &where);
@@ -55,15 +53,12 @@ public slots:
     void work();
 private slots:
     void onFileChanged(const QString &path);
+
 private:
     QString what;
     QString where;
-    QTextStream out { stdout };
-    QTextStream err { stderr };
-    QDBusUnixFileDescriptor fd { -1 };
+    QDBusUnixFileDescriptor fd;
     QFileSystemWatcher watcher;
 };
-
-std::tuple<std::unique_ptr<char[]>, char*, std::size_t> pageAlignedBuffer(std::size_t pages = 1024);
 
 #endif // WRITEJOB_H

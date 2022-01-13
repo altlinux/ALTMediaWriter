@@ -31,25 +31,25 @@ class WinDriveProvider;
 class WinDrive;
 class Variant;
 
-class WinDriveProvider : public DriveProvider
-{
+class WinDriveProvider : public DriveProvider {
     Q_OBJECT
 public:
     WinDriveProvider(DriveManager *parent);
 
 public slots:
     void checkDrives();
-private:
-    QSet<int> findPhysicalDrive(char driveLetter);
-    bool describeDrive(int driveNumber, bool hasLetter, bool verbose);
 
-    QMap<int, WinDrive*> m_drives;
+private:
+    QSet<int> findPhysicalDrive(const char driveLetter);
+    bool describeDrive(const int driveNumber, const bool hasLetter, const bool verbose);
+
+    QMap<int, WinDrive *> m_drives;
 };
 
 class WinDrive : public Drive {
     Q_OBJECT
 public:
-    WinDrive(WinDriveProvider *parent, const QString &name, uint64_t size, bool containsLive, int device, const QString &serialNumber);
+    WinDrive(WinDriveProvider *parent, const QString &name, const uint64_t size, const bool containsLive, const int device, const QString &serialNumber);
     ~WinDrive();
 
     Q_INVOKABLE virtual bool write(Variant *variant) override;
@@ -58,17 +58,17 @@ public:
 
     QString serialNumber() const;
 
-    bool operator==(const WinDrive &o) const;
+    bool operator==(const WinDrive &other) const;
 
 private slots:
-    void onFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    void onRestoreFinished(int exitCode, QProcess::ExitStatus exitStatus);
+    void onFinished(const int exitCode, const QProcess::ExitStatus exitStatus);
+    void onRestoreFinished(const int exitCode, const QProcess::ExitStatus exitStatus);
     void onReadyRead();
 
 private:
     int m_device;
     QString m_serialNo;
-    QProcess *m_child { nullptr };
+    QProcess *m_child;
 };
 
 #endif // WINDRIVEMANAGER_H

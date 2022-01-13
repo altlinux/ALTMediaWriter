@@ -48,8 +48,9 @@ Dialog {
     onVisibleChanged: {
         // When dialog is closed via Cancel button or Close button, cancel current download or write
         if (!visible) {
-            if (drives.selected)
+            if (drives.selected) {
                 drives.selected.cancel()
+            }
             releases.selected.variant.cancelDownload()
         }
         releases.selected.variant.resetStatus()
@@ -238,8 +239,9 @@ Dialog {
         ]
 
         Keys.onEscapePressed: {
-            if ([Variant.WRITING, Variant.WRITE_VERIFYING].indexOf(releases.selected.variant.status) < 0)
+            if ([Variant.WRITING, Variant.WRITE_VERIFYING].indexOf(releases.selected.variant.status) < 0) {
                 dialog.visible = false
+            }
         }
 
         ScrollView {
@@ -380,10 +382,12 @@ Dialog {
                                 running: releases.selected.variant.status == Variant.WRITING
                                 loops: -1
                                 onStopped: {
-                                    if (releases.selected.variant.status == Variant.WRITING_FINISHED)
+                                    if (releases.selected.variant.status == Variant.WRITING_FINISHED) { {
                                         writeArrow.color = "#00dd00"
-                                    else
+                                    }
+                                    } else {
                                         writeArrow.color = palette.text
+                                    }
                                 }
                                 ColorAnimation {
                                     duration: 3500
@@ -417,8 +421,9 @@ Dialog {
                                 value: driveCombo.currentIndex
                             }
                             onActivated: {
-                                if ([Variant.WRITING_FINISHED, Variant.WRITING_FAILED].indexOf(releases.selected.variant.status) >= 0)
+                                if ([Variant.WRITING_FINISHED, Variant.WRITING_FAILED].indexOf(releases.selected.variant.status) >= 0) {
                                     releases.selected.variant.resetStatus()
+                                }
                             }
                             placeholderText: qsTr("There are no portable drives connected")
                         }

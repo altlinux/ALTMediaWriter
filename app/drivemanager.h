@@ -23,8 +23,8 @@
 #ifndef DRIVEMANAGER_H
 #define DRIVEMANAGER_H
 
-#include <QDebug>
 #include <QAbstractListModel>
+#include <QDebug>
 
 class DriveManager;
 class DriveProvider;
@@ -47,16 +47,15 @@ QString getHelperPath();
  * @property selectedIndex the index of the selected drive
  * @property lastRestoreable the most recently connected restoreable drive
  */
-class DriveManager : public QAbstractListModel
-{
+class DriveManager : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(int length READ length NOTIFY drivesChanged)
-    Q_PROPERTY(Drive* selected READ selected NOTIFY selectedChanged)
+    Q_PROPERTY(Drive *selected READ selected NOTIFY selectedChanged)
     Q_PROPERTY(int selectedIndex READ selectedIndex WRITE setSelectedIndex NOTIFY selectedChanged)
     Q_PROPERTY(bool isBroken READ isBackendBroken NOTIFY isBackendBrokenChanged)
     Q_PROPERTY(QString errorString READ errorString NOTIFY isBackendBrokenChanged)
 
-    Q_PROPERTY(Drive* lastRestoreable READ lastRestoreable NOTIFY restoreableDriveChanged)
+    Q_PROPERTY(Drive *lastRestoreable READ lastRestoreable NOTIFY restoreableDriveChanged)
 public:
     static DriveManager *instance();
 
@@ -67,7 +66,7 @@ public:
 
     Drive *selected() const;
     int selectedIndex() const;
-    void setSelectedIndex(int o);
+    void setSelectedIndex(const int index);
 
     int length() const;
 
@@ -77,11 +76,11 @@ public:
     QString errorString();
 
 protected:
-    void setLastRestoreable(Drive *d);
+    void setLastRestoreable(Drive *drive);
 
 private slots:
-    void onDriveConnected(Drive *d);
-    void onDriveRemoved(Drive *d);
+    void onDriveConnected(Drive *drive);
+    void onDriveRemoved(Drive *drive);
     void onBackendBroken(const QString &message);
 
 signals:
@@ -94,11 +93,11 @@ private:
     explicit DriveManager(QObject *parent = 0);
 
     static DriveManager *_self;
-    QList<Drive*> m_drives {};
-    int m_selectedIndex { 0 };
-    Drive *m_lastRestoreable { nullptr };
-    DriveProvider *m_provider { nullptr };
-    QString m_errorString { };
+    QList<Drive *> m_drives;
+    int m_selectedIndex;
+    Drive *m_lastRestoreable;
+    DriveProvider *m_provider;
+    QString m_errorString;
 };
 
 /**
@@ -119,8 +118,8 @@ public:
     bool initialized() const;
 
 signals:
-    void driveConnected(Drive *d);
-    void driveRemoved(Drive *d);
+    void driveConnected(Drive *drive);
+    void driveRemoved(Drive *drive);
     void backendBroken(const QString &message);
 
     void initializedChanged();
@@ -128,7 +127,7 @@ signals:
 protected:
     DriveProvider(DriveManager *parent);
 
-    bool m_initialized { true };
+    bool m_initialized;
 };
 
 /**
@@ -145,7 +144,7 @@ protected:
  */
 class Drive : public QObject {
     Q_OBJECT
-    Q_PROPERTY(Progress* progress READ progress CONSTANT)
+    Q_PROPERTY(Progress *progress READ progress CONSTANT)
 
     Q_PROPERTY(QString name READ name CONSTANT)
     Q_PROPERTY(QString readableSize READ readableSize CONSTANT)
@@ -161,7 +160,7 @@ public:
     };
     Q_ENUMS(RestoreStatus)
 
-    Drive(DriveProvider *parent, const QString &name, uint64_t size, bool containsLive = false);
+    Drive(DriveProvider *parent, const QString &name, const uint64_t size, const bool containsLive = false);
 
     Progress *progress() const;
 
@@ -174,21 +173,21 @@ public:
     Q_INVOKABLE virtual void cancel();
     Q_INVOKABLE virtual void restore() = 0;
 
-    bool operator==(const Drive& o) const;
+    bool operator==(const Drive &other) const;
 
 public slots:
-    void setRestoreStatus(RestoreStatus o);
+    void setRestoreStatus(const RestoreStatus status);
 
 signals:
     void restoreStatusChanged();
 
 protected:
-    Variant *m_variant { nullptr };
-    Progress *m_progress { nullptr };
-    QString m_name { };
-    uint64_t m_size { 0 };
-    RestoreStatus m_restoreStatus { CLEAN };
-    QString m_error { };
+    Variant *m_variant;
+    Progress *m_progress;
+    QString m_name;
+    uint64_t m_size;
+    RestoreStatus m_restoreStatus;
+    QString m_error;
 };
 
 #endif // DRIVEMANAGER_H

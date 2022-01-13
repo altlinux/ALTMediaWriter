@@ -21,46 +21,42 @@
  */
 
 #include "variant.h"
-#include "release.h"
-#include "image_download.h"
 #include "architecture.h"
+#include "drivemanager.h"
+#include "image_download.h"
 #include "network.h"
 #include "progress.h"
+#include "release.h"
 #include "releasemanager.h"
-#include "drivemanager.h"
 
+#include <QDir>
 #include <QFileInfo>
 #include <QStandardPaths>
-#include <QDir>
 
-Variant::Variant(QString url, Architecture arch, const FileType fileType, QString board, const bool live, QObject *parent)
-: QObject(parent)
-, m_url(url)
-, m_fileName(QUrl(url).fileName())
-, m_filePath(QDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)).filePath(fileName()))
-, m_board(board)
-, m_live(live)
-, m_arch(arch)
-, m_fileType(fileType)
-, m_status(Variant::PREPARING)
-, m_progress(new Progress(this))
-{
-
+Variant::Variant(const QString &url, const Architecture arch, const FileType fileType, const QString &board, const bool live, QObject *parent)
+: QObject(parent) {
+    m_url = url;
+    m_fileName = QUrl(url).fileName();
+    m_filePath = QDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)).filePath(fileName());
+    m_board = board;
+    m_live = live;
+    m_arch = arch;
+    m_fileType = fileType;
+    m_status = Variant::PREPARING;
+    m_progress = new Progress(this);
 }
 
 Variant::Variant(const QString &path, QObject *parent)
-: QObject(parent)
-, m_url(QString())
-, m_fileName(QFileInfo(path).fileName())
-, m_filePath(path)
-, m_board(QString())
-, m_live(false)
-, m_arch(Architecture_UNKNOWN)
-, m_fileType(file_type_from_filename(path))
-, m_status(Variant::READY_FOR_WRITING)
-, m_progress(new Progress(this))
-{
-
+: QObject(parent) {
+    m_url = QString();
+    m_fileName = QFileInfo(path).fileName();
+    m_filePath = path;
+    m_board = QString();
+    m_live = false;
+    m_arch = Architecture_UNKNOWN;
+    m_fileType = file_type_from_filename(path);
+    m_status = Variant::READY_FOR_WRITING;
+    m_progress = new Progress(this);
 }
 
 Architecture Variant::arch() const {
@@ -103,7 +99,7 @@ Progress *Variant::progress() {
 
 void Variant::setDelayedWrite(const bool value) {
     delayedWrite = value;
-    
+
     Drive *drive = DriveManager::instance()->selected();
     if (drive != nullptr) {
         if (value) {
@@ -115,8 +111,9 @@ void Variant::setDelayedWrite(const bool value) {
 }
 
 Variant::Status Variant::status() const {
-    if (m_status == READY_FOR_WRITING && DriveManager::instance()->isBackendBroken())
+    if (m_status == READY_FOR_WRITING && DriveManager::instance()->isBackendBroken()) {
         return WRITING_NOT_POSSIBLE;
+    }
     return m_status;
 }
 
@@ -237,9 +234,9 @@ bool Variant::erase() {
     }
 }
 
-void Variant::setStatus(Status s) {
-    if (m_status != s) {
-        m_status = s;
+void Variant::setStatus(const Status status) {
+    if (m_status != status) {
+        m_status = status;
         emit statusChanged();
     }
 }
@@ -248,9 +245,9 @@ QString Variant::errorString() const {
     return m_error;
 }
 
-void Variant::setErrorString(const QString &o) {
-    if (m_error != o) {
-        m_error = o;
+void Variant::setErrorString(const QString &error) {
+    if (m_error != error) {
+        m_error = error;
         emit errorStringChanged();
     }
 }

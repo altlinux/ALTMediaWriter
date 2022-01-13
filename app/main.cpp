@@ -20,19 +20,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "releasemanager.h"
-#include "release_model.h"
-#include "release.h"
-#include "variant.h"
-#include "progress.h"
 #include "drivemanager.h"
+#include "progress.h"
+#include "release.h"
+#include "release_model.h"
+#include "releasemanager.h"
+#include "variant.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QTranslator>
-#include <QDebug>
 #include <QScreen>
+#include <QTranslator>
 #include <QtPlugin>
 
 #ifdef __linux
@@ -40,7 +40,7 @@
 #endif
 
 #if QT_VERSION < 0x050300
-# error "Minimum supported Qt version is 5.3.0"
+#error "Minimum supported Qt version is 5.3.0"
 #endif
 
 #ifdef QT_STATIC
@@ -61,8 +61,7 @@ void myMessageOutput(QtMsgType, const QMessageLogContext &, const QString &msg) 
     fflush(stdout);
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 #ifdef __linux
     if (QX11Info::isPlatformX11()) {
         if (qEnvironmentVariableIsEmpty("QSG_RENDER_LOOP"))
@@ -77,9 +76,12 @@ int main(int argc, char **argv)
 
 #ifdef __linux
     // qt x11 scaling is broken
-    if (QX11Info::isPlatformX11())
-#endif
+    if (QX11Info::isPlatformX11()) {
         QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    }
+#else
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
 
     qInstallMessageHandler(myMessageOutput);
 

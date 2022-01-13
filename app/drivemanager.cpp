@@ -25,50 +25,48 @@
 #include "variant.h"
 
 #ifdef __linux__
-# include "linuxdrivemanager.h"
+#include "linuxdrivemanager.h"
 #endif // __linux__
 
 #ifdef _WIN32
-# include "windrivemanager.h"
+#include "windrivemanager.h"
 #endif // _WIN32
 
-#include <QtQml>
 #include <QFile>
+#include <QtQml>
 
 // NOTE: when installed, helper will be in the same directory as the mediawriter executable, so this is just for running from a build directory where they are in separate dirs.
 QString getHelperPath() {
-    const QString platform =
-    []() {
-        #ifdef __linux__
+    const QString platform = []() {
+#ifdef __linux__
         return "linux";
-        #endif // __linux__
+#endif // __linux__
 
-        #ifdef _WIN32
+#ifdef _WIN32
         return "win";
-        #endif // _WIN32
+#endif // _WIN32
     }();
-    const QString executable =
-    []() {
-        #ifdef __linux__
+    const QString executable = []() {
+#ifdef __linux__
         return "helper";
-        #endif // __linux__
+#endif // __linux__
 
-        #ifdef _WIN32
+#ifdef _WIN32
         return "helper.exe";
-        #endif // _WIN32
+#endif // _WIN32
     }();
     const QString appPath = qApp->applicationDirPath();
     const QList<QString> possiblePaths = {
         appPath + "/" + executable,
-        #ifdef __linux__
+#ifdef __linux__
         QString(LIBEXECDIR) + "/" + executable,
-        #endif // __linux__
+#endif // __linux__
         appPath + "/../helper/" + platform + "/" + executable,
         appPath + "/../../helper/" + platform + "/release/" + executable,
         appPath + "/../../helper/" + platform + "/debug/" + executable,
     };
 
-    for (const auto path: possiblePaths) {
+    for (const QString &path : possiblePaths) {
         if (QFile::exists(path)) {
             return path;
         }
@@ -80,8 +78,12 @@ QString getHelperPath() {
 DriveManager *DriveManager::_self = nullptr;
 
 DriveManager::DriveManager(QObject *parent)
-    : QAbstractListModel(parent), m_provider(DriveProvider::create(this))
-{
+: QAbstractListModel(parent) {
+    m_provider = DriveProvider::create(this);
+    m_selectedIndex = 0;
+    m_lastRestoreable = nullptr;
+    m_provider = nullptr;
+
     qDebug() << this->metaObject()->className() << "construction";
 
     connect(m_provider, &DriveProvider::driveConnected, this, &DriveManager::onDriveConnected);
@@ -90,18 +92,22 @@ DriveManager::DriveManager(QObject *parent)
 }
 
 DriveManager *DriveManager::instance() {
-    if (!_self)
+    if (!_self) {
         _self = new DriveManager();
+    }
     return _self;
 }
 
 QVariant DriveManager::headerData(int section, Qt::Orientation orientation, int role) const {
-    Q_UNUSED(section); Q_UNUSED(orientation);
+    Q_UNUSED(section);
+    Q_UNUSED(orientation);
 
-    if (role == Qt::UserRole + 1)
+    if (role == Qt::UserRole + 1) {
         return "drive";
-    if (role == Qt::UserRole + 2)
+    }
+    if (role == Qt::UserRole + 2) {
         return "display";
+    }
 
     return QVariant();
 }
@@ -119,21 +125,25 @@ int DriveManager::rowCount(const QModelIndex &parent) const {
 }
 
 QVariant DriveManager::data(const QModelIndex &index, int role) const {
-    if (!index.isValid())
+    if (!index.isValid()) {
         return QVariant();
+    }
 
-    if (role == Qt::UserRole + 1)
+    if (role == Qt::UserRole + 1) {
         return QVariant::fromValue(m_drives[index.row()]);
+    }
 
-    if (role == Qt::UserRole + 2)
+    if (role == Qt::UserRole + 2) {
         return QVariant::fromValue(m_drives[index.row()]->name());
+    }
 
     return QVariant();
 }
 
 Drive *DriveManager::selected() const {
-    if (m_selectedIndex >= 0 && m_selectedIndex < m_drives.count())
+    if (m_selectedIndex >= 0 && m_selectedIndex < m_drives.count()) {
         return m_drives[m_selectedIndex];
+    }
     return nullptr;
 }
 
@@ -141,9 +151,9 @@ int DriveManager::selectedIndex() const {
     return m_selectedIndex;
 }
 
-void DriveManager::setSelectedIndex(int o) {
-    if (m_selectedIndex != o && o < m_drives.count() && o >= 0) {
-        m_selectedIndex = o;
+void DriveManager::setSelectedIndex(const int index) {
+    if (m_selectedIndex != index && index < m_drives.count() && index >= 0) {
+        m_selectedIndex = index;
         emit selectedChanged();
     }
 }
@@ -164,41 +174,41 @@ QString DriveManager::errorString() {
     return m_errorString;
 }
 
-void DriveManager::setLastRestoreable(Drive *d) {
-    if (m_lastRestoreable != d) {
-        m_lastRestoreable = d;
+void DriveManager::setLastRestoreable(Drive *drive) {
+    if (m_lastRestoreable != drive) {
+        m_lastRestoreable = drive;
         emit restoreableDriveChanged();
     }
 }
 
-void DriveManager::onDriveConnected(Drive *d) {
+void DriveManager::onDriveConnected(Drive *drive) {
     int position = 0;
-    for (auto i : m_drives) {
-        if (d->size() < i->size())
+    for (const Drive *i : m_drives) {
+        if (drive->size() < i->size()) {
             break;
+        }
         position++;
     }
     beginInsertRows(QModelIndex(), position, position);
-    m_drives.insert(position, d);
+    m_drives.insert(position, drive);
     endInsertRows();
     emit drivesChanged();
 
     if (m_provider->initialized()) {
         m_selectedIndex = position;
         emit selectedChanged();
-    }
-    else {
+    } else {
         m_selectedIndex = 0;
         emit selectedChanged();
     }
 
-    if (d->restoreStatus() == Drive::CONTAINS_LIVE) {
-        setLastRestoreable(d);
+    if (drive->restoreStatus() == Drive::CONTAINS_LIVE) {
+        setLastRestoreable(drive);
     }
 }
 
-void DriveManager::onDriveRemoved(Drive *d) {
-    int i = m_drives.indexOf(d);
+void DriveManager::onDriveRemoved(Drive *drive) {
+    int i = m_drives.indexOf(drive);
     if (i >= 0) {
         beginRemoveRows(QModelIndex(), i, i);
         m_drives.removeAt(i);
@@ -209,7 +219,7 @@ void DriveManager::onDriveRemoved(Drive *d) {
         }
         emit selectedChanged();
 
-        if (d == m_lastRestoreable) {
+        if (drive == m_lastRestoreable) {
             setLastRestoreable(nullptr);
         }
     }
@@ -220,7 +230,7 @@ void DriveManager::onBackendBroken(const QString &message) {
     emit isBackendBrokenChanged();
 }
 
-DriveProvider *DriveProvider::create(DriveManager *parent)  {
+DriveProvider *DriveProvider::create(DriveManager *parent) {
 #ifdef _WIN32
     return new WinDriveProvider(parent);
 #endif // _WIN32
@@ -234,20 +244,25 @@ bool DriveProvider::initialized() const {
     return m_initialized;
 }
 
-
 DriveProvider::DriveProvider(DriveManager *parent)
-    : QObject(parent) {
-
+: QObject(parent) {
+    m_initialized = true;
 }
 
-Drive::Drive(DriveProvider *parent, const QString &name, uint64_t size, bool containsLive)
-    : QObject(parent),
-      m_progress(new Progress(this)),
-      m_name(name),
-      m_size(size),
-      m_restoreStatus(containsLive ? CONTAINS_LIVE : CLEAN)
-{
-
+Drive::Drive(DriveProvider *parent, const QString &name, const uint64_t size, const bool containsLive)
+: QObject(parent) {
+    m_progress = new Progress(this);
+    m_name = name;
+    m_size = size;
+    m_restoreStatus = [&]() {
+        if (containsLive) {
+            return CONTAINS_LIVE;
+        } else {
+            return CLEAN;
+        }
+    }();
+    m_variant = nullptr;
+    m_size = 0;
 }
 
 Progress *Drive::progress() const {
@@ -262,20 +277,15 @@ QString Drive::readableSize() const {
     QString sizeStr;
     if (m_size < (1000UL)) {
         sizeStr = QString("%1 B").arg(m_size);
-    }
-    else if (m_size < (1000000UL)) {
+    } else if (m_size < (1000000UL)) {
         sizeStr = QString("%1 KB").arg(m_size / 1000.0, 0, 'f', 1);
-    }
-    else if (m_size < (1000000000UL)) {
+    } else if (m_size < (1000000000UL)) {
         sizeStr = QString("%1 MB").arg(m_size / 1000000.0, 0, 'f', 1);
-    }
-    else if (m_size < (1000000000000UL)) {
+    } else if (m_size < (1000000000000UL)) {
         sizeStr = QString("%1 GB").arg(m_size / 1000000000.0, 0, 'f', 1);
-    }
-    else if (m_size < (1000000000000000UL)) {
+    } else if (m_size < (1000000000000000UL)) {
         sizeStr = QString("%1 TB").arg(m_size / 1000000000000.0, 0, 'f', 1);
-    }
-    else { // better be ready for exabyte images and drives
+    } else { // better be ready for exabyte images and drives
         sizeStr = QString("%1 EB").arg(m_size / 1000000000000000.0, 0, 'f', 1);
     }
     return sizeStr;
@@ -313,13 +323,13 @@ void Drive::cancel() {
     emit restoreStatusChanged();
 }
 
-bool Drive::operator==(const Drive &o) const {
-    return name() == o.name() && size() == o.size();
+bool Drive::operator==(const Drive &other) const {
+    return name() == other.name() && size() == other.size();
 }
 
-void Drive::setRestoreStatus(Drive::RestoreStatus o) {
-    if (m_restoreStatus != o) {
-        m_restoreStatus = o;
+void Drive::setRestoreStatus(const Drive::RestoreStatus status) {
+    if (m_restoreStatus != status) {
+        m_restoreStatus = status;
         emit restoreStatusChanged();
     }
 }

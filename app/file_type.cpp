@@ -1,21 +1,19 @@
 
 #include "file_type.h"
 
+#include <QFileInfo>
 #include <QObject>
 
-QList<FileType> file_type_all() {
-    static QList<FileType> list =
-    []() {
-        QList<FileType> out; 
-        for (int i = 0; i < FileType_COUNT; i++) {
-            const FileType architecture = (FileType) i;
-            list.append(architecture);
-        }
-        return out;
-    }();
-    
-    return list;
-}
+const QList<FileType> file_type_all = []() {
+    QList<FileType> out;
+
+    for (int i = 0; i < FileType_COUNT; i++) {
+        const FileType architecture = (FileType) i;
+        out.append(architecture);
+    }
+
+    return out;
+}();
 
 QStringList file_type_strings(const FileType file_type) {
     switch (file_type) {
@@ -50,25 +48,20 @@ QString file_type_name(const FileType file_type) {
 }
 
 FileType file_type_from_filename(const QString &filename) {
-    FileType matching_type = FileType_UNKNOWN;
-    QString matching_string = QString();
+    const QFileInfo file_info = QFileInfo(filename);
+    const QString file_suffix = file_info.completeSuffix();
 
-    for (const FileType type : file_type_all()) {
+    for (const FileType &type : file_type_all) {
         const QStringList strings = file_type_strings(type);
 
-        for (const QString string : strings) {
-            // NOTE: need to select the longest string for cases like ".tar" and "recovery.tar"
-            const bool string_matches = filename.endsWith(string, Qt::CaseInsensitive);
-            const bool this_string_is_longer = (string.length() > matching_string.length());
+        const bool match = strings.contains(file_suffix);
 
-            if (string_matches && this_string_is_longer) {
-                matching_type = type;
-                matching_string = string;
-            }
+        if (match) {
+            return type;
         }
     }
 
-    return matching_type;
+    return FileType_UNKNOWN;
 }
 
 bool file_type_can_write(const FileType file_type) {

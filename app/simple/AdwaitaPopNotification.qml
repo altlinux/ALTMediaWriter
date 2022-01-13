@@ -35,8 +35,9 @@ FocusScope {
     Behavior on opacity { NumberAnimation { duration: 120 } }
 
     onOpenChanged: {
-        if (open)
+        if (open) {
             hideTimer.start()
+        }
     }
 
     height: contents.height + 12

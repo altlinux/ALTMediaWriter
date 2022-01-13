@@ -25,10 +25,10 @@
 
 #include "drivemanager.h"
 
+#include <QDBusArgument>
 #include <QDBusInterface>
 #include <QDBusObjectPath>
 #include <QDBusPendingCall>
-#include <QDBusArgument>
 #include <QProcess>
 
 typedef QHash<QString, QVariantMap> InterfacesAndProperties;
@@ -47,7 +47,7 @@ public:
 
 private slots:
     void delayedConstruct();
-    void init(QDBusPendingCallWatcher *w);
+    void init(QDBusPendingCallWatcher *watcher);
     void onInterfacesAdded(const QDBusObjectPath &object_path, const InterfacesAndProperties &interfaces_and_properties);
     void onInterfacesRemoved(const QDBusObjectPath &object_path, const QStringList &interfaces);
     void onPropertiesChanged(const QString &interface_name, const QVariantMap &changed_properties, const QStringList &invalidated_properties);
@@ -56,15 +56,15 @@ private:
     QDBusObjectPath handleObject(const QDBusObjectPath &path, const InterfacesAndProperties &interface);
 
 private:
-    QDBusInterface *m_objManager { nullptr };
-    QHash<QDBusObjectPath, LinuxDrive*> m_drives;
+    QDBusInterface *m_objManager;
+    QHash<QDBusObjectPath, LinuxDrive *> m_drives;
 };
 
 class LinuxDrive : public Drive {
     Q_OBJECT
     Q_PROPERTY(QString devicePath READ devicePath CONSTANT)
 public:
-    LinuxDrive(LinuxDriveProvider *parent, QString device, QString name, uint64_t size, bool isoLayout);
+    LinuxDrive(LinuxDriveProvider *parent, const QString &device, const QString &name, const uint64_t size, const bool isoLayout);
     ~LinuxDrive();
 
     Q_INVOKABLE virtual bool write(Variant *variant) override;
@@ -75,14 +75,14 @@ public:
 
 private slots:
     void onReadyRead();
-    void onFinished(int exitCode, QProcess::ExitStatus status);
-    void onRestoreFinished(int exitCode, QProcess::ExitStatus status);
+    void onFinished(const int exitCode, const QProcess::ExitStatus status);
+    void onRestoreFinished(const int exitCode, const QProcess::ExitStatus status);
     void onErrorOccurred(QProcess::ProcessError e);
 
 private:
     QString m_device;
 
-    QProcess *m_process { nullptr };
+    QProcess *m_process;
 };
 
 #endif // LINUXDRIVEMANAGER_H

@@ -21,18 +21,18 @@
  */
 
 #include "releasemanager.h"
-#include "release_model.h"
-#include "release.h"
-#include "file_type.h"
 #include "architecture.h"
-#include "variant.h"
+#include "file_type.h"
 #include "network.h"
+#include "release.h"
+#include "release_model.h"
+#include "variant.h"
 
 #include <yaml-cpp/yaml.h>
 
-#include <QtQml>
-#include <QApplication>
 #include <QAbstractEventDispatcher>
+#include <QApplication>
+#include <QtQml>
 
 QList<QString> load_list_from_file(const QString &filepath);
 QList<QString> get_sections_urls();
@@ -40,16 +40,16 @@ QList<QString> get_images_urls();
 QString yml_get(const YAML::Node &node, const QString &key);
 
 ReleaseManager::ReleaseManager(QObject *parent)
-: QObject(parent)
-, m_downloadingMetadata(true)
-{
+: QObject(parent) {
+    m_downloadingMetadata = true;
+
     qDebug() << this->metaObject()->className() << "construction";
 
     sourceModel = new ReleaseModel(this);
     filterModel = new ReleaseFilterModel(sourceModel, this);
 
     // Add custom release to first position
-    auto customRelease = Release::custom(this);
+    Release *customRelease = Release::custom(this);
     addReleaseToModel(0, customRelease);
     setSelectedIndex(0);
 
@@ -58,7 +58,7 @@ ReleaseManager::ReleaseManager(QObject *parent)
 
 void ReleaseManager::downloadMetadata() {
     qDebug() << "Downloading metadata";
-    
+
     setDownloadingMetadata(true);
 
     const QList<QString> section_urls = get_sections_urls();
@@ -69,12 +69,11 @@ void ReleaseManager::downloadMetadata() {
 
     // Create requests to download all release files and
     // collect the replies
-    const QHash<QString, QNetworkReply *> replies =
-    [section_urls, image_urls]() {
+    const QHash<QString, QNetworkReply *> replies = [section_urls, image_urls]() {
         QHash<QString, QNetworkReply *> out;
         const QList<QString> all_urls = section_urls + image_urls;
 
-        for (const auto url : all_urls) {
+        for (const QString &url : all_urls) {
             QNetworkReply *reply = makeNetworkRequest(url, 5000);
 
             out[url] = reply;
@@ -85,10 +84,9 @@ void ReleaseManager::downloadMetadata() {
 
     // This will run when all the replies are finished (or
     // technically, the last one)
-    const auto onReplyFinished =
-    [this, replies, section_urls, image_urls]() {
+    const auto onReplyFinished = [this, replies, section_urls, image_urls]() {
         // Only proceed if this is the last reply
-        for (auto reply : replies) {
+        for (const QNetworkReply *reply : replies) {
             if (!reply->isFinished()) {
                 return;
             }
@@ -96,7 +94,7 @@ void ReleaseManager::downloadMetadata() {
 
         // Check that all replies suceeded
         // If not, retry
-        for (auto reply : replies.values()) {
+        for (const QNetworkReply *reply : replies.values()) {
             // NOTE: ignore ContentNotFoundError since it can happen if one of the files was moved or renamed
             const QNetworkReply::NetworkError error = reply->error();
             const bool download_failed = (error != QNetworkReply::NoError && error != QNetworkReply::ContentNotFoundError);
@@ -114,7 +112,7 @@ void ReleaseManager::downloadMetadata() {
         // Collect results
         QHash<QString, QString> url_to_file;
 
-        for (auto url : replies.keys()) {
+        for (const QString &url : replies.keys()) {
             QNetworkReply *reply = replies[url];
 
             if (reply->error() == QNetworkReply::NoError) {
@@ -126,10 +124,9 @@ void ReleaseManager::downloadMetadata() {
             }
         }
 
-        const QList<QString> sectionsFiles =
-        [section_urls, url_to_file]() {
+        const QList<QString> sectionsFiles = [section_urls, url_to_file]() {
             QList<QString> out;
-            for (const auto section_url : section_urls) {
+            for (const QString &section_url : section_urls) {
                 const QString section = url_to_file[section_url];
                 out.append(section);
             }
@@ -140,10 +137,9 @@ void ReleaseManager::downloadMetadata() {
 
         loadReleases(sectionsFiles);
 
-        const QList<QString> imagesFiles =
-        [image_urls, url_to_file]() {
+        const QList<QString> imagesFiles = [image_urls, url_to_file]() {
             QList<QString> out;
-            for (const auto image_url : image_urls) {
+            for (const QString &image_url : image_urls) {
                 const QString image = url_to_file[image_url];
                 out.append(image);
             }
@@ -152,18 +148,18 @@ void ReleaseManager::downloadMetadata() {
 
         qDebug() << "Loading variants";
 
-        for (auto imagesFile : imagesFiles) {
+        for (const QString &imagesFile : imagesFiles) {
             loadVariants(imagesFile);
         }
 
-        for (auto reply : replies.values()) {
+        for (QNetworkReply *reply : replies.values()) {
             reply->deleteLater();
         }
 
         setDownloadingMetadata(false);
     };
 
-    for (const auto reply : replies) {
+    for (QNetworkReply *reply : replies) {
         connect(
             reply, &QNetworkReply::finished,
             onReplyFinished);
@@ -187,8 +183,10 @@ int ReleaseManager::selectedIndex() const {
     return m_selectedIndex;
 }
 
-void ReleaseManager::setSelectedIndex(int row_proxy) {
-    const QModelIndex index_proxy = filterModel->index(row_proxy, 0);
+// NOTE: index arg refers to proxy, so have to convert
+// it to source
+void ReleaseManager::setSelectedIndex(const int index) {
+    const QModelIndex index_proxy = filterModel->index(index, 0);
     const QModelIndex index_source = filterModel->mapToSource(index_proxy);
 
     const int row_source = index_source.row();
@@ -210,7 +208,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
         return;
     }
 
-    for (auto variantData : variants["entries"]) {
+    for (const YAML::Node &variantData : variants["entries"]) {
         const QString url = yml_get(variantData, "link");
         if (url.isEmpty()) {
             qDebug() << "Variant has no url";
@@ -224,8 +222,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
         }
 
         const QString arch_string = yml_get(variantData, "arch");
-        const Architecture arch =
-        [arch_string, url]() -> Architecture  {
+        const Architecture arch = [arch_string, url]() -> Architecture {
             if (!arch_string.isEmpty()) {
                 return architecture_from_string(arch_string);
             } else {
@@ -238,8 +235,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
         }
 
         // NOTE: yml file doesn't define "board" for pc32/pc64, so default to "PC"
-        const QString board =
-        [variantData]() -> QString {
+        const QString board = [variantData]() -> QString {
             const QString out = yml_get(variantData, "board");
             if (!out.isEmpty()) {
                 return out;
@@ -254,8 +250,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
             continue;
         }
 
-        const bool live =
-        [variantData]() {
+        const bool live = [variantData]() {
             const QString live_string = yml_get(variantData, "live");
             if (!live_string.isEmpty()) {
                 return (live_string == "1");
@@ -267,8 +262,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
         // qDebug() << QUrl(url).fileName() << releaseName << architecture_name(arch) << board << file_type_name(fileType) << (live ? "LIVE" : "");
 
         // Find a release that has the same name as this variant
-        Release *release =
-        [this, releaseName]() -> Release *{
+        Release *release = [this, releaseName]() -> Release * {
             for (int i = 0; i < sourceModel->rowCount(); i++) {
                 Release *release = sourceModel->get(i);
 
@@ -290,7 +284,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
 
 QStringList ReleaseManager::architectures() const {
     QStringList out;
-    for (const Architecture architecture : architecture_all()) {
+    for (const Architecture &architecture : architecture_all) {
         if (architecture != Architecture_UNKNOWN) {
             const QString name = architecture_name(architecture);
             out.append(name);
@@ -300,12 +294,11 @@ QStringList ReleaseManager::architectures() const {
 }
 
 QStringList ReleaseManager::fileTypeFilters() const {
-    const QList<FileType> fileTypes = file_type_all();
+    const QList<FileType> fileTypes = file_type_all;
 
     QStringList filters;
-    for (const auto type : fileTypes) {
-        const QString extensions =
-        [type]() {
+    for (const FileType &type : fileTypes) {
+        const QString extensions = [type]() {
             const QStringList strings = file_type_strings(type);
             if (strings.isEmpty()) {
                 return QString();
@@ -314,7 +307,7 @@ QStringList ReleaseManager::fileTypeFilters() const {
             QString out;
             out += "(";
 
-            for (const auto e : strings) {
+            for (const QString &e : strings) {
                 if (strings.indexOf(e) > 0) {
                     out += " ";
                 }
@@ -332,7 +325,7 @@ QStringList ReleaseManager::fileTypeFilters() const {
         }
 
         const QString name = file_type_name(type);
-        
+
         const QString filter = name + " " + extensions;
         filters.append(filter);
     }
@@ -343,13 +336,13 @@ QStringList ReleaseManager::fileTypeFilters() const {
 }
 
 void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
-    for (auto sectionFile : sectionsFiles) {
+    for (const QString &sectionFile : sectionsFiles) {
         const YAML::Node section = YAML::Load(sectionFile.toStdString());
 
         if (!section["members"]) {
             continue;
         }
-        
+
         for (unsigned int i = 0; i < section["members"].size(); i++) {
             const YAML::Node releaseData = section["members"][i];
 
@@ -359,15 +352,14 @@ void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
                 continue;
             }
 
-            const QString language =
-            []() {
+            const QString language = []() {
                 if (QLocale().language() == QLocale::Russian) {
                     return "_ru";
                 } else {
                     return "_en";
                 }
             }();
-            
+
             const QString display_name = yml_get(releaseData, "name" + language);
             if (display_name.isEmpty()) {
                 qDebug() << "Release has no display name";
@@ -388,7 +380,7 @@ void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
 
             // NOTE: currently no screenshots
             const QStringList screenshots;
-            
+
             // Check that icon file exists
             const QString icon_name = yml_get(releaseData, "img");
             if (icon_name.isEmpty()) {
@@ -413,8 +405,7 @@ void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
             // workstation first after custom release and
             // server second, so that they are both on the
             // frontpage.
-            const int index =
-            [this, release]() {
+            const int index = [this, release]() {
                 const QString release_name = release->name();
                 const bool is_workstation = (release_name == "alt-workstation");
                 const bool is_kworkstation = (release_name == "alt-kworkstation");
@@ -427,7 +418,7 @@ void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
                     return sourceModel->rowCount();
                 }
             }();
-            
+
             addReleaseToModel(index, release);
         }
     }

@@ -21,27 +21,26 @@
  */
 
 #include "release.h"
-#include "releasemanager.h"
 #include "architecture.h"
+#include "releasemanager.h"
 #include "variant.h"
 
 #include <QDebug>
 
 Release::Release(const QString &name, const QString &display_name, const QString &summary, const QString &description, const QString &icon, const QStringList &screenshots, QObject *parent)
-: QObject(parent)
-, m_name(name)
-, m_displayName(display_name)
-, m_summary(summary)
-, m_description(description)
-, m_icon(icon)
-, m_screenshots(screenshots)
-, m_isCustom(false)
-{
-
+: QObject(parent) {
+    m_name = name;
+    m_displayName = display_name;
+    m_summary = summary;
+    m_description = description;
+    m_icon = icon;
+    m_screenshots = screenshots;
+    m_isCustom = false;
+    m_selectedVariant = 0;
 }
 
 Release *Release::custom(QObject *parent) {
-    auto customRelease = new Release(QString(), tr("Custom image"), QT_TRANSLATE_NOOP("Release", "Pick a file from your drive(s)"), { QT_TRANSLATE_NOOP("Release", "<p>Here you can choose a OS image from your hard drive to be written to your flash disk</p><p>Currently it is only supported to write raw disk images (.iso or .bin)</p>") }, "qrc:/logo/custom", {}, parent);
+    auto customRelease = new Release(QString(), tr("Custom image"), QT_TRANSLATE_NOOP("Release", "Pick a file from your drive(s)"), {QT_TRANSLATE_NOOP("Release", "<p>Here you can choose a OS image from your hard drive to be written to your flash disk</p><p>Currently it is only supported to write raw disk images (.iso or .bin)</p>")}, "qrc:/logo/custom", {}, parent);
     customRelease->m_isCustom = true;
     customRelease->setLocalFile(QString());
 
@@ -50,10 +49,9 @@ Release *Release::custom(QObject *parent) {
 
 void Release::addVariant(Variant *variant) {
     // Sort variants by architecture
-    const int insert_index =
-    [this, variant]() {
+    const int insert_index = [this, variant]() {
         int out = 0;
-        for (auto current : m_variants) {
+        for (const Variant *current : m_variants) {
             if (current->arch() > variant->arch()) {
                 return out;
             }
@@ -76,18 +74,18 @@ void Release::addVariant(Variant *variant) {
 void Release::setLocalFile(const QUrl &fileUrl) {
     QString filePath = fileUrl.path();
 
-    // NOTE: on windows QUrl::path() leaves a leading
-    // slash like this: "/C:foo/bar", very fun!
-    #ifdef _WIN32
+// NOTE: on windows QUrl::path() leaves a leading
+// slash like this: "/C:foo/bar", very fun!
+#ifdef _WIN32
     if (filePath.startsWith("/")) {
         filePath.remove(0, 1);
     }
-    #endif // _WIN32
+#endif // _WIN32
 
     qDebug() << "Setting local file to: " << filePath;
 
     // Delete old custom variant (there's really only one, but iterate anyway)
-    for (auto variant : m_variants) {
+    for (Variant *variant : m_variants) {
         variant->deleteLater();
     }
     m_variants.clear();
@@ -95,10 +93,10 @@ void Release::setLocalFile(const QUrl &fileUrl) {
     // Add new variant
     auto customVariant = new Variant(filePath, this);
     m_variants.append(customVariant);
-    
+
     emit variantsChanged();
     emit selectedVariantChanged();
- }
+}
 
 QString Release::name() const {
     return m_name;
@@ -129,8 +127,9 @@ QStringList Release::screenshots() const {
 }
 
 Variant *Release::selectedVariant() const {
-    if (m_selectedVariant >= 0 && m_selectedVariant < m_variants.count())
+    if (m_selectedVariant >= 0 && m_selectedVariant < m_variants.count()) {
         return m_variants[m_selectedVariant];
+    }
     return nullptr;
 }
 
@@ -138,9 +137,9 @@ int Release::selectedVariantIndex() const {
     return m_selectedVariant;
 }
 
-void Release::setSelectedVariantIndex(int o) {
-    if (m_selectedVariant != o && m_selectedVariant >= 0 && m_selectedVariant < m_variants.count()) {
-        m_selectedVariant = o;
+void Release::setSelectedVariantIndex(const int index) {
+    if (m_selectedVariant != index && m_selectedVariant >= 0 && m_selectedVariant < m_variants.count()) {
+        m_selectedVariant = index;
         emit selectedVariantChanged();
     }
 }

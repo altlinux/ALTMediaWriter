@@ -24,13 +24,14 @@
 
 #ifdef __linux
 
-# include <QDBusInterface>
+#include <QDBusInterface>
 
 void Notifications::notify(const QString &title, const QString &body) {
     QDBusInterface notifications("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications", QDBusConnection::sessionBus());
-    auto reply = notifications.call("Notify", "ALT Media Writer", 0U, "mediawriter", title, body, QStringList{}, QVariantMap{}, -1);
-    if (reply.type() == QDBusMessage::ErrorMessage)
+    const QDBusMessage reply = notifications.call("Notify", "ALT Media Writer", 0U, "mediawriter", title, body, QStringList{}, QVariantMap{}, -1);
+    if (reply.type() == QDBusMessage::ErrorMessage) {
         qDebug() << "Couldn't send a notification:" << reply.errorName() << "-" << reply.errorMessage();
+    }
 }
 
 #endif // __linux
@@ -39,11 +40,10 @@ void Notifications::notify(const QString &title, const QString &body) {
 
 void Notifications::notify(const QString &title, const QString &body) {
     static QSystemTrayIcon *icon = new QSystemTrayIcon(QIcon(":/icon.ico"));
-    if (!icon->isVisible())
+    if (!icon->isVisible()) {
         icon->show();
+    }
     icon->showMessage(title, body);
 }
 
 #endif // _WIN32
-
-

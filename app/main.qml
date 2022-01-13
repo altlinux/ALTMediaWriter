@@ -82,10 +82,12 @@ ApplicationWindow {
         Connections {
             target: drives
             onLastRestoreableChanged: {
-                if (drives.lastRestoreable != null && !dlDialog.visible)
+                if (drives.lastRestoreable != null && !dlDialog.visible) {
                     deviceNotification.open = true
-                if (!drives.lastRestoreable)
+                }
+                if (!drives.lastRestoreable) {
                     deviceNotification.open = false
+                }
             }
         }
     }
