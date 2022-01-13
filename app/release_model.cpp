@@ -43,7 +43,8 @@ Release *ReleaseModel::get(const int index) const {
 // data role)
 QHash<int, QByteArray> ReleaseModel::roleNames() const {
     static const QHash<int, QByteArray> names = {
-        {Qt::UserRole + 1, "release"}};
+        {Qt::UserRole + 1, "release"},
+    };
 
     return names;
 }
