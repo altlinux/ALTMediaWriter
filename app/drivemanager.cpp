@@ -78,8 +78,8 @@ QString getHelperPath() {
 DriveManager *DriveManager::_self = nullptr;
 
 DriveManager::DriveManager(QObject *parent)
-: QAbstractListModel(parent)
-, m_provider(DriveProvider::create(this)) {
+: QAbstractListModel(parent) {
+    m_provider = DriveProvider::create(this);
     m_selectedIndex = 0;
     m_lastRestoreable = nullptr;
     m_provider = nullptr;
@@ -250,11 +250,17 @@ DriveProvider::DriveProvider(DriveManager *parent)
 }
 
 Drive::Drive(DriveProvider *parent, const QString &name, uint64_t size, bool containsLive)
-: QObject(parent)
-, m_progress(new Progress(this))
-, m_name(name)
-, m_size(size)
-, m_restoreStatus(containsLive ? CONTAINS_LIVE : CLEAN) {
+: QObject(parent) {
+    m_progress = new Progress(this);
+    m_name = name;
+    m_size = size;
+    m_restoreStatus = [&]() {
+        if (containsLive) {
+            return CONTAINS_LIVE;
+        } else {
+            return CLEAN;
+        }
+    }();
     m_variant = nullptr;
     m_size = 0;
 }

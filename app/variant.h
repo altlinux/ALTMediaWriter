@@ -130,13 +130,13 @@ public slots:
     void onImageDownloadFinished();
 
 private:
-    const QString m_url;
-    const QString m_fileName;
-    const QString m_filePath;
-    const QString m_board;
-    const bool m_live;
-    const Architecture m_arch;
-    const FileType m_fileType;
+    QString m_url;
+    QString m_fileName;
+    QString m_filePath;
+    QString m_board;
+    bool m_live;
+    Architecture m_arch;
+    FileType m_fileType;
     Status m_status;
     QString m_error;
     bool delayedWrite;

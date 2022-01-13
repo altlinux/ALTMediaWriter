@@ -252,9 +252,9 @@ bool WinDriveProvider::describeDrive(int nDriveNumber, bool hasLetter, bool verb
 }
 
 WinDrive::WinDrive(WinDriveProvider *parent, const QString &name, uint64_t size, bool containsLive, int device, const QString &serialNumber)
-: Drive(parent, name, size, containsLive)
-, m_device(device)
-, m_serialNo(serialNumber) {
+: Drive(parent, name, size, containsLive) {
+    m_device = device;
+    m_serialNo = serialNumber;
     m_child = nullptr;
 }
 

@@ -184,8 +184,8 @@ void LinuxDriveProvider::onPropertiesChanged(const QString &interface_name, cons
 }
 
 LinuxDrive::LinuxDrive(LinuxDriveProvider *parent, QString device, QString name, uint64_t size, bool isoLayout)
-: Drive(parent, name, size, isoLayout)
-, m_device(device) {
+: Drive(parent, name, size, isoLayout) {
+    m_device = device;
     m_process = nullptr;
 }
 

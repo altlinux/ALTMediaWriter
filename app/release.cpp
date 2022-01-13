@@ -28,14 +28,14 @@
 #include <QDebug>
 
 Release::Release(const QString &name, const QString &display_name, const QString &summary, const QString &description, const QString &icon, const QStringList &screenshots, QObject *parent)
-: QObject(parent)
-, m_name(name)
-, m_displayName(display_name)
-, m_summary(summary)
-, m_description(description)
-, m_icon(icon)
-, m_screenshots(screenshots)
-, m_isCustom(false) {
+: QObject(parent) {
+    m_name = name;
+    m_displayName = display_name;
+    m_summary = summary;
+    m_description = description;
+    m_icon = icon;
+    m_screenshots = screenshots;
+    m_isCustom = false;
 }
 
 Release *Release::custom(QObject *parent) {

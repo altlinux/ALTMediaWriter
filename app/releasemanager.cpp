@@ -40,8 +40,9 @@ QList<QString> get_images_urls();
 QString yml_get(const YAML::Node &node, const QString &key);
 
 ReleaseManager::ReleaseManager(QObject *parent)
-: QObject(parent)
-, m_downloadingMetadata(true) {
+: QObject(parent) {
+    m_downloadingMetadata = true;
+
     qDebug() << this->metaObject()->className() << "construction";
 
     sourceModel = new ReleaseModel(this);

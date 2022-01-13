@@ -34,29 +34,29 @@
 #include <QStandardPaths>
 
 Variant::Variant(QString url, Architecture arch, const FileType fileType, QString board, const bool live, QObject *parent)
-: QObject(parent)
-, m_url(url)
-, m_fileName(QUrl(url).fileName())
-, m_filePath(QDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)).filePath(fileName()))
-, m_board(board)
-, m_live(live)
-, m_arch(arch)
-, m_fileType(fileType)
-, m_status(Variant::PREPARING)
-, m_progress(new Progress(this)) {
+: QObject(parent) {
+    m_url = url;
+    m_fileName = QUrl(url).fileName();
+    m_filePath = QDir(QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)).filePath(fileName());
+    m_board = board;
+    m_live = live;
+    m_arch = arch;
+    m_fileType = fileType;
+    m_status = Variant::PREPARING;
+    m_progress = new Progress(this);
 }
 
 Variant::Variant(const QString &path, QObject *parent)
-: QObject(parent)
-, m_url(QString())
-, m_fileName(QFileInfo(path).fileName())
-, m_filePath(path)
-, m_board(QString())
-, m_live(false)
-, m_arch(Architecture_UNKNOWN)
-, m_fileType(file_type_from_filename(path))
-, m_status(Variant::READY_FOR_WRITING)
-, m_progress(new Progress(this)) {
+: QObject(parent) {
+    m_url = QString();
+    m_fileName = QFileInfo(path).fileName();
+    m_filePath = path;
+    m_board = QString();
+    m_live = false;
+    m_arch = Architecture_UNKNOWN;
+    m_fileType = file_type_from_filename(path);
+    m_status = Variant::READY_FOR_WRITING;
+    m_progress = new Progress(this);
 }
 
 Architecture Variant::arch() const {
