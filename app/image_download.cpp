@@ -20,24 +20,23 @@
 #include "image_download.h"
 #include "network.h"
 
+#include <QDir>
+#include <QFile>
+#include <QNetworkAccessManager>
 #include <QNetworkProxyFactory>
 #include <QNetworkReply>
 #include <QNetworkRequest>
-#include <QNetworkAccessManager>
 #include <QStandardPaths>
 #include <QStorageInfo>
-#include <QDir>
 #include <QTimer>
-#include <QFile>
 
 ImageDownload::ImageDownload(const QUrl &url_arg, const QString &filePath_arg)
 : QObject()
 , url(url_arg)
 , filePath(filePath_arg)
-, hash(QCryptographicHash::Md5)
-{
+, hash(QCryptographicHash::Md5) {
     qDebug() << this->metaObject()->className() << "created for" << url;
-    
+
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     const QString tempFilePath = filePath + ".part";
@@ -70,7 +69,7 @@ void ImageDownload::cancel() {
 
 void ImageDownload::onImageDownloadReadyRead() {
     QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
-    
+
     if (startingImageDownload) {
         qDebug() << "Request started successfully";
         startingImageDownload = false;
@@ -123,7 +122,7 @@ void ImageDownload::onImageDownloadFinished() {
 
         const QString md5sumUrl = url.adjusted(QUrl::RemoveFilename).toString() + "/MD5SUM";
         QNetworkReply *md5Reply = makeNetworkRequest(md5sumUrl);
-        
+
         connect(
             md5Reply, &QNetworkReply::finished,
             this, &ImageDownload::onMd5DownloadFinished);
@@ -179,7 +178,7 @@ void ImageDownload::onMd5DownloadFinished() {
 
         if (md5.isEmpty()) {
             checkMd5(QString());
-        } else { 
+        } else {
             file->close();
             const bool open_success = file->open(QIODevice::ReadOnly);
             if (open_success) {
@@ -201,7 +200,7 @@ void ImageDownload::computeMd5() {
 
     const QByteArray bytes = file->read(64L * 1024L);
     const bool read_success = (bytes.size() > 0);
-    
+
     if (read_success) {
         hash.addData(bytes);
         emit progress(file->pos());

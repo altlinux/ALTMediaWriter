@@ -25,42 +25,42 @@
 #include "variant.h"
 
 #ifdef __linux__
-# include "linuxdrivemanager.h"
+#include "linuxdrivemanager.h"
 #endif // __linux__
 
 #ifdef _WIN32
-# include "windrivemanager.h"
+#include "windrivemanager.h"
 #endif // _WIN32
 
-#include <QtQml>
 #include <QFile>
+#include <QtQml>
 
 // NOTE: when installed, helper will be in the same directory as the mediawriter executable, so this is just for running from a build directory where they are in separate dirs.
 QString getHelperPath() {
     const QString platform = []() {
-        #ifdef __linux__
+#ifdef __linux__
         return "linux";
-        #endif // __linux__
+#endif // __linux__
 
-        #ifdef _WIN32
+#ifdef _WIN32
         return "win";
-        #endif // _WIN32
+#endif // _WIN32
     }();
     const QString executable = []() {
-        #ifdef __linux__
+#ifdef __linux__
         return "helper";
-        #endif // __linux__
+#endif // __linux__
 
-        #ifdef _WIN32
+#ifdef _WIN32
         return "helper.exe";
-        #endif // _WIN32
+#endif // _WIN32
     }();
     const QString appPath = qApp->applicationDirPath();
     const QList<QString> possiblePaths = {
         appPath + "/" + executable,
-        #ifdef __linux__
+#ifdef __linux__
         QString(LIBEXECDIR) + "/" + executable,
-        #endif // __linux__
+#endif // __linux__
         appPath + "/../helper/" + platform + "/" + executable,
         appPath + "/../../helper/" + platform + "/release/" + executable,
         appPath + "/../../helper/" + platform + "/debug/" + executable,
@@ -78,8 +78,8 @@ QString getHelperPath() {
 DriveManager *DriveManager::_self = nullptr;
 
 DriveManager::DriveManager(QObject *parent)
-    : QAbstractListModel(parent), m_provider(DriveProvider::create(this))
-{
+: QAbstractListModel(parent)
+, m_provider(DriveProvider::create(this)) {
     qDebug() << this->metaObject()->className() << "construction";
 
     connect(m_provider, &DriveProvider::driveConnected, this, &DriveManager::onDriveConnected);
@@ -95,7 +95,8 @@ DriveManager *DriveManager::instance() {
 }
 
 QVariant DriveManager::headerData(int section, Qt::Orientation orientation, int role) const {
-    Q_UNUSED(section); Q_UNUSED(orientation);
+    Q_UNUSED(section);
+    Q_UNUSED(orientation);
 
     if (role == Qt::UserRole + 1) {
         return "drive";
@@ -192,8 +193,7 @@ void DriveManager::onDriveConnected(Drive *d) {
     if (m_provider->initialized()) {
         m_selectedIndex = position;
         emit selectedChanged();
-    }
-    else {
+    } else {
         m_selectedIndex = 0;
         emit selectedChanged();
     }
@@ -226,7 +226,7 @@ void DriveManager::onBackendBroken(const QString &message) {
     emit isBackendBrokenChanged();
 }
 
-DriveProvider *DriveProvider::create(DriveManager *parent)  {
+DriveProvider *DriveProvider::create(DriveManager *parent) {
 #ifdef _WIN32
     return new WinDriveProvider(parent);
 #endif // _WIN32
@@ -240,20 +240,16 @@ bool DriveProvider::initialized() const {
     return m_initialized;
 }
 
-
 DriveProvider::DriveProvider(DriveManager *parent)
-    : QObject(parent) {
-
+: QObject(parent) {
 }
 
 Drive::Drive(DriveProvider *parent, const QString &name, uint64_t size, bool containsLive)
-    : QObject(parent),
-      m_progress(new Progress(this)),
-      m_name(name),
-      m_size(size),
-      m_restoreStatus(containsLive ? CONTAINS_LIVE : CLEAN)
-{
-
+: QObject(parent)
+, m_progress(new Progress(this))
+, m_name(name)
+, m_size(size)
+, m_restoreStatus(containsLive ? CONTAINS_LIVE : CLEAN) {
 }
 
 Progress *Drive::progress() const {
@@ -268,20 +264,15 @@ QString Drive::readableSize() const {
     QString sizeStr;
     if (m_size < (1000UL)) {
         sizeStr = QString("%1 B").arg(m_size);
-    }
-    else if (m_size < (1000000UL)) {
+    } else if (m_size < (1000000UL)) {
         sizeStr = QString("%1 KB").arg(m_size / 1000.0, 0, 'f', 1);
-    }
-    else if (m_size < (1000000000UL)) {
+    } else if (m_size < (1000000000UL)) {
         sizeStr = QString("%1 MB").arg(m_size / 1000000.0, 0, 'f', 1);
-    }
-    else if (m_size < (1000000000000UL)) {
+    } else if (m_size < (1000000000000UL)) {
         sizeStr = QString("%1 GB").arg(m_size / 1000000000.0, 0, 'f', 1);
-    }
-    else if (m_size < (1000000000000000UL)) {
+    } else if (m_size < (1000000000000000UL)) {
         sizeStr = QString("%1 TB").arg(m_size / 1000000000000.0, 0, 'f', 1);
-    }
-    else { // better be ready for exabyte images and drives
+    } else { // better be ready for exabyte images and drives
         sizeStr = QString("%1 EB").arg(m_size / 1000000000000000.0, 0, 'f', 1);
     }
     return sizeStr;

@@ -17,13 +17,12 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-
 #ifndef IMAGE_DOWNLOAD_H
 #define IMAGE_DOWNLOAD_H
 
+#include <QCryptographicHash>
 #include <QObject>
 #include <QUrl>
-#include <QCryptographicHash>
 
 /**
  * Downloads an image using QNetwork and writes downloaded
@@ -77,7 +76,7 @@ signals:
 
     void cancelled();
 
-    // 
+    //
     void progress(const qint64 value);
     void progressMaxChanged(const qint64 value);
 

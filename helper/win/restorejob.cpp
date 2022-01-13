@@ -26,8 +26,7 @@
 #include <QTimer>
 
 RestoreJob::RestoreJob(const QString &where)
-    : QObject(nullptr)
-{
+: QObject(nullptr) {
     bool ok = false;
     m_where = where.toInt(&ok);
     if (!ok) {
@@ -56,8 +55,7 @@ void RestoreJob::work() {
 
     if (m_diskpart.waitForFinished()) {
         qApp->exit(0);
-    }
-    else {
+    } else {
         err << m_diskpart.readAllStandardError();
         err.flush();
         qApp->exit(1);

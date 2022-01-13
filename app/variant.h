@@ -45,10 +45,10 @@
 #include "architecture.h"
 #include "file_type.h"
 
-#include <QObject>
-#include <QList>
-#include <QString>
 #include <QHash>
+#include <QList>
+#include <QObject>
+#include <QString>
 
 class Progress;
 
@@ -59,7 +59,7 @@ class Variant final : public QObject {
     Q_PROPERTY(QString fileName READ fileName CONSTANT)
     Q_PROPERTY(QString fileTypeName READ fileTypeName CONSTANT)
     Q_PROPERTY(bool canWrite READ canWrite CONSTANT)
-    Q_PROPERTY(Progress* progress READ progress CONSTANT)
+    Q_PROPERTY(Progress *progress READ progress CONSTANT)
 
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString statusString READ statusString NOTIFY statusChanged)

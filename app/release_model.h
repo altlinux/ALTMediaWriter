@@ -34,14 +34,14 @@
 
 #include "architecture.h"
 
-#include <QStandardItemModel>
 #include <QSortFilterProxyModel>
+#include <QStandardItemModel>
 
 class Release;
 
 class ReleaseModel final : public QStandardItemModel {
-Q_OBJECT
-    
+    Q_OBJECT
+
 public:
     using QStandardItemModel::QStandardItemModel;
 
@@ -50,7 +50,7 @@ public:
 };
 
 class ReleaseFilterModel final : public QSortFilterProxyModel {
-Q_OBJECT
+    Q_OBJECT
     Q_PROPERTY(bool frontPage READ getFrontPage NOTIFY frontPageChanged)
 
 public:

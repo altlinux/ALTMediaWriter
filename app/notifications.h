@@ -3,8 +3,7 @@
 
 #include <QObject>
 
-class Notifications
-{
+class Notifications {
 public:
     static void notify(const QString &title, const QString &body);
 };

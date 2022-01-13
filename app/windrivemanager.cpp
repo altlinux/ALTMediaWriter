@@ -25,16 +25,15 @@
 #include "progress.h"
 #include "variant.h"
 
-#include <QTimer>
 #include <QDebug>
+#include <QTimer>
 
 #include <windows.h>
 
 #include <cmath>
 
 WinDriveProvider::WinDriveProvider(DriveManager *parent)
-    : DriveProvider(parent)
-{
+: DriveProvider(parent) {
     qDebug() << this->metaObject()->className() << "construction";
     QTimer::singleShot(0, this, &WinDriveProvider::checkDrives);
 }
@@ -79,7 +78,7 @@ QSet<int> WinDriveProvider::findPhysicalDrive(char driveLetter) {
 
     QString drivePath = QString("\\\\.\\%1:").arg(driveLetter);
 
-    HANDLE hDevice = ::CreateFile(drivePath.toStdWString().c_str(), 0, FILE_SHARE_READ|FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+    HANDLE hDevice = ::CreateFile(drivePath.toStdWString().c_str(), 0, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
     if (hDevice == INVALID_HANDLE_VALUE) {
         return ret;
     }
@@ -96,8 +95,7 @@ QSet<int> WinDriveProvider::findPhysicalDrive(char driveLetter) {
         }
         ::CloseHandle(hDevice);
         return ret;
-    }
-    else {
+    } else {
         warningMap[driveLetter] = 0;
     }
 
@@ -127,14 +125,14 @@ bool WinDriveProvider::describeDrive(int nDriveNumber, bool hasLetter, bool verb
     uint64_t deviceBytes;
     STORAGE_BUS_TYPE storageBus;
 
-    BOOL bResult   = FALSE;                 // results flag
+    BOOL bResult = FALSE; // results flag
     //DWORD dwRet = NO_ERROR;
 
     // Format physical drive path (may be '\\.\PhysicalDrive0', '\\.\PhysicalDrive1' and so on).
     QString strDrivePath = QString("\\\\.\\PhysicalDrive%0").arg(nDriveNumber);
 
     // Get a handle to physical drive
-    HANDLE hDevice = ::CreateFile(strDrivePath.toStdWString().c_str(), 0, FILE_SHARE_READ|FILE_SHARE_WRITE,
+    HANDLE hDevice = ::CreateFile(strDrivePath.toStdWString().c_str(), 0, FILE_SHARE_READ | FILE_SHARE_WRITE,
         NULL, OPEN_EXISTING, 0, NULL);
 
     if (hDevice == INVALID_HANDLE_VALUE) {
@@ -158,11 +156,10 @@ bool WinDriveProvider::describeDrive(int nDriveNumber, bool hasLetter, bool verb
     if (verbose) {
         qDebug() << this->metaObject()->className() << strDrivePath << "IOCTL_STORAGE_QUERY_PROPERTY";
     }
-    if(! ::DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
-        &storagePropertyQuery, sizeof(STORAGE_PROPERTY_QUERY),
-        &storageDescriptorHeader, sizeof(STORAGE_DESCRIPTOR_HEADER),
-        &dwBytesReturned, NULL))
-    {
+    if (!::DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
+            &storagePropertyQuery, sizeof(STORAGE_PROPERTY_QUERY),
+            &storageDescriptorHeader, sizeof(STORAGE_DESCRIPTOR_HEADER),
+            &dwBytesReturned, NULL)) {
         //dwRet = ::GetLastError();
         ::CloseHandle(hDevice);
         return false; // dwRet;
@@ -170,36 +167,35 @@ bool WinDriveProvider::describeDrive(int nDriveNumber, bool hasLetter, bool verb
 
     // Alloc the output buffer
     const DWORD dwOutBufferSize = storageDescriptorHeader.Size;
-    BYTE* pOutBuffer = new BYTE[dwOutBufferSize];
+    BYTE *pOutBuffer = new BYTE[dwOutBufferSize];
     ZeroMemory(pOutBuffer, dwOutBufferSize);
 
     if (verbose) {
         qDebug() << this->metaObject()->className() << strDrivePath << "IOCTL_STORAGE_QUERY_PROPERTY with a bigger buffer";
     }
     // Get the storage device descriptor
-    if(!(bResult = ::DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
-            &storagePropertyQuery, sizeof(STORAGE_PROPERTY_QUERY),
-            pOutBuffer, dwOutBufferSize,
-            &dwBytesReturned, NULL)))
-    {
+    if (!(bResult = ::DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY,
+              &storagePropertyQuery, sizeof(STORAGE_PROPERTY_QUERY),
+              pOutBuffer, dwOutBufferSize,
+              &dwBytesReturned, NULL))) {
         //dwRet = ::GetLastError();
-        delete []pOutBuffer;
+        delete[] pOutBuffer;
         ::CloseHandle(hDevice);
         return false; // dwRet;
     }
 
     // Now, the output buffer points to a STORAGE_DEVICE_DESCRIPTOR structure
     // followed by additional info like vendor ID, product ID, serial number, and so on.
-    STORAGE_DEVICE_DESCRIPTOR* pDeviceDescriptor = (STORAGE_DEVICE_DESCRIPTOR*)pOutBuffer;
+    STORAGE_DEVICE_DESCRIPTOR *pDeviceDescriptor = (STORAGE_DEVICE_DESCRIPTOR *) pOutBuffer;
     removable = pDeviceDescriptor->RemovableMedia;
     if (pDeviceDescriptor->ProductIdOffset != 0) {
-        productId = QString((char*) pOutBuffer + pDeviceDescriptor->ProductIdOffset).trimmed();
+        productId = QString((char *) pOutBuffer + pDeviceDescriptor->ProductIdOffset).trimmed();
     }
     if (pDeviceDescriptor->VendorIdOffset != 0) {
-        productVendor = QString((char*) pOutBuffer + pDeviceDescriptor->VendorIdOffset).trimmed();
+        productVendor = QString((char *) pOutBuffer + pDeviceDescriptor->VendorIdOffset).trimmed();
     }
     if (pDeviceDescriptor->SerialNumberOffset != 0) {
-        serialNumber = QString((char*) pOutBuffer + pDeviceDescriptor->SerialNumberOffset).trimmed();
+        serialNumber = QString((char *) pOutBuffer + pDeviceDescriptor->SerialNumberOffset).trimmed();
     }
     storageBus = pDeviceDescriptor->BusType;
 
@@ -212,18 +208,18 @@ bool WinDriveProvider::describeDrive(int nDriveNumber, bool hasLetter, bool verb
     }
 
     DISK_GEOMETRY pdg;
-    DWORD junk     = 0;                     // discard results
+    DWORD junk = 0; // discard results
 
     if (verbose) {
         qDebug() << this->metaObject()->className() << strDrivePath << "IOCTL_DISK_GET_DRIVE_GEOMETRY";
     }
 
-    bResult = DeviceIoControl(hDevice,                       // device to be queried
-                              IOCTL_DISK_GET_DRIVE_GEOMETRY, // operation to perform
-                              NULL, 0,                       // no input buffer
-                              &pdg, sizeof(pdg),            // output buffer
-                              &junk,                         // # bytes returned
-                              (LPOVERLAPPED) NULL);          // synchronous I/O
+    bResult = DeviceIoControl(hDevice, // device to be queried
+        IOCTL_DISK_GET_DRIVE_GEOMETRY, // operation to perform
+        NULL, 0, // no input buffer
+        &pdg, sizeof(pdg), // output buffer
+        &junk, // # bytes returned
+        (LPOVERLAPPED) NULL); // synchronous I/O
 
     if (!bResult || pdg.MediaType == Unknown) {
         return false;
@@ -235,7 +231,7 @@ bool WinDriveProvider::describeDrive(int nDriveNumber, bool hasLetter, bool verb
     if (verbose) {
         qDebug() << this->metaObject()->className() << strDrivePath << "cleanup, adding to the list";
     }
-    delete []pOutBuffer;
+    delete[] pOutBuffer;
     ::CloseHandle(hDevice);
 
     WinDrive *currentDrive = new WinDrive(this, productVendor + " " + productId, deviceBytes, !hasLetter, nDriveNumber, serialNumber);
@@ -256,11 +252,9 @@ bool WinDriveProvider::describeDrive(int nDriveNumber, bool hasLetter, bool verb
 }
 
 WinDrive::WinDrive(WinDriveProvider *parent, const QString &name, uint64_t size, bool containsLive, int device, const QString &serialNumber)
-    : Drive(parent, name, size, containsLive)
-    , m_device(device)
-    , m_serialNo(serialNumber)
-{
-
+: Drive(parent, name, size, containsLive)
+, m_device(device)
+, m_serialNo(serialNumber) {
 }
 
 WinDrive::~WinDrive() {
@@ -280,7 +274,7 @@ bool WinDrive::write(Variant *variant) {
         m_child->deleteLater();
     }
     m_child = new QProcess(this);
-    connect(m_child, static_cast<void(QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, &WinDrive::onFinished);
+    connect(m_child, static_cast<void (QProcess::*)(int, QProcess::ExitStatus)>(&QProcess::finished), this, &WinDrive::onFinished);
     connect(m_child, &QProcess::readyRead, this, &WinDrive::onReadyRead);
 
     const QString helperPath = getHelperPath();
@@ -336,7 +330,7 @@ void WinDrive::restore() {
     m_child->setArguments(args);
 
     //connect(m_process, &QProcess::readyRead, this, &LinuxDrive::onReadyRead);
-    connect(m_child, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(onRestoreFinished(int,QProcess::ExitStatus)));
+    connect(m_child, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(onRestoreFinished(int, QProcess::ExitStatus)));
 
     qDebug() << this->metaObject()->className() << "Starting" << m_child->program() << args;
 
@@ -362,8 +356,7 @@ void WinDrive::onFinished(int exitCode, QProcess::ExitStatus exitStatus) {
     if (exitCode == 0) {
         m_variant->setStatus(Variant::WRITING_FINISHED);
         Notifications::notify(tr("Finished!"), tr("Writing %1 was successful").arg(m_variant->fileName()));
-    }
-    else {
+    } else {
         m_variant->setErrorString(m_child->readAllStandardError().trimmed());
         m_variant->setStatus(Variant::WRITING_FAILED);
     }
@@ -404,16 +397,14 @@ void WinDrive::onReadyRead() {
         QString line = m_child->readLine().trimmed();
         if (line == "WRITE") {
             m_progress->setCurrent(0);
-            
+
             // Set progress bar max value at start of writing
             const QFile file(m_variant->filePath());
             m_progress->setMax(file.size());
-        }
-        else if (line == "DONE") {
+        } else if (line == "DONE") {
             m_variant->setStatus(Variant::WRITING_FINISHED);
             Notifications::notify(tr("Finished!"), tr("Writing %1 was successful").arg(m_variant->fileName()));
-        }
-        else {
+        } else {
             bool ok;
             qreal bytes = line.toLongLong(&ok);
             if (ok) {

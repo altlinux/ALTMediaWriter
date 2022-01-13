@@ -33,7 +33,7 @@ qreal Progress::leftSize() const {
 void Progress::setCurrent(const qreal newCurrent) {
     if (m_current != newCurrent) {
         m_current = newCurrent;
-        
+
         emit ratioChanged();
         emit leftSizeChanged();
     }

@@ -35,16 +35,16 @@ class ReleaseModel;
 class ReleaseFilterModel;
 
 class ReleaseManager : public QObject {
-Q_OBJECT
+    Q_OBJECT
     Q_PROPERTY(bool downloadingMetadata READ downloadingMetadata NOTIFY downloadingMetadataChanged)
 
-    Q_PROPERTY(Release* selected READ selected NOTIFY selectedChanged)
+    Q_PROPERTY(Release *selected READ selected NOTIFY selectedChanged)
     Q_PROPERTY(int selectedIndex READ selectedIndex WRITE setSelectedIndex NOTIFY selectedChanged)
 
     Q_PROPERTY(QStringList architectures READ architectures CONSTANT)
     Q_PROPERTY(QStringList fileTypeFilters READ fileTypeFilters CONSTANT)
 
-    Q_PROPERTY(ReleaseFilterModel* filter READ getFilterModel CONSTANT)
+    Q_PROPERTY(ReleaseFilterModel *filter READ getFilterModel CONSTANT)
 
 public:
     explicit ReleaseManager(QObject *parent = 0);

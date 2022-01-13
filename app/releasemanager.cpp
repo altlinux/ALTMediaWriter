@@ -21,18 +21,18 @@
  */
 
 #include "releasemanager.h"
-#include "release_model.h"
-#include "release.h"
-#include "file_type.h"
 #include "architecture.h"
-#include "variant.h"
+#include "file_type.h"
 #include "network.h"
+#include "release.h"
+#include "release_model.h"
+#include "variant.h"
 
 #include <yaml-cpp/yaml.h>
 
-#include <QtQml>
-#include <QApplication>
 #include <QAbstractEventDispatcher>
+#include <QApplication>
+#include <QtQml>
 
 QList<QString> load_list_from_file(const QString &filepath);
 QList<QString> get_sections_urls();
@@ -41,8 +41,7 @@ QString yml_get(const YAML::Node &node, const QString &key);
 
 ReleaseManager::ReleaseManager(QObject *parent)
 : QObject(parent)
-, m_downloadingMetadata(true)
-{
+, m_downloadingMetadata(true) {
     qDebug() << this->metaObject()->className() << "construction";
 
     sourceModel = new ReleaseModel(this);
@@ -58,7 +57,7 @@ ReleaseManager::ReleaseManager(QObject *parent)
 
 void ReleaseManager::downloadMetadata() {
     qDebug() << "Downloading metadata";
-    
+
     setDownloadingMetadata(true);
 
     const QList<QString> section_urls = get_sections_urls();
@@ -220,7 +219,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
         }
 
         const QString arch_string = yml_get(variantData, "arch");
-        const Architecture arch = [arch_string, url]() -> Architecture  {
+        const Architecture arch = [arch_string, url]() -> Architecture {
             if (!arch_string.isEmpty()) {
                 return architecture_from_string(arch_string);
             } else {
@@ -260,7 +259,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile) {
         // qDebug() << QUrl(url).fileName() << releaseName << architecture_name(arch) << board << file_type_name(fileType) << (live ? "LIVE" : "");
 
         // Find a release that has the same name as this variant
-        Release *release = [this, releaseName]() -> Release *{
+        Release *release = [this, releaseName]() -> Release * {
             for (int i = 0; i < sourceModel->rowCount(); i++) {
                 Release *release = sourceModel->get(i);
 
@@ -323,7 +322,7 @@ QStringList ReleaseManager::fileTypeFilters() const {
         }
 
         const QString name = file_type_name(type);
-        
+
         const QString filter = name + " " + extensions;
         filters.append(filter);
     }
@@ -340,7 +339,7 @@ void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
         if (!section["members"]) {
             continue;
         }
-        
+
         for (unsigned int i = 0; i < section["members"].size(); i++) {
             const YAML::Node releaseData = section["members"][i];
 
@@ -357,7 +356,7 @@ void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
                     return "_en";
                 }
             }();
-            
+
             const QString display_name = yml_get(releaseData, "name" + language);
             if (display_name.isEmpty()) {
                 qDebug() << "Release has no display name";
@@ -378,7 +377,7 @@ void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
 
             // NOTE: currently no screenshots
             const QStringList screenshots;
-            
+
             // Check that icon file exists
             const QString icon_name = yml_get(releaseData, "img");
             if (icon_name.isEmpty()) {
@@ -416,7 +415,7 @@ void ReleaseManager::loadReleases(const QList<QString> &sectionsFiles) {
                     return sourceModel->rowCount();
                 }
             }();
-            
+
             addReleaseToModel(index, release);
         }
     }

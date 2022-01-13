@@ -24,7 +24,7 @@
 
 #ifdef __linux
 
-# include <QDBusInterface>
+#include <QDBusInterface>
 
 void Notifications::notify(const QString &title, const QString &body) {
     QDBusInterface notifications("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications", QDBusConnection::sessionBus());
@@ -47,5 +47,3 @@ void Notifications::notify(const QString &title, const QString &body) {
 }
 
 #endif // _WIN32
-
-

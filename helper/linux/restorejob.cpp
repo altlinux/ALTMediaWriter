@@ -27,9 +27,9 @@
 #include <QThread>
 #include <QTimer>
 
-#include <QtDBus>
 #include <QDBusInterface>
 #include <QDBusUnixFileDescriptor>
+#include <QtDBus>
 
 typedef QHash<QString, QVariant> Properties;
 typedef QHash<QString, Properties> InterfacesAndProperties;
@@ -39,13 +39,12 @@ Q_DECLARE_METATYPE(InterfacesAndProperties)
 Q_DECLARE_METATYPE(DBusIntrospection)
 
 RestoreJob::RestoreJob(const QString &where)
-    : QObject(nullptr), where(where)
-{
+: QObject(nullptr)
+, where(where) {
     QTimer::singleShot(0, this, SLOT(work()));
 }
 
-void RestoreJob::work()
-{
+void RestoreJob::work() {
     QDBusInterface device("org.freedesktop.UDisks2", where, "org.freedesktop.UDisks2.Block", QDBusConnection::systemBus(), this);
     QString drivePath = qvariant_cast<QDBusObjectPath>(device.property("Drive")).path();
     QDBusInterface drive("org.freedesktop.UDisks2", drivePath, "org.freedesktop.UDisks2.Drive", QDBusConnection::systemBus(), this);
@@ -61,7 +60,7 @@ void RestoreJob::work()
                 QString currentDrivePath = qvariant_cast<QDBusObjectPath>(objects[i]["org.freedesktop.UDisks2.Block"]["Drive"]).path();
                 if (currentDrivePath == drivePath) {
                     QDBusInterface partition("org.freedesktop.UDisks2", i.path(), "org.freedesktop.UDisks2.Filesystem", QDBusConnection::systemBus());
-                    message = partition.call("Unmount", Properties { {"force", true} });
+                    message = partition.call("Unmount", Properties{{"force", true}});
                 }
             }
         }
@@ -85,7 +84,7 @@ void RestoreJob::work()
     }
     QString partitionPath = partitionReply.value().path();
     QDBusInterface partition("org.freedesktop.UDisks2", partitionPath, "org.freedesktop.UDisks2.Block", QDBusConnection::systemBus(), this);
-    QDBusReply<void> formatPartitionReply = partition.call("Format", "vfat", Properties { {"update-partition-type", true} });
+    QDBusReply<void> formatPartitionReply = partition.call("Format", "vfat", Properties{{"update-partition-type", true}});
     if (!formatPartitionReply.isValid() && formatPartitionReply.error().type() != QDBusError::NoReply) {
         err << formatPartitionReply.error().message() << "\n";
         err.flush();

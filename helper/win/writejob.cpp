@@ -23,12 +23,12 @@
 #include "writejob.h"
 
 #include <QCoreApplication>
-#include <QTimer>
-#include <QTextStream>
-#include <QProcess>
-#include <QFile>
-#include <QThread>
 #include <QDebug>
+#include <QFile>
+#include <QProcess>
+#include <QTextStream>
+#include <QThread>
+#include <QTimer>
 
 #include <io.h>
 #include <windows.h>
@@ -36,8 +36,8 @@
 #include <lzma.h>
 
 WriteJob::WriteJob(const QString &what, const QString &where)
-    : QObject(nullptr), what(what)
-{
+: QObject(nullptr)
+, what(what) {
     bool ok = false;
     this->where = where.toInt(&ok);
 
@@ -54,7 +54,7 @@ HANDLE WriteJob::openDrive(int physicalDriveNumber) {
 
     hVol = CreateFile(drivePath.toStdWString().c_str(), GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, 0, OPEN_EXISTING, 0, 0);
 
-    if( hVol == INVALID_HANDLE_VALUE ) {
+    if (hVol == INVALID_HANDLE_VALUE) {
         TCHAR message[256];
         FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), message, 255, NULL);
         err << tr("Couldn't open the drive for writing") << " (" << QString::fromWCharArray(message).trimmed() << ")\n";
@@ -72,8 +72,7 @@ bool WriteJob::lockDrive(HANDLE drive) {
     while (true) {
         if (!DeviceIoControl(drive, FSCTL_LOCK_VOLUME, NULL, 0, NULL, 0, &status, NULL)) {
             attempts++;
-        }
-        else {
+        } else {
             return true;
         }
 
@@ -168,8 +167,7 @@ bool WriteJob::writeBlock(HANDLE drive, OVERLAPPED *overlap, char *data, uint si
         DWORD Errorcode = GetLastError();
         if (Errorcode == ERROR_IO_PENDING) {
             WaitForSingleObject(overlap->hEvent, INFINITE);
-        }
-        else {
+        } else {
             TCHAR message[256];
             FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM, NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), message, 255, NULL);
             err << tr("Destination drive is not writable") << " (" << QString::fromWCharArray(message).trimmed() << ")\n";
@@ -186,7 +184,6 @@ bool WriteJob::writeBlock(HANDLE drive, OVERLAPPED *overlap, char *data, uint si
 
     return true;
 }
-
 
 void WriteJob::unlockDrive(HANDLE drive) {
     DWORD status;
@@ -288,7 +285,7 @@ bool WriteJob::writeCompressed(HANDLE drive) {
 
     while (true) {
         if (strm.avail_in == 0) {
-            qint64 len = file.read((char*) inBuffer, BLOCK_SIZE);
+            qint64 len = file.read((char *) inBuffer, BLOCK_SIZE);
             totalRead += len;
 
             strm.next_in = inBuffer;
@@ -317,20 +314,20 @@ bool WriteJob::writeCompressed(HANDLE drive) {
         }
         if (ret != LZMA_OK) {
             switch (ret) {
-            case LZMA_MEM_ERROR:
-                err << tr("There is not enough memory to decompress the file.");
-                break;
-            case LZMA_FORMAT_ERROR:
-            case LZMA_DATA_ERROR:
-            case LZMA_BUF_ERROR:
-                err << tr("The downloaded compressed file is corrupted.");
-                break;
-            case LZMA_OPTIONS_ERROR:
-                err << tr("Unsupported compression options.");
-                break;
-            default:
-                err << tr("Unknown decompression error.");
-                break;
+                case LZMA_MEM_ERROR:
+                    err << tr("There is not enough memory to decompress the file.");
+                    break;
+                case LZMA_FORMAT_ERROR:
+                case LZMA_DATA_ERROR:
+                case LZMA_BUF_ERROR:
+                    err << tr("The downloaded compressed file is corrupted.");
+                    break;
+                case LZMA_OPTIONS_ERROR:
+                    err << tr("Unsupported compression options.");
+                    break;
+                default:
+                    err << tr("Unknown decompression error.");
+                    break;
             }
             qApp->exit(4);
             CloseHandle(drive);

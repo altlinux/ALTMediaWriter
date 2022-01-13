@@ -26,7 +26,7 @@
 
 Release *ReleaseModel::get(const int index) const {
     QStandardItem *the_item = item(index);
-    
+
     if (the_item != nullptr) {
         QVariant variant = the_item->data();
         Release *release = variant.value<Release *>();
@@ -43,15 +43,13 @@ Release *ReleaseModel::get(const int index) const {
 // data role)
 QHash<int, QByteArray> ReleaseModel::roleNames() const {
     static const QHash<int, QByteArray> names = {
-        {Qt::UserRole + 1, "release"}
-    };
+        {Qt::UserRole + 1, "release"}};
 
     return names;
 }
 
 ReleaseFilterModel::ReleaseFilterModel(ReleaseModel *model_arg, QObject *parent)
-: QSortFilterProxyModel(parent)
-{
+: QSortFilterProxyModel(parent) {
     model = model_arg;
     frontPage = true;
     filterArch = Architecture_ALL;
@@ -65,7 +63,7 @@ bool ReleaseFilterModel::filterAcceptsRow(int source_row, const QModelIndex &) c
     if (release == nullptr) {
         return false;
     }
-    
+
     if (frontPage) {
         // Don't filter when on front page, just show 3 releases
         const bool on_front_page = (source_row < 3);

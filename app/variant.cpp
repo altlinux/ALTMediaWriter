@@ -21,17 +21,17 @@
  */
 
 #include "variant.h"
-#include "release.h"
-#include "image_download.h"
 #include "architecture.h"
+#include "drivemanager.h"
+#include "image_download.h"
 #include "network.h"
 #include "progress.h"
+#include "release.h"
 #include "releasemanager.h"
-#include "drivemanager.h"
 
+#include <QDir>
 #include <QFileInfo>
 #include <QStandardPaths>
-#include <QDir>
 
 Variant::Variant(QString url, Architecture arch, const FileType fileType, QString board, const bool live, QObject *parent)
 : QObject(parent)
@@ -43,9 +43,7 @@ Variant::Variant(QString url, Architecture arch, const FileType fileType, QStrin
 , m_arch(arch)
 , m_fileType(fileType)
 , m_status(Variant::PREPARING)
-, m_progress(new Progress(this))
-{
-
+, m_progress(new Progress(this)) {
 }
 
 Variant::Variant(const QString &path, QObject *parent)
@@ -58,9 +56,7 @@ Variant::Variant(const QString &path, QObject *parent)
 , m_arch(Architecture_UNKNOWN)
 , m_fileType(file_type_from_filename(path))
 , m_status(Variant::READY_FOR_WRITING)
-, m_progress(new Progress(this))
-{
-
+, m_progress(new Progress(this)) {
 }
 
 Architecture Variant::arch() const {
@@ -103,7 +99,7 @@ Progress *Variant::progress() {
 
 void Variant::setDelayedWrite(const bool value) {
     delayedWrite = value;
-    
+
     Drive *drive = DriveManager::instance()->selected();
     if (drive != nullptr) {
         if (value) {

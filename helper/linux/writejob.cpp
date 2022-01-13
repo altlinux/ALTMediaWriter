@@ -23,18 +23,17 @@
 #include "writejob.h"
 
 #include <QCoreApplication>
-#include <QTimer>
-#include <QTextStream>
-#include <QProcess>
-#include <QtGlobal>
-#include <QtDBus>
 #include <QDBusInterface>
 #include <QDBusUnixFileDescriptor>
 #include <QProcess>
+#include <QTextStream>
+#include <QTimer>
+#include <QtDBus>
+#include <QtGlobal>
 
-#include <unistd.h>
 #include <errno.h>
 #include <sys/fcntl.h>
+#include <unistd.h>
 
 #include <tuple>
 #include <utility>
@@ -61,8 +60,9 @@ public:
 };
 
 WriteJob::WriteJob(const QString &what, const QString &where)
-    : QObject(nullptr), what(what), where(where)
-{
+: QObject(nullptr)
+, what(what)
+, where(where) {
     qDBusRegisterMetaType<Properties>();
     qDBusRegisterMetaType<InterfacesAndProperties>();
     qDBusRegisterMetaType<DBusIntrospection>();
@@ -87,19 +87,18 @@ QDBusUnixFileDescriptor WriteJob::getDescriptor() {
                 QString currentDrivePath = qvariant_cast<QDBusObjectPath>(objects[i]["org.freedesktop.UDisks2.Block"]["Drive"]).path();
                 if (currentDrivePath == drivePath) {
                     QDBusInterface partition("org.freedesktop.UDisks2", i.path(), "org.freedesktop.UDisks2.Filesystem", QDBusConnection::systemBus());
-                    message = partition.call("Unmount", Properties { {"force", true} });
+                    message = partition.call("Unmount", Properties{{"force", true}});
                 }
             }
         }
-    }
-    else {
+    } else {
         err << message.errorMessage();
         err.flush();
         qApp->exit(2);
         return QDBusUnixFileDescriptor(-1);
     }
 
-    QDBusReply<QDBusUnixFileDescriptor> reply = device.callWithArgumentList(QDBus::Block, "OpenDevice", {"rw", Properties{{"flags", O_DIRECT | O_SYNC | O_CLOEXEC}, {"writable", true}}} );
+    QDBusReply<QDBusUnixFileDescriptor> reply = device.callWithArgumentList(QDBus::Block, "OpenDevice", {"rw", Properties{{"flags", O_DIRECT | O_SYNC | O_CLOEXEC}, {"writable", true}}});
     QDBusUnixFileDescriptor fd = reply.value();
 
     if (!fd.isValid()) {
@@ -173,20 +172,20 @@ bool WriteJob::writeCompressed(int fd) {
         }
         if (ret != LZMA_OK) {
             switch (ret) {
-            case LZMA_MEM_ERROR:
-                err << tr("There is not enough memory to decompress the file.");
-                break;
-            case LZMA_FORMAT_ERROR:
-            case LZMA_DATA_ERROR:
-            case LZMA_BUF_ERROR:
-                err << tr("The downloaded compressed file is corrupted.");
-                break;
-            case LZMA_OPTIONS_ERROR:
-                err << tr("Unsupported compression options.");
-                break;
-            default:
-                err << tr("Unknown decompression error.");
-                break;
+                case LZMA_MEM_ERROR:
+                    err << tr("There is not enough memory to decompress the file.");
+                    break;
+                case LZMA_FORMAT_ERROR:
+                case LZMA_DATA_ERROR:
+                case LZMA_BUF_ERROR:
+                    err << tr("The downloaded compressed file is corrupted.");
+                    break;
+                case LZMA_OPTIONS_ERROR:
+                    err << tr("Unsupported compression options.");
+                    break;
+                default:
+                    err << tr("Unknown decompression error.");
+                    break;
             }
             qApp->exit(4);
             return false;
@@ -218,7 +217,7 @@ bool WriteJob::writePlain(int fd) {
     const PageAlignedBuffer buffer;
     qint64 total = 0;
 
-    while(!inFile.atEnd()) {
+    while (!inFile.atEnd()) {
         qint64 len = inFile.read((char *) buffer.buffer, buffer.size);
         if (len < 0) {
             err << tr("Source image is not readable");
@@ -226,11 +225,11 @@ bool WriteJob::writePlain(int fd) {
             qApp->exit(3);
             return false;
         }
-try_again:
+    try_again:
         qint64 written = ::write(fd, buffer.buffer, len);
         if (written != len) {
             if (written < 0) {
-                if(errno == EIO) {
+                if (errno == EIO) {
                     static int skip_once = 0;
                     if (!skip_once) {
                         skip_once = 1;

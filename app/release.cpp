@@ -21,8 +21,8 @@
  */
 
 #include "release.h"
-#include "releasemanager.h"
 #include "architecture.h"
+#include "releasemanager.h"
 #include "variant.h"
 
 #include <QDebug>
@@ -35,13 +35,11 @@ Release::Release(const QString &name, const QString &display_name, const QString
 , m_description(description)
 , m_icon(icon)
 , m_screenshots(screenshots)
-, m_isCustom(false)
-{
-
+, m_isCustom(false) {
 }
 
 Release *Release::custom(QObject *parent) {
-    auto customRelease = new Release(QString(), tr("Custom image"), QT_TRANSLATE_NOOP("Release", "Pick a file from your drive(s)"), { QT_TRANSLATE_NOOP("Release", "<p>Here you can choose a OS image from your hard drive to be written to your flash disk</p><p>Currently it is only supported to write raw disk images (.iso or .bin)</p>") }, "qrc:/logo/custom", {}, parent);
+    auto customRelease = new Release(QString(), tr("Custom image"), QT_TRANSLATE_NOOP("Release", "Pick a file from your drive(s)"), {QT_TRANSLATE_NOOP("Release", "<p>Here you can choose a OS image from your hard drive to be written to your flash disk</p><p>Currently it is only supported to write raw disk images (.iso or .bin)</p>")}, "qrc:/logo/custom", {}, parent);
     customRelease->m_isCustom = true;
     customRelease->setLocalFile(QString());
 
@@ -75,13 +73,13 @@ void Release::addVariant(Variant *variant) {
 void Release::setLocalFile(const QUrl &fileUrl) {
     QString filePath = fileUrl.path();
 
-    // NOTE: on windows QUrl::path() leaves a leading
-    // slash like this: "/C:foo/bar", very fun!
-    #ifdef _WIN32
+// NOTE: on windows QUrl::path() leaves a leading
+// slash like this: "/C:foo/bar", very fun!
+#ifdef _WIN32
     if (filePath.startsWith("/")) {
         filePath.remove(0, 1);
     }
-    #endif // _WIN32
+#endif // _WIN32
 
     qDebug() << "Setting local file to: " << filePath;
 
@@ -94,10 +92,10 @@ void Release::setLocalFile(const QUrl &fileUrl) {
     // Add new variant
     auto customVariant = new Variant(filePath, this);
     m_variants.append(customVariant);
-    
+
     emit variantsChanged();
     emit selectedVariantChanged();
- }
+}
 
 QString Release::name() const {
     return m_name;

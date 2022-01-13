@@ -64,7 +64,7 @@ class Release : public QObject {
     Q_PROPERTY(QStringList screenshots READ screenshots CONSTANT)
 
     Q_PROPERTY(QQmlListProperty<Variant> variants READ variants NOTIFY variantsChanged)
-    Q_PROPERTY(Variant* variant READ selectedVariant NOTIFY selectedVariantChanged)
+    Q_PROPERTY(Variant *variant READ selectedVariant NOTIFY selectedVariantChanged)
     Q_PROPERTY(int variantIndex READ selectedVariantIndex WRITE setSelectedVariantIndex NOTIFY selectedVariantChanged)
 public:
     Release(const QString &name, const QString &displayName, const QString &summary, const QString &description, const QString &icon, const QStringList &screenshots, QObject *parent);
@@ -84,7 +84,7 @@ public:
     QStringList screenshots() const;
 
     QQmlListProperty<Variant> variants();
-    QList<Variant*> variantList() const;
+    QList<Variant *> variantList() const;
     Variant *selectedVariant() const;
     int selectedVariantIndex() const;
     void setSelectedVariantIndex(int o);
@@ -92,6 +92,7 @@ public:
 signals:
     void variantsChanged();
     void selectedVariantChanged();
+
 private:
     QString m_name;
     QString m_displayName;

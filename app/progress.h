@@ -34,7 +34,7 @@
  * @property leftSize how much size is left until completion 
  */
 class Progress : public QObject {
-Q_OBJECT
+    Q_OBJECT
     Q_PROPERTY(qreal ratio READ ratio NOTIFY ratioChanged)
     Q_PROPERTY(qreal leftSize READ leftSize NOTIFY leftSizeChanged)
 

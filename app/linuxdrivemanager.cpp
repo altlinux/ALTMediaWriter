@@ -24,14 +24,13 @@
 #include "progress.h"
 #include "variant.h"
 
-#include <QtDBus/QtDBus>
 #include <QDBusArgument>
+#include <QtDBus/QtDBus>
 
 #include "notifications.h"
 
 LinuxDriveProvider::LinuxDriveProvider(DriveManager *parent)
-    : DriveProvider(parent)
-{
+: DriveProvider(parent) {
     qDebug() << this->metaObject()->className() << "construction";
     qDBusRegisterMetaType<InterfacesAndProperties>();
     qDBusRegisterMetaType<DBusIntrospection>();
@@ -50,9 +49,9 @@ void LinuxDriveProvider::delayedConstruct() {
 
     connect(w, &QDBusPendingCallWatcher::finished, this, &LinuxDriveProvider::init);
 
-    QDBusConnection::systemBus().connect("org.freedesktop.UDisks2", 0, "org.freedesktop.DBus.Properties", "PropertiesChanged", this, SLOT(onPropertiesChanged(QString,QVariantMap,QStringList)));
-    QDBusConnection::systemBus().connect("org.freedesktop.UDisks2", "/org/freedesktop/UDisks2", "org.freedesktop.DBus.ObjectManager", "InterfacesAdded", this, SLOT(onInterfacesAdded(QDBusObjectPath,InterfacesAndProperties)));
-    QDBusConnection::systemBus().connect("org.freedesktop.UDisks2", "/org/freedesktop/UDisks2", "org.freedesktop.DBus.ObjectManager", "InterfacesRemoved", this, SLOT(onInterfacesRemoved(QDBusObjectPath,QStringList)));
+    QDBusConnection::systemBus().connect("org.freedesktop.UDisks2", 0, "org.freedesktop.DBus.Properties", "PropertiesChanged", this, SLOT(onPropertiesChanged(QString, QVariantMap, QStringList)));
+    QDBusConnection::systemBus().connect("org.freedesktop.UDisks2", "/org/freedesktop/UDisks2", "org.freedesktop.DBus.ObjectManager", "InterfacesAdded", this, SLOT(onInterfacesAdded(QDBusObjectPath, InterfacesAndProperties)));
+    QDBusConnection::systemBus().connect("org.freedesktop.UDisks2", "/org/freedesktop/UDisks2", "org.freedesktop.DBus.ObjectManager", "InterfacesRemoved", this, SLOT(onInterfacesRemoved(QDBusObjectPath, QStringList)));
 }
 
 QDBusObjectPath LinuxDriveProvider::handleObject(const QDBusObjectPath &object_path, const InterfacesAndProperties &interfaces_and_properties) {
@@ -63,7 +62,7 @@ QDBusObjectPath LinuxDriveProvider::handleObject(const QDBusObjectPath &object_p
     QDBusInterface driveInterface("org.freedesktop.UDisks2", driveId.path(), "org.freedesktop.UDisks2.Drive", QDBusConnection::systemBus());
 
     if ((numberRE.indexIn(object_path.path()) >= 0 && !object_path.path().startsWith("/org/freedesktop/UDisks2/block_devices/mmcblk")) ||
-            mmcRE.indexIn(object_path.path()) >= 0) {
+        mmcRE.indexIn(object_path.path()) >= 0) {
         return QDBusObjectPath();
     }
 
@@ -88,8 +87,7 @@ QDBusObjectPath LinuxDriveProvider::handleObject(const QDBusObjectPath &object_p
         } else {
             if (model.isEmpty()) {
                 name = vendor;
-            }
-            else {
+            } else {
                 name = QString("%1 %2").arg(vendor).arg(model);
             }
         }
@@ -171,11 +169,11 @@ void LinuxDriveProvider::onInterfacesRemoved(const QDBusObjectPath &object_path,
 
 void LinuxDriveProvider::onPropertiesChanged(const QString &interface_name, const QVariantMap &changed_properties, const QStringList &invalidated_properties) {
     Q_UNUSED(interface_name)
-    const QSet<QString> watchedProperties = { "MediaAvailable", "Size" };
+    const QSet<QString> watchedProperties = {"MediaAvailable", "Size"};
 
     // not ideal but it works alright without a huge lot of code
     if (!changed_properties.keys().toSet().intersect(watchedProperties).isEmpty() ||
-            !invalidated_properties.toSet().intersect(watchedProperties).isEmpty()) {
+        !invalidated_properties.toSet().intersect(watchedProperties).isEmpty()) {
         QDBusPendingCall pcall = m_objManager->asyncCall("GetManagedObjects");
         QDBusPendingCallWatcher *w = new QDBusPendingCallWatcher(pcall, this);
 
@@ -184,7 +182,8 @@ void LinuxDriveProvider::onPropertiesChanged(const QString &interface_name, cons
 }
 
 LinuxDrive::LinuxDrive(LinuxDriveProvider *parent, QString device, QString name, uint64_t size, bool isoLayout)
-    : Drive(parent, name, size, isoLayout), m_device(device) {
+: Drive(parent, name, size, isoLayout)
+, m_device(device) {
 }
 
 LinuxDrive::~LinuxDrive() {
@@ -223,7 +222,7 @@ bool LinuxDrive::write(Variant *variant) {
     m_process->setArguments(args);
 
     connect(m_process, &QProcess::readyRead, this, &LinuxDrive::onReadyRead);
-    connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(onFinished(int,QProcess::ExitStatus)));
+    connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(onFinished(int, QProcess::ExitStatus)));
 #if QT_VERSION >= 0x050600
     // TODO check if this is actually necessary - it should work just fine even without it
     connect(m_process, &QProcess::errorOccurred, this, &LinuxDrive::onErrorOccurred);
@@ -264,7 +263,7 @@ void LinuxDrive::restore() {
         setRestoreStatus(RESTORE_ERROR);
         return;
     }
-    
+
     QStringList args;
     args << "restore";
     args << m_device;
@@ -272,7 +271,7 @@ void LinuxDrive::restore() {
     m_process->setArguments(args);
 
     connect(m_process, &QProcess::readyRead, this, &LinuxDrive::onReadyRead);
-    connect(m_process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(onRestoreFinished(int,QProcess::ExitStatus)));
+    connect(m_process, SIGNAL(finished(int, QProcess::ExitStatus)), this, SLOT(onRestoreFinished(int, QProcess::ExitStatus)));
 
     m_process->start(QIODevice::ReadOnly);
 }
@@ -295,12 +294,10 @@ void LinuxDrive::onReadyRead() {
             m_progress->setMax(file.size());
 
             m_progress->setCurrent(0);
-        }
-        else if (line == "DONE") {
+        } else if (line == "DONE") {
             m_variant->setStatus(Variant::WRITING_FINISHED);
             Notifications::notify(tr("Finished!"), tr("Writing %1 was successful").arg(m_variant->fileName()));
-        }
-        else {
+        } else {
             bool ok = false;
             qreal val = line.toULongLong(&ok);
             if (ok && val > 0.0) {
@@ -325,8 +322,7 @@ void LinuxDrive::onFinished(int exitCode, QProcess::ExitStatus status) {
             m_variant->setErrorString(errorMessage);
             m_variant->setStatus(Variant::WRITING_FAILED);
         }
-    }
-    else {
+    } else {
         Notifications::notify(tr("Finished!"), tr("Writing %1 was successful").arg(m_variant->fileName()));
         m_variant->setStatus(Variant::WRITING_FINISHED);
     }
@@ -347,8 +343,7 @@ void LinuxDrive::onRestoreFinished(int exitCode, QProcess::ExitStatus status) {
             qDebug() << "Drive restoration failed";
         }
         m_restoreStatus = RESTORE_ERROR;
-    }
-    else {
+    } else {
         m_restoreStatus = RESTORED;
     }
     if (m_process) {

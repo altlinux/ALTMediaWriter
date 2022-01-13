@@ -1,8 +1,8 @@
 
 #include "file_type.h"
 
-#include <QObject>
 #include <QFileInfo>
+#include <QObject>
 
 const QList<FileType> file_type_all = []() {
     QList<FileType> out;

@@ -25,7 +25,7 @@
 #include <QObject>
 
 const QList<Architecture> architecture_all = []() {
-    QList<Architecture> out; 
+    QList<Architecture> out;
 
     for (int i = 0; i < Architecture_COUNT; i++) {
         const Architecture architecture = (Architecture) i;
@@ -83,7 +83,7 @@ Architecture architecture_from_string(const QString &string) {
 Architecture architecture_from_filename(const QString &filename) {
     for (const Architecture architecture : architecture_all) {
         const QStringList strings = architecture_strings(architecture);
-        
+
         for (const QString &string : strings) {
             if (filename.contains(string, Qt::CaseInsensitive)) {
                 return architecture;

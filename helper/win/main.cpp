@@ -36,11 +36,9 @@ int main(int argc, char *argv[]) {
 
     if (app.arguments().count() == 3 && app.arguments()[1] == "restore") {
         new RestoreJob(app.arguments()[2]);
-    }
-    else if (app.arguments().count() == 4 && app.arguments()[1] == "write") {
+    } else if (app.arguments().count() == 4 && app.arguments()[1] == "write") {
         new WriteJob(app.arguments()[2], app.arguments()[3]);
-    } 
-    else {
+    } else {
         QTextStream err(stderr);
         err << "Helper: Wrong arguments entered\n";
         return 1;

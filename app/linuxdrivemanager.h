@@ -25,10 +25,10 @@
 
 #include "drivemanager.h"
 
+#include <QDBusArgument>
 #include <QDBusInterface>
 #include <QDBusObjectPath>
 #include <QDBusPendingCall>
-#include <QDBusArgument>
 #include <QProcess>
 
 typedef QHash<QString, QVariantMap> InterfacesAndProperties;
@@ -56,8 +56,8 @@ private:
     QDBusObjectPath handleObject(const QDBusObjectPath &path, const InterfacesAndProperties &interface);
 
 private:
-    QDBusInterface *m_objManager { nullptr };
-    QHash<QDBusObjectPath, LinuxDrive*> m_drives;
+    QDBusInterface *m_objManager{nullptr};
+    QHash<QDBusObjectPath, LinuxDrive *> m_drives;
 };
 
 class LinuxDrive : public Drive {
@@ -82,7 +82,7 @@ private slots:
 private:
     QString m_device;
 
-    QProcess *m_process { nullptr };
+    QProcess *m_process{nullptr};
 };
 
 #endif // LINUXDRIVEMANAGER_H
