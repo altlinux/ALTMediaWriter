@@ -27,6 +27,7 @@
 
 #include <QDebug>
 #include <QTimer>
+#include <QFile>
 
 #include <windows.h>
 
@@ -117,7 +118,7 @@ QSet<int> WinDriveProvider::findPhysicalDrive(const char driveLetter) {
     return ret;
 }
 
-bool WinDriveProvider::describeDrive(const int driveNumber, const bool hasLetter, const bool verbose) {
+bool WinDriveProvider::describeDrive(const int nDriveNumber, const bool hasLetter, const bool verbose) {
     BOOL removable;
     QString productVendor;
     QString productId;
