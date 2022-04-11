@@ -1,7 +1,6 @@
 
 #include "file_type.h"
 
-#include <QFileInfo>
 #include <QObject>
 
 const QList<FileType> file_type_all = []() {
@@ -48,20 +47,25 @@ QString file_type_name(const FileType file_type) {
 }
 
 FileType file_type_from_filename(const QString &filename) {
-    const QFileInfo file_info = QFileInfo(filename);
-    const QString file_suffix = file_info.completeSuffix();
+    FileType matching_type = FileType_UNKNOWN;
+    QString matching_string = QString();
 
     for (const FileType &type : file_type_all) {
         const QStringList strings = file_type_strings(type);
 
-        const bool match = strings.contains(file_suffix);
+        for (const QString string : strings) {
+            // NOTE: need to select the longest string for cases like ".tar" and "recovery.tar"
+            const bool string_matches = filename.endsWith(string, Qt::CaseInsensitive);
+            const bool this_string_is_longer = (string.length() > matching_string.length());
 
-        if (match) {
-            return type;
+            if (string_matches && this_string_is_longer) {
+                matching_type = type;
+                matching_string = string;
+            }
         }
     }
 
-    return FileType_UNKNOWN;
+    return matching_type;
 }
 
 bool file_type_can_write(const FileType file_type) {
