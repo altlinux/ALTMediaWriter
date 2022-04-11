@@ -1,9 +1,5 @@
 # How to update assets
 
-## Update urls
-
-Update URLs in "sections_urls.txt" and "images_urls.txt". Make sure to delete any removed urls.
-
 ## Update logos
 
 Update "i/logo" folder to match the same folder from getalt.

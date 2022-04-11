@@ -1,6 +1,0 @@
-http://getalt.org/_data/images/p9-education.yml
-http://getalt.org/_data/images/p9-server-v.yml
-http://getalt.org/_data/images/p9-server.yml
-http://getalt.org/_data/images/p9-simply.yml
-http://getalt.org/_data/images/p9-workstation.yml
-http://getalt.org/_data/images/p9-kworkstation.yml

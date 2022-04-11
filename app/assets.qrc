@@ -12,7 +12,5 @@
 
     <qresource>
         <file alias="focusRect">assets/focusrect.png</file>
-        <file alias="sections_urls.txt">assets/sections_urls.txt</file>
-        <file alias="images_urls.txt">assets/images_urls.txt</file>
     </qresource>
 </RCC>
