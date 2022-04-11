@@ -23,12 +23,31 @@
 #ifndef NETWORK_H
 #define NETWORK_H
 
-#include <QString>
+#include <QObject>
+#include <QHash>
 
 class QNetworkAccessManager;
 class QNetworkReply;
 
 extern QNetworkAccessManager *network_access_manager;
+
+class NetworkReplyGroup final : public QObject {
+    Q_OBJECT
+
+public:
+    NetworkReplyGroup(const QList<QString> &url_list, QObject *parent);
+    ~NetworkReplyGroup();
+
+    QHash<QString, QNetworkReply *> get_reply_list() const;
+
+signals:
+    void finished();
+
+private:
+    QHash<QString, QNetworkReply *> reply_list;
+
+    void on_reply_finished();
+};
 
 QNetworkReply *makeNetworkRequest(const QString &url, const int time_out_millis = 0);
 

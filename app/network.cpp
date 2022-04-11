@@ -28,6 +28,59 @@
 
 QNetworkAccessManager *network_access_manager = new QNetworkAccessManager();
 
+NetworkReplyGroup::NetworkReplyGroup(const QList<QString> &url_list, QObject *parent)
+: QObject(parent) {
+    reply_list = [&]() {
+        QHash<QString, QNetworkReply *> out;
+        for (const QString &url : url_list) {
+            QNetworkReply *reply = makeNetworkRequest(url, 5000);
+
+            out[url] = reply;
+        }
+
+        return out;
+    }();
+
+    for (QNetworkReply *reply : reply_list) {
+        connect(
+            reply, &QNetworkReply::finished,
+            this, &NetworkReplyGroup::on_reply_finished);
+    }
+}
+
+NetworkReplyGroup::~NetworkReplyGroup() {
+    // NOTE: network replies have to be deleted using
+    // deleteLater(), deleting using normal delete
+    // causes problems
+    for (QNetworkReply *reply : reply_list) {
+        reply->deleteLater();
+    }
+}
+
+QHash<QString, QNetworkReply *> NetworkReplyGroup::get_reply_list() const {
+    return reply_list;
+}
+
+// Emit finished() signal when all requests are
+// finished
+void NetworkReplyGroup::on_reply_finished() {
+    const bool all_finished = [&]() {
+        for (const QNetworkReply *reply : reply_list) {
+            const bool finished = reply->isFinished();
+
+            if (!finished) {
+                return false;
+            }
+        }
+
+        return true;
+    }();
+
+    if (all_finished) {
+        emit finished();
+    }
+}
+
 QNetworkReply *makeNetworkRequest(const QString &url, const int time_out_millis) {
     QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);

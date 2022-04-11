@@ -67,41 +67,29 @@ void ReleaseManager::downloadMetadata() {
     const QList<QString> image_urls = get_images_urls();
     qDebug() << "image_urls = " << image_urls;
 
-    // Create requests to download all release files and
-    // collect the replies
-    const QHash<QString, QNetworkReply *> replies = [section_urls, image_urls]() {
-        QHash<QString, QNetworkReply *> out;
-        const QList<QString> all_urls = section_urls + image_urls;
+    const QList<QString> all_urls = section_urls + image_urls;
 
-        for (const QString &url : all_urls) {
-            QNetworkReply *reply = makeNetworkRequest(url, 5000);
+    auto reply_group = new NetworkReplyGroup(all_urls, this);
 
-            out[url] = reply;
-        }
-
-        return out;
-    }();
-
-    // This will run when all the replies are finished (or
-    // technically, the last one)
-    const auto onReplyFinished = [this, replies, section_urls, image_urls]() {
-        // Only proceed if this is the last reply
-        for (const QNetworkReply *reply : replies) {
-            if (!reply->isFinished()) {
-                return;
-            }
-        }
-
+    auto on_finished = [this, section_urls, image_urls, reply_group]() {
+        const QHash<QString, QNetworkReply *> replies = reply_group->get_reply_list();
+        
         // Check that all replies suceeded
         // If not, retry
         for (const QNetworkReply *reply : replies.values()) {
-            // NOTE: ignore ContentNotFoundError since it can happen if one of the files was moved or renamed
+            // NOTE: ignore ContentNotFoundError for
+            // metadata since it can happen if one of
+            // the files was moved or renamed. In that
+            // case it's fine to process other
+            // downloads and ignore this failed one.
             const QNetworkReply::NetworkError error = reply->error();
             const bool download_failed = (error != QNetworkReply::NoError && error != QNetworkReply::ContentNotFoundError);
 
             if (download_failed) {
                 qDebug() << "Failed to download metadata:" << reply->errorString() << reply->error() << "Retrying in 10 seconds.";
                 QTimer::singleShot(10000, this, &ReleaseManager::downloadMetadata);
+
+                delete reply_group;
 
                 return;
             }
@@ -152,18 +140,14 @@ void ReleaseManager::downloadMetadata() {
             loadVariants(imagesFile);
         }
 
-        for (QNetworkReply *reply : replies.values()) {
-            reply->deleteLater();
-        }
+        delete reply_group;
 
         setDownloadingMetadata(false);
     };
 
-    for (QNetworkReply *reply : replies) {
-        connect(
-            reply, &QNetworkReply::finished,
-            onReplyFinished);
-    }
+    connect(
+        reply_group, &NetworkReplyGroup::finished,
+        this, on_finished);
 }
 
 void ReleaseManager::setDownloadingMetadata(const bool value) {
