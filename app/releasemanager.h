@@ -33,6 +33,7 @@
 class Release;
 class ReleaseModel;
 class ReleaseFilterModel;
+class NetworkReplyGroup;
 
 class ReleaseManager : public QObject {
     Q_OBJECT
@@ -69,12 +70,14 @@ private:
     ReleaseFilterModel *filterModel;
     int m_selectedIndex;
     bool m_downloadingMetadata;
+    NetworkReplyGroup *metadata_reply_group;
 
     void loadVariants(const QString &variantsFile);
     void setDownloadingMetadata(const bool value);
     void downloadMetadata();
     void loadReleases(const QList<QString> &sectionsFiles);
     void addReleaseToModel(const int index, Release *release);
+    void onMetadataDownloaded();
 };
 
 #endif // RELEASEMANAGER_H

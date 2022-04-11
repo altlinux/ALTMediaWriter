@@ -69,85 +69,91 @@ void ReleaseManager::downloadMetadata() {
 
     const QList<QString> all_urls = section_urls + image_urls;
 
-    auto reply_group = new NetworkReplyGroup(all_urls, this);
-
-    auto on_finished = [this, section_urls, image_urls, reply_group]() {
-        const QHash<QString, QNetworkReply *> replies = reply_group->get_reply_list();
-        
-        // Check that all replies suceeded
-        // If not, retry
-        for (const QNetworkReply *reply : replies.values()) {
-            // NOTE: ignore ContentNotFoundError for
-            // metadata since it can happen if one of
-            // the files was moved or renamed. In that
-            // case it's fine to process other
-            // downloads and ignore this failed one.
-            const QNetworkReply::NetworkError error = reply->error();
-            const bool download_failed = (error != QNetworkReply::NoError && error != QNetworkReply::ContentNotFoundError);
-
-            if (download_failed) {
-                qDebug() << "Failed to download metadata:" << reply->errorString() << reply->error() << "Retrying in 10 seconds.";
-                QTimer::singleShot(10000, this, &ReleaseManager::downloadMetadata);
-
-                delete reply_group;
-
-                return;
-            }
-        }
-
-        qDebug() << "Downloaded metadata, loading it";
-
-        // Collect results
-        QHash<QString, QString> url_to_file;
-
-        for (const QString &url : replies.keys()) {
-            QNetworkReply *reply = replies[url];
-
-            if (reply->error() == QNetworkReply::NoError) {
-                const QByteArray bytes = reply->readAll();
-                url_to_file[url] = QString(bytes);
-            } else {
-                qDebug() << "Failed to download metadata from" << url;
-                qDebug() << "Error:" << reply->error();
-            }
-        }
-
-        const QList<QString> sectionsFiles = [section_urls, url_to_file]() {
-            QList<QString> out;
-            for (const QString &section_url : section_urls) {
-                const QString section = url_to_file[section_url];
-                out.append(section);
-            }
-            return out;
-        }();
-
-        qDebug() << "Loading releases";
-
-        loadReleases(sectionsFiles);
-
-        const QList<QString> imagesFiles = [image_urls, url_to_file]() {
-            QList<QString> out;
-            for (const QString &image_url : image_urls) {
-                const QString image = url_to_file[image_url];
-                out.append(image);
-            }
-            return out;
-        }();
-
-        qDebug() << "Loading variants";
-
-        for (const QString &imagesFile : imagesFiles) {
-            loadVariants(imagesFile);
-        }
-
-        delete reply_group;
-
-        setDownloadingMetadata(false);
-    };
+    metadata_reply_group = new NetworkReplyGroup(all_urls, this);
 
     connect(
-        reply_group, &NetworkReplyGroup::finished,
-        this, on_finished);
+        metadata_reply_group, &NetworkReplyGroup::finished,
+        this, &ReleaseManager::onMetadataDownloaded);
+}
+
+void ReleaseManager::onMetadataDownloaded() {
+    const QHash<QString, QNetworkReply *> replies = metadata_reply_group->get_reply_list();
+    
+    // Check that all replies suceeded
+    // If not, retry
+    for (const QNetworkReply *reply : replies.values()) {
+        // NOTE: ignore ContentNotFoundError for
+        // metadata since it can happen if one of
+        // the files was moved or renamed. In that
+        // case it's fine to process other
+        // downloads and ignore this failed one.
+        const QNetworkReply::NetworkError error = reply->error();
+        const bool download_failed = (error != QNetworkReply::NoError && error != QNetworkReply::ContentNotFoundError);
+
+        if (download_failed) {
+            qDebug() << "Failed to download metadata:" << reply->errorString() << reply->error() << "Retrying in 10 seconds.";
+            QTimer::singleShot(10000, this, &ReleaseManager::downloadMetadata);
+
+            delete metadata_reply_group;
+
+            return;
+        }
+    }
+
+    qDebug() << "Downloaded metadata, loading it";
+
+    // Collect results
+    QHash<QString, QString> url_to_file;
+
+    for (const QString &url : replies.keys()) {
+        QNetworkReply *reply = replies[url];
+
+        if (reply->error() == QNetworkReply::NoError) {
+            const QByteArray bytes = reply->readAll();
+            url_to_file[url] = QString(bytes);
+        } else {
+            qDebug() << "Failed to download metadata from" << url;
+            qDebug() << "Error:" << reply->error();
+        }
+    }
+
+    const QList<QString> sectionsFiles = [&]() {
+        QList<QString> out;
+
+        const QList<QString> section_urls = get_sections_urls();
+
+        for (const QString &section_url : section_urls) {
+            const QString section = url_to_file[section_url];
+            out.append(section);
+        }
+        return out;
+    }();
+
+    qDebug() << "Loading releases";
+
+    loadReleases(sectionsFiles);
+
+    const QList<QString> imagesFiles = [&]() {
+        QList<QString> out;
+
+        const QList<QString> image_urls = get_images_urls();
+
+        for (const QString &image_url : image_urls) {
+            const QString image = url_to_file[image_url];
+            out.append(image);
+        }
+        return out;
+    }();
+
+    qDebug() << "Loading variants";
+
+    for (const QString &imagesFile : imagesFiles) {
+        loadVariants(imagesFile);
+    }
+
+    delete metadata_reply_group;
+
+    setDownloadingMetadata(false);
 }
 
 void ReleaseManager::setDownloadingMetadata(const bool value) {
