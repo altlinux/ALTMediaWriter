@@ -34,14 +34,19 @@
 #include <QApplication>
 #include <QtQml>
 
+const QString METADATA_URLS_HOST = "http://getalt.org";
+const QString METADATA_URLS_BACKUP_HOST = "http://kvel2d.github.io/posts";
+
 QList<QString> load_list_from_file(const QString &filepath);
-QList<QString> get_sections_urls();
-QList<QString> get_images_urls();
 QString yml_get(const YAML::Node &node, const QString &key);
+QList<QString> get_metadata_urls_list(const QString &host);
 
 ReleaseManager::ReleaseManager(QObject *parent)
 : QObject(parent) {
     m_downloadingMetadata = true;
+    metadata_urls_reply_group = nullptr;
+    metadata_urls_backup_reply_group = nullptr;
+    metadata_reply_group = nullptr;
 
     qDebug() << this->metaObject()->className() << "construction";
 
@@ -53,19 +58,201 @@ ReleaseManager::ReleaseManager(QObject *parent)
     addReleaseToModel(0, customRelease);
     setSelectedIndex(0);
 
-    QTimer::singleShot(0, this, &ReleaseManager::downloadMetadata);
+    QTimer::singleShot(0, this, &ReleaseManager::downloadMetadataUrls);
+}
+
+void ReleaseManager::downloadMetadataUrls() {
+    qDebug() << "Downloading metadata urls";
+
+    setDownloadingMetadata(true);
+
+    const QList<QString> url_list = get_metadata_urls_list(METADATA_URLS_HOST);
+
+    metadata_urls_reply_group = new NetworkReplyGroup(url_list, this);
+
+    connect(
+        metadata_urls_reply_group, &NetworkReplyGroup::finished,
+        this, &ReleaseManager::onMetadataUrlsDownloaded);
+}
+
+// TODO: remove usage of backup when metadata urls
+// start getting hosted on getalt
+//
+// NOTE: code duplication for downloading metadata urls
+// is ok because this code is temporary and will be
+// completely removed in the future
+void ReleaseManager::onMetadataUrlsDownloaded() {
+    const QHash<QString, QNetworkReply *> replies = metadata_urls_reply_group->get_reply_list();
+    
+    // Check that all replies suceeded
+    // If not, retry
+    for (const QNetworkReply *reply : replies.values()) {
+        // NOTE: ignore ContentNotFoundError for
+        // metadata since it can happen if one of
+        // the files was moved or renamed. In that
+        // case it's fine to process other
+        // downloads and ignore this failed one.
+        const QNetworkReply::NetworkError error = reply->error();
+        const bool download_failed = (error != QNetworkReply::NoError);
+
+        // Attempt to download from backup host if this
+        // one fails
+        // 
+        // TODO: when usage of backup is removed, fail
+        // and restart here
+        if (download_failed) {
+            qDebug() << "Failed to download metadata urls:" << reply->errorString() << reply->error() << "Downloading from backup";
+            QTimer::singleShot(100, this, &ReleaseManager::downloadMetadataUrlsBackup);
+
+            delete metadata_urls_reply_group;
+            metadata_urls_reply_group = nullptr;
+
+            return;
+        }
+    }
+
+    qDebug() << "Downloaded metadata urls";
+    qDebug() << "Saving metadata urls";
+
+    // Collect results
+    QHash<QString, QList<QString>> url_to_data;
+
+    for (const QString &url : replies.keys()) {
+        QNetworkReply *reply = replies[url];
+
+        if (reply->error() == QNetworkReply::NoError) {
+            url_to_data[url] = [&]() {
+                const QByteArray bytes = reply->readAll();
+                const QString string = QString(bytes);
+                QList<QString> out = string.split("\n");
+                // Remove last empty line, if there's one
+                out.removeAll("");
+
+                return out;
+            }();
+        } else {
+            qDebug() << "Failed to download metadata from" << url;
+            qDebug() << "Error:" << reply->error();
+        }
+    }
+
+    const QList<QString> url_list = get_metadata_urls_list(METADATA_URLS_HOST);
+    const QString section_metadata_url = url_list[0];
+    const QString image_metadata_url = url_list[1];
+    
+    if (url_to_data.contains(section_metadata_url)) {
+        section_urls = url_to_data[section_metadata_url];
+    }
+    if (url_to_data.contains(image_metadata_url)) {
+        image_urls = url_to_data[image_metadata_url];
+    }
+
+    const bool success = (!section_urls.isEmpty() && !image_urls.isEmpty());
+
+    delete metadata_urls_reply_group;
+    metadata_urls_reply_group = nullptr;
+
+    if (success) {
+        qDebug() << "Processed metadata urls";
+        qDebug() << "section_urls = " << section_urls;
+        qDebug() << "image_urls = " << image_urls;
+
+        downloadMetadata();
+    } else {
+        qDebug() << "Metadata urls are invalid or empty";
+    }
+}
+
+void ReleaseManager::downloadMetadataUrlsBackup() {
+    qDebug() << "Downloading metadata urls backup";
+
+    const QList<QString> url_list = get_metadata_urls_list(METADATA_URLS_BACKUP_HOST);
+    
+    metadata_urls_backup_reply_group = new NetworkReplyGroup(url_list, this);
+
+    connect(
+        metadata_urls_backup_reply_group, &NetworkReplyGroup::finished,
+        this, &ReleaseManager::onMetadataUrlsBackupDownloaded);
+}
+
+void ReleaseManager::onMetadataUrlsBackupDownloaded() {
+    const QHash<QString, QNetworkReply *> replies = metadata_urls_backup_reply_group->get_reply_list();
+    
+    // Check that all replies suceeded
+    // If not, retry
+    for (const QNetworkReply *reply : replies.values()) {
+        // NOTE: ignore ContentNotFoundError for
+        // metadata since it can happen if one of
+        // the files was moved or renamed. In that
+        // case it's fine to process other
+        // downloads and ignore this failed one.
+        const QNetworkReply::NetworkError error = reply->error();
+        const bool download_failed = (error != QNetworkReply::NoError);
+
+        if (download_failed) {
+            qDebug() << "Failed to download metadata urls:" << reply->errorString() << reply->error() << "Retrying in 10 seconds.";
+            QTimer::singleShot(10000, this, &ReleaseManager::downloadMetadataUrls);
+
+            delete metadata_urls_backup_reply_group;
+            metadata_urls_backup_reply_group = nullptr;
+
+            return;
+        }
+    }
+
+    qDebug() << "Downloaded metadata urls";
+    qDebug() << "Saving metadata urls";
+
+    // Collect results
+    QHash<QString, QList<QString>> url_to_data;
+
+    for (const QString &url : replies.keys()) {
+        QNetworkReply *reply = replies[url];
+
+        if (reply->error() == QNetworkReply::NoError) {
+            url_to_data[url] = [&]() {
+                const QByteArray bytes = reply->readAll();
+                const QString string = QString(bytes);
+                QList<QString> out = string.split("\n");
+                out.removeAll("");
+
+                return out;
+            }();
+        } else {
+            qDebug() << "Failed to download metadata from" << url;
+            qDebug() << "Error:" << reply->error();
+        }
+    }
+
+    const QList<QString> url_list = get_metadata_urls_list(METADATA_URLS_BACKUP_HOST);
+    const QString section_metadata_url = url_list[0];
+    const QString image_metadata_url = url_list[1];
+    
+    if (url_to_data.contains(section_metadata_url)) {
+        section_urls = url_to_data[section_metadata_url];
+    }
+    if (url_to_data.contains(image_metadata_url)) {
+        image_urls = url_to_data[image_metadata_url];
+    }
+
+    const bool success = (!section_urls.isEmpty() && !image_urls.isEmpty());
+
+    delete metadata_urls_backup_reply_group;
+    metadata_urls_backup_reply_group = nullptr;
+
+    if (success) {
+        qDebug() << "Processed metadata urls";
+        qDebug() << "section_urls = " << section_urls;
+        qDebug() << "image_urls = " << image_urls;
+
+        downloadMetadata();
+    } else {
+        qDebug() << "Metadata urls are invalid or empty";
+    }
 }
 
 void ReleaseManager::downloadMetadata() {
     qDebug() << "Downloading metadata";
-
-    setDownloadingMetadata(true);
-
-    const QList<QString> section_urls = get_sections_urls();
-    qDebug() << "section_urls = " << section_urls;
-
-    const QList<QString> image_urls = get_images_urls();
-    qDebug() << "image_urls = " << image_urls;
 
     const QList<QString> all_urls = section_urls + image_urls;
 
@@ -95,6 +282,7 @@ void ReleaseManager::onMetadataDownloaded() {
             QTimer::singleShot(10000, this, &ReleaseManager::downloadMetadata);
 
             delete metadata_reply_group;
+            metadata_reply_group = nullptr;
 
             return;
         }
@@ -120,8 +308,6 @@ void ReleaseManager::onMetadataDownloaded() {
     const QList<QString> sectionsFiles = [&]() {
         QList<QString> out;
 
-        const QList<QString> section_urls = get_sections_urls();
-
         for (const QString &section_url : section_urls) {
             const QString section = url_to_file[section_url];
             out.append(section);
@@ -135,8 +321,6 @@ void ReleaseManager::onMetadataDownloaded() {
 
     const QList<QString> imagesFiles = [&]() {
         QList<QString> out;
-
-        const QList<QString> image_urls = get_images_urls();
 
         for (const QString &image_url : image_urls) {
             const QString image = url_to_file[image_url];
@@ -152,6 +336,7 @@ void ReleaseManager::onMetadataDownloaded() {
     }
 
     delete metadata_reply_group;
+    metadata_reply_group = nullptr;
 
     setDownloadingMetadata(false);
 }
@@ -442,18 +627,6 @@ QList<QString> load_list_from_file(const QString &filepath) {
     return list;
 }
 
-QList<QString> get_sections_urls() {
-    static QList<QString> sections_urls = load_list_from_file(":/sections_urls.txt");
-
-    return sections_urls;
-}
-
-QList<QString> get_images_urls() {
-    static QList<QString> images_urls = load_list_from_file(":/images_urls.txt");
-
-    return images_urls;
-}
-
 QString yml_get(const YAML::Node &node, const QString &key) {
     const std::string key_std = key.toStdString();
     const YAML::Node value_yml = node[key_std];
@@ -468,4 +641,18 @@ QString yml_get(const YAML::Node &node, const QString &key) {
     value.replace("\n", " ");
 
     return value;
+}
+
+// TODO: this f-n might become unneeded when usage of
+// backup host is removed
+QList<QString> get_metadata_urls_list(const QString &host) {
+    const QString SECTION_URL_LIST_FILENAME = "altmediawriter_section_url_list.txt";
+    const QString IMAGE_URL_LIST_FILENAME = "altmediawriter_image_url_list.txt";
+        
+    const QList<QString> out = {
+        QString("%1/%2").arg(host, SECTION_URL_LIST_FILENAME),
+        QString("%1/%2").arg(host, IMAGE_URL_LIST_FILENAME),
+    };
+
+    return out;
 }

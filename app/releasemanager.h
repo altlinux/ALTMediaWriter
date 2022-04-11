@@ -71,9 +71,17 @@ private:
     int m_selectedIndex;
     bool m_downloadingMetadata;
     NetworkReplyGroup *metadata_reply_group;
+    NetworkReplyGroup *metadata_urls_reply_group;
+    NetworkReplyGroup *metadata_urls_backup_reply_group;
+    QList<QString> section_urls;
+    QList<QString> image_urls;
 
     void loadVariants(const QString &variantsFile);
     void setDownloadingMetadata(const bool value);
+    void downloadMetadataUrls();
+    void onMetadataUrlsDownloaded();
+    void downloadMetadataUrlsBackup();
+    void onMetadataUrlsBackupDownloaded();
     void downloadMetadata();
     void loadReleases(const QList<QString> &sectionsFiles);
     void addReleaseToModel(const int index, Release *release);
