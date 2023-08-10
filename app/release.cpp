@@ -145,7 +145,7 @@ void Release::setSelectedVariantIndex(const int index) {
 }
 
 QQmlListProperty<Variant> Release::variants() {
-    return QQmlListProperty<Variant>(this, m_variants);
+    return QQmlListProperty<Variant>(this, &m_variants);
 }
 
 QList<Variant *> Release::variantList() const {
