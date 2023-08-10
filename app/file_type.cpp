@@ -53,7 +53,7 @@ FileType file_type_from_filename(const QString &filename) {
     for (const FileType &type : file_type_all) {
         const QStringList strings = file_type_strings(type);
 
-        for (const QString string : strings) {
+        for (const QString &string : strings) {
             // NOTE: need to select the longest string for cases like ".tar" and "recovery.tar"
             const bool string_matches = filename.endsWith(string, Qt::CaseInsensitive);
             const bool this_string_is_longer = (string.length() > matching_string.length());
