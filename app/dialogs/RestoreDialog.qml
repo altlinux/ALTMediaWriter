@@ -37,7 +37,7 @@ Dialog {
 
     Connections {
         target: drives
-        onLastRestoreableChanged: {
+        function onLastRestoreableChanged() {
             if (drives.lastRestoreable == null) {
                 root.close()
             }
