@@ -449,6 +449,9 @@ Dialog {
                                     releases.selected.variant.resetStatus()
                                 }
                             }
+                            onCurrentIndexChanged: {
+                                drives.setSelectedIndex(driveCombo.currentIndex)
+                            }
                             displayText: currentIndex === -1 || !currentText ? qsTr("There are no portable drives connected") : currentText
                         }
                     }
