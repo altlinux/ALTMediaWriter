@@ -193,14 +193,6 @@ void DriveManager::onDriveConnected(Drive *drive) {
     endInsertRows();
     emit drivesChanged();
 
-    if (m_provider->initialized()) {
-        m_selectedIndex = position;
-        emit selectedChanged();
-    } else {
-        m_selectedIndex = 0;
-        emit selectedChanged();
-    }
-
     if (drive->restoreStatus() == Drive::CONTAINS_LIVE) {
         setLastRestoreable(drive);
     }
