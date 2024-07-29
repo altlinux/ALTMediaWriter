@@ -66,7 +66,7 @@ public:
 
     Drive *selected() const;
     int selectedIndex() const;
-    void setSelectedIndex(const int index);
+    Q_INVOKABLE void setSelectedIndex(const int index);
 
     int length() const;
 
