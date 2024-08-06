@@ -3,7 +3,7 @@
 
 Name:           altmediawriter
 Version:        1.0.4
-Release:        alt1
+Release:        alt2
 Summary:        ALT Media Writer
 Group:          System/Configuration/Other
 
@@ -59,6 +59,9 @@ appstream-util validate-relax --nonet %buildroot/%_datadir/appdata/%name.appdata
 
 
 %changelog
+* Tue Aug 06 2024 Maria Alexeeva <alxvmr@altlinux.org> 1.0.4-alt2
+- Fix selection of the device for writing (fix disk formatting).
+
 * Wed Jun 01 2022 Dmitry Degtyarev <kevl@altlinux.org> 1.0.4-alt1
 - Download dialog: Fix visual problems where text elements
   would sometimes overlap each other.
