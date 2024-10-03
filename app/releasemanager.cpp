@@ -370,7 +370,7 @@ void ReleaseManager::onMetadataDownloaded() {
                 out_set.insert(md5sum_url);
             }
 
-            const QList<QString> out = out_set.toList();
+            const QList<QString> out = out_set.values();
 
             return out;
         }();
