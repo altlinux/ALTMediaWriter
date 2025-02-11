@@ -360,7 +360,7 @@ void WinDrive::onFinished(const int exitCode, const QProcess::ExitStatus exitSta
         m_variant->setStatus(Variant::WRITING_FINISHED);
         Notifications::notify(tr("Finished!"), tr("Writing %1 was successful").arg(m_variant->fileName()));
     } else {
-        m_variant->setErrorString(m_child->readAllStandardError().trimmed());
+        m_variant->setErrorString(QString::fromLocal8Bit(m_child->readAllStandardError()).trimmed());
 
         if (m_variant->status() == Variant::WRITE_VERIFYING) {
             m_variant->setStatus(Variant::WRITE_VERIFYING_FAILED);
