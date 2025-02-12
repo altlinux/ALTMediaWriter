@@ -2,6 +2,19 @@ altmediawriter
 CHANGELOG
 
 -----------------------------------------------------------------------
+ VERSION 1.0.6
+-----------------------------------------------------------------------
+- WinDriveManager: Fix error message display (corrected encoding).
+
+-----------------------------------------------------------------------
+ VERSION 1.0.5-alt2
+-----------------------------------------------------------------------
+- Writing: Fix a bug that instead of the user-selected write device,
+  the image was written to the last mounted device.
+- Writing: Fix progress bar display.
+- Writing: Fix restore on Linux with latest UDisks/libblockdev.
+
+-----------------------------------------------------------------------
  VERSION 1.0.5
 -----------------------------------------------------------------------
 - Misc: Fix compatibility with ALT Linux P9.
