@@ -2,6 +2,13 @@ altmediawriter
 CHANGELOG
 
 -----------------------------------------------------------------------
+ VERSION 1.0.7
+-----------------------------------------------------------------------
+- Releases: Add platform selection.
+- Add use of METADATA_URLS_HOST_ENV environment variable to set 
+  METADATA_URLS_HOST
+
+-----------------------------------------------------------------------
  VERSION 1.0.6
 -----------------------------------------------------------------------
 - WinDriveManager: Fix error message display (corrected encoding).

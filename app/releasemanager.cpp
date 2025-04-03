@@ -22,6 +22,7 @@
 
 #include "releasemanager.h"
 #include "architecture.h"
+#include "platform.h"
 #include "file_type.h"
 #include "network.h"
 #include "release.h"
@@ -545,6 +546,19 @@ void ReleaseManager::loadVariants(const QString &variantsFile, const QHash<QStri
             continue;
         }
 
+        const QString platform_string = yml_get(variantData, "platform");
+        const Platform platform = [platform_string, url]() -> Platform {
+            if (!platform_string.isEmpty()) {
+                return platform_from_string(platform_string);
+            } else {
+                return Platform_UNKNOWN;
+            }
+        }();
+        if (platform == Platform_UNKNOWN) {
+            qDebug() << "Variant has unknown platform" << platform << url;
+            continue;
+        }
+
         // NOTE: yml file doesn't define "board" for pc32/pc64, so default to "PC"
         const QString board = [variantData]() -> QString {
             const QString out = yml_get(variantData, "board");
@@ -592,7 +606,7 @@ void ReleaseManager::loadVariants(const QString &variantsFile, const QHash<QStri
         }();
 
         if (release != nullptr) {
-            Variant *variant = new Variant(url, arch, fileType, board, live, md5sum, this);
+            Variant *variant = new Variant(url, arch, platform, fileType, board, live, md5sum, this);
             release->addVariant(variant);
         } else {
             qDebug() << "Failed to find a release for this variant!" << url;

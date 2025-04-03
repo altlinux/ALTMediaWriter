@@ -33,7 +33,7 @@
 #include <QFileInfo>
 #include <QStandardPaths>
 
-Variant::Variant(const QString &url, const Architecture arch, const FileType fileType, const QString &board, const bool live, const QString &md5sum, QObject *parent)
+Variant::Variant(const QString &url, const Architecture arch, const Platform platform, const FileType fileType, const QString &board, const bool live, const QString &md5sum, QObject *parent)
 : QObject(parent) {
     m_url = url;
     m_fileName = QUrl(url).fileName();
@@ -42,6 +42,7 @@ Variant::Variant(const QString &url, const Architecture arch, const FileType fil
     m_live = live;
     m_md5sum = md5sum;
     m_arch = arch;
+    m_platform = platform;
     m_fileType = fileType;
     m_status = Variant::PREPARING;
     m_progress = new Progress(this);
@@ -56,6 +57,7 @@ Variant::Variant(const QString &path, QObject *parent)
     m_live = false;
     m_md5sum = QString();
     m_arch = Architecture_UNKNOWN;
+    m_platform = Platform_UNKNOWN;
     m_fileType = file_type_from_filename(path);
     m_status = Variant::READY_FOR_WRITING;
     m_progress = new Progress(this);
@@ -85,6 +87,14 @@ QString Variant::name() const {
     }
 
     return out;
+}
+
+Platform Variant::platform() const {
+    return m_platform;
+}
+
+QString Variant::platformName() const {
+    return platform_name (m_platform);
 }
 
 QString Variant::url() const {

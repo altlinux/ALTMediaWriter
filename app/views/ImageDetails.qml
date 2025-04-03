@@ -40,7 +40,7 @@ Item {
     enabled: focused
 
     function toMainScreen() {
-        otherVariantsPopover.open = false
+        otherPlatformsPopover.open = false
         canGoBack = false
         contentList.currentIndex--
     }
@@ -94,7 +94,7 @@ Item {
                                 return
                             }
                             deviceNotification.open = false
-                            otherVariantsPopover.open = false
+                            otherPlatformsPopover.open = false
                             dlDialog.visible = true
                             releases.selected.variant.download()
                         }
@@ -140,29 +140,36 @@ Item {
                                 text: releases.selected.variant.name
                             }
                             Text {
+                                font.pointSize: 10
+                                color: mixColors(palette.window, palette.windowText, 0.3)
+                                visible: releases.selected.variant
+                                text: releases.selected.variant.platformName
+                            }
+                            Text {
                                 font.pointSize: 8
                                 color: mixColors(palette.window, palette.windowText, 0.3)
                                 visible: releases.selected.variant
                                 text: releases.selected.variant && releases.selected.variant.fileTypeName
                             }
                             RowLayout {
-                                spacing: 0
+                                spacing: 10
                                 width: parent.width
+
                                 Text {
                                     Layout.alignment: Qt.AlignRight
                                     visible: releases.selected.variants.length > 1
                                     text: qsTr("Other variants...")
                                     font.pointSize: 8
-                                    color: otherVariantsMouseArea.containsPress ? Qt.lighter("#1d61bf", 1.7) : otherVariantsMouseArea.containsMouse ? Qt.darker("#1d61bf", 1.5) : "#1d61bf"
+                                    color: otherPlatformsMouseArea.containsPress ? Qt.lighter("#1d61bf", 1.7) : otherPlatformsMouseArea.containsMouse ? Qt.darker("#1d61bf", 1.5) : "#1d61bf"
                                     Behavior on color { ColorAnimation { duration: 100 } }
                                     MouseArea {
-                                        id: otherVariantsMouseArea
+                                        id: otherPlatformsMouseArea
                                         activeFocusOnTab: parent.visible
                                         anchors.fill: parent
                                         hoverEnabled: true
                                         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                                         function action() {
-                                            otherVariantsPopover.open = !otherVariantsPopover.open
+                                            otherPlatformsPopover.open = !otherPlatformsPopover.open
                                         }
                                         Keys.onSpacePressed: action()
                                         onClicked: {
@@ -187,37 +194,111 @@ Item {
                                     }
 
                                     AdwaitaPopOver {
-                                        id: otherVariantsPopover
+                                        id: otherPlatformsPopover
                                         z: 2
                                         anchors {
-                                            horizontalCenter: parent.horizontalCenter
-                                            top: parent.bottom
-                                            topMargin: 8 + opacity * 24
+                                            verticalCenter: parent.verticalCenter
+                                            left: parent.right
+                                            rightMargin: 8 + opacity * 24
                                         }
 
                                         ColumnLayout {
                                             spacing: 9
                                             ExclusiveGroup {
-                                                id: otherVariantsExclusiveGroup
+                                                id: otherPlatformsExclusiveGroup
                                             }
+                                            property Item openPopover: null;
+
                                             Repeater {
-                                                model: releases.selected.variants
-                                                AdwaitaRadioButton {
-                                                    text: name
-                                                    Layout.alignment: Qt.AlignVCenter
-                                                    exclusiveGroup: otherVariantsExclusiveGroup
-                                                    checked: index == releases.selected.variantIndex
-                                                    onCheckedChanged: {
-                                                        if (checked) {
-                                                            releases.selected.variantIndex = index
+                                                model: releases.selected.platformsList
+                                                Text {
+                                                    visible: releases.selected.variants.length > 1
+                                                    Layout.alignment: Qt.AlignLeft
+                                                    text: modelData
+                                                    font.pointSize: 8
+                                                    color: otherArchsMouseArea.containsPress ? Qt.lighter("#1d61bf", 1.7) : otherArchsMouseArea.containsMouse ? Qt.darker("#1d61bf", 1.5) : "#1d61bf"
+                                                    Behavior on color { ColorAnimation { duration: 100 } }
+
+                                                    MouseArea {
+                                                        id: otherArchsMouseArea
+                                                        activeFocusOnTab: parent.visible
+                                                        anchors.fill: parent
+                                                        hoverEnabled: true
+                                                        cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
+                                                        function action() {
+                                                            if (parent.parent.openPopover !== null) {
+                                                                parent.parent.openPopover.open = false
+                                                            }
+
+                                                            if (otherArchsPopover.open) {
+                                                                otherArchsPopover.open = false;
+                                                                parent.parent.openPopover = null;
+                                                            } else {
+                                                                otherArchsPopover.open = true;
+                                                                parent.parent.openPopover = otherArchsPopover;
+                                                            }
+
+                                                            releases.selected.selectedPlatform = text
                                                         }
-                                                        otherVariantsPopover.open = false
+                                                        Keys.onSpacePressed: action()
+                                                        onClicked: {
+                                                            action()
+                                                        }
+                                                        FocusRectangle {
+                                                            anchors.fill: parent
+                                                            anchors.margins: -2
+                                                            visible: parent.activeFocus
+                                                        }
+                                                    }
+                                                    Rectangle {
+                                                        anchors {
+                                                            left: parent.left
+                                                            right: parent.right
+                                                            top: parent.bottom
+                                                        }
+                                                        radius: height / 2
+                                                        color: parent.color
+                                                        height: 1
+                                                    }
+                                                    AdwaitaPopOver {
+                                                        id: otherArchsPopover
+                                                        z: 2
+                                                        anchors {
+                                                            // horizontalCenter: parent.horizontalCenter
+                                                            verticalCenter: parent.verticalCenter
+                                                            left: parent.right
+                                                            leftMargin: 8 + opacity * 24
+                                                        }
+
+                                                        ColumnLayout {
+                                                            spacing: 9
+                                                            ExclusiveGroup {
+                                                                id: otherArchsExclusiveGroup
+                                                            }
+                                                            Repeater {
+                                                                model: releases.selected.filteredVariantsPlatform
+                                                                AdwaitaRadioButton {
+                                                                    text: modelData.name
+                                                                    Layout.alignment: Qt.AlignVCenter
+                                                                    exclusiveGroup: otherArchsExclusiveGroup
+                                                                    checked: index + releases.selected.countAddIndex == releases.selected.variantIndex
+                                                                    onCheckedChanged: {
+                                                                        if (checked && index + releases.selected.countAddIndex != releases.selected.variantIndex) {
+                                                                            releases.selected.variantIndex = index
+                                                                            otherArchsPopover.open = false
+                                                                            otherPlatformsPopover.open = false
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             }
                                         }
                                     }
                                 }
+
                             }
                         }
                     }

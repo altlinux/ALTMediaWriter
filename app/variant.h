@@ -43,6 +43,7 @@
  */
 
 #include "architecture.h"
+#include "platform.h"
 #include "file_type.h"
 
 #include <QHash>
@@ -66,6 +67,8 @@ class Variant final : public QObject {
     Q_PROPERTY(Status status READ status NOTIFY statusChanged)
     Q_PROPERTY(QString statusString READ statusString NOTIFY statusChanged)
     Q_PROPERTY(QString errorString READ errorString WRITE setErrorString NOTIFY errorStringChanged)
+
+    Q_PROPERTY(QString platformName READ platformName CONSTANT)
 public:
     Q_ENUMS(Type)
     enum Status {
@@ -98,7 +101,7 @@ public:
         {WRITING_FAILED, tr("Error")},
     };
 
-    Variant(const QString &url, const Architecture arch, const FileType fileType, const QString &board, const bool live, const QString &md5sum, QObject *parent);
+    Variant(const QString &url, const Architecture arch, const Platform platform, const FileType fileType, const QString &board, const bool live, const QString &md5sum, QObject *parent);
 
     // Constructor for local file
     Variant(const QString &path, QObject *parent);
@@ -107,6 +110,9 @@ public:
 
     Architecture arch() const;
     QString name() const;
+
+    Platform platform() const;
+    QString platformName() const;
 
     QString url() const;
     QString filePath() const;
@@ -146,6 +152,7 @@ private:
     bool m_live;
     QString m_md5sum;
     Architecture m_arch;
+    Platform m_platform;
     FileType m_fileType;
     Status m_status;
     QString m_error;

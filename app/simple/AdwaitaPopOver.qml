@@ -75,22 +75,22 @@ FocusScope {
         radius: 6
         Rectangle {
             z: -1
-            y: -6.5 - 1
+            x: -6.5 - 1
             antialiasing: true
             border {
                 width: 1
                 color: Qt.darker(palette.button, 1.5)
             }
             color: palette.window
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
             width: 14
             height: 14
             rotation: 45
         }
         Rectangle {
             color: palette.window
-            y: -6.5 + 1
-            anchors.horizontalCenter: parent.horizontalCenter
+            x: -6.5 + 1
+            anchors.verticalCenter: parent.verticalCenter
             width: 14
             height: 14
             rotation: 45

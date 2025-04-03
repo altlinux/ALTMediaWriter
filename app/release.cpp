@@ -48,14 +48,18 @@ Release *Release::custom(QObject *parent) {
 }
 
 void Release::addVariant(Variant *variant) {
-    // Sort variants by architecture
+    // Sorting is done first by platform, then by architecture
+    // This is to ensure that the storage of variants corresponds to the display order
     const int insert_index = [this, variant]() {
         int out = 0;
         for (const Variant *current : m_variants) {
-            if (current->arch() > variant->arch()) {
+            if (current->platform() > variant->platform()) {
                 return out;
+            } else if (current->platform() == variant->platform()) {
+                if (current->arch() > variant->arch()) {
+                    return out;
+                }
             }
-
             out++;
         }
         return out;
@@ -63,6 +67,8 @@ void Release::addVariant(Variant *variant) {
 
     m_variants.insert(insert_index, variant);
     emit variantsChanged();
+
+    platform_members_count[platform_name(variant->platform())]++;
 
     // Select first variant by default
     if (m_variants.count() == 1) {
@@ -137,9 +143,59 @@ int Release::selectedVariantIndex() const {
     return m_selectedVariant;
 }
 
+QStringList Release::platformsList() const {
+    QStringList keys;
+    for (const auto& pair : platform_members_count) {
+        keys.append(pair.first);
+    }
+
+    return keys;
+}
+
+QVariantList Release::filteredVariantsPlatform() const {
+    QVariantList filtered;
+    for (Variant* v : m_variants) {
+        if (platform_name(v->platform()) == platform_name(m_selectedPlatform)) {
+            filtered.append(QVariant::fromValue(v));
+        }
+    }
+    return filtered;
+}
+
+Platform Release::selectedPlatform () const {
+    return m_selectedPlatform;
+}
+
+void Release::setSelectedPlatform (const QString &platform_name) {
+    m_selectedPlatform = platform_from_string (platform_name);
+    emit selectedPlatformChanged();
+}
+
+int Release::countAddIndex() const {
+    int add_index = 0;
+    if (m_selectedPlatform != Platform_UNKNOWN && m_selectedPlatform != Platform_ALL) {
+        QString current_platform_name = platform_name (m_selectedPlatform);
+        for (auto it = platform_members_count.begin(); it!=platform_members_count.end(); ++it) {
+            if (it->first == current_platform_name) {
+                break;
+            }
+            add_index += it->second;
+        }
+    }
+
+    return add_index;
+}
+
 void Release::setSelectedVariantIndex(const int index) {
-    if (m_selectedVariant != index && m_selectedVariant >= 0 && m_selectedVariant < m_variants.count()) {
-        m_selectedVariant = index;
+
+    if (m_selectedVariant == index) {
+        return;
+    }
+
+    int index_p = index + countAddIndex();
+
+    if (m_selectedVariant >= 0 && m_selectedVariant < m_variants.count()) {
+        m_selectedVariant = index_p;
         emit selectedVariantChanged();
     }
 }

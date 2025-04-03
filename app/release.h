@@ -45,10 +45,18 @@
  */
 
 #include "architecture.h"
+#include "platform.h"
 #include "file_type.h"
 
 #include <QQmlListProperty>
 #include <QUrl>
+#include <map>
+
+struct str_num_compare {
+    bool operator() (const QString& lhs, const QString& rhs) const {
+        return lhs.mid(1).toInt() > rhs.mid(1).toInt();
+    }
+};
 
 class Variant;
 
@@ -66,6 +74,12 @@ class Release : public QObject {
     Q_PROPERTY(QQmlListProperty<Variant> variants READ variants NOTIFY variantsChanged)
     Q_PROPERTY(Variant *variant READ selectedVariant NOTIFY selectedVariantChanged)
     Q_PROPERTY(int variantIndex READ selectedVariantIndex WRITE setSelectedVariantIndex NOTIFY selectedVariantChanged)
+
+    Q_PROPERTY(QString selectedPlatform READ selectedPlatform WRITE setSelectedPlatform NOTIFY selectedPlatformChanged)
+    Q_PROPERTY(int countAddIndex READ countAddIndex CONSTANT)
+
+    Q_PROPERTY(QStringList platformsList READ platformsList CONSTANT)
+    Q_PROPERTY(QVariantList filteredVariantsPlatform READ filteredVariantsPlatform NOTIFY selectedPlatformChanged)
 public:
     Release(const QString &name, const QString &displayName, const QString &summary, const QString &description, const QString &icon, const QStringList &screenshots, QObject *parent);
 
@@ -89,9 +103,17 @@ public:
     int selectedVariantIndex() const;
     void setSelectedVariantIndex(const int index);
 
+    QStringList platformsList() const;
+    QVariantList filteredVariantsPlatform () const;
+    int countAddIndex() const;
+
+    Platform selectedPlatform() const;
+    void setSelectedPlatform (const QString &platform_name);
+
 signals:
     void variantsChanged();
     void selectedVariantChanged();
+    void selectedPlatformChanged();
 
 private:
     QString m_name;
@@ -101,8 +123,12 @@ private:
     QString m_icon;
     QStringList m_screenshots;
     QList<Variant *> m_variants;
+    Platform m_selectedPlatform;
     int m_selectedVariant;
     bool m_isCustom;
+
+    static bool customSort (const QString &a, const QString &b);
+    std::map<QString, int, str_num_compare> platform_members_count;
 };
 
 #endif // RELEASE_H

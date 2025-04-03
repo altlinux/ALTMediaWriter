@@ -26,6 +26,7 @@ HEADERS += \
     progress.h \
     file_type.h \
     architecture.h \
+    platform.h \
     release.h \
     release_model.h \
     units.h \
@@ -40,6 +41,7 @@ SOURCES += main.cpp \
     progress.cpp \
     file_type.cpp \
     architecture.cpp \
+    platform.cpp \
     release.cpp \
     release_model.cpp \
     units.cpp \
