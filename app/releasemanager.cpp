@@ -34,12 +34,14 @@
 #include <QApplication>
 #include <QtQml>
 
-const QString METADATA_URLS_HOST = "http://getalt.org";
+QString getMetadataUrl();
+const QString METADATA_URLS_HOST = getMetadataUrl();
 const QString METADATA_URLS_BACKUP_HOST = "http://kvel2d.github.io/posts";
 
 QList<QString> load_list_from_file(const QString &filepath);
 QString yml_get(const YAML::Node &node, const QString &key);
 QList<QString> get_metadata_urls_list(const QString &host);
+
 
 ReleaseManager::ReleaseManager(QObject *parent)
 : QObject(parent) {
@@ -796,4 +798,13 @@ QList<QString> get_metadata_urls_list(const QString &host) {
     };
 
     return out;
+}
+
+QString getMetadataUrl() {
+    QByteArray envValue = qgetenv("METADATA_URLS_HOST_ENV");
+    if (!envValue.isEmpty()) {
+        return QString::fromUtf8(envValue);
+    } else {
+        return "http://getalt.org";
+    }
 }
