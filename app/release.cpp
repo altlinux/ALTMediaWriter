@@ -192,10 +192,8 @@ void Release::setSelectedVariantIndex(const int index) {
         return;
     }
 
-    int index_p = index + countAddIndex();
-
     if (m_selectedVariant >= 0 && m_selectedVariant < m_variants.count()) {
-        m_selectedVariant = index_p;
+        m_selectedVariant = index;
         emit selectedVariantChanged();
     }
 }

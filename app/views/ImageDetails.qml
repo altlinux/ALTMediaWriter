@@ -284,7 +284,7 @@ Item {
                                                                     checked: index + releases.selected.countAddIndex == releases.selected.variantIndex
                                                                     onCheckedChanged: {
                                                                         if (checked && index + releases.selected.countAddIndex != releases.selected.variantIndex) {
-                                                                            releases.selected.variantIndex = index
+                                                                            releases.selected.variantIndex = index + releases.selected.countAddIndex
                                                                             otherArchsPopover.open = false
                                                                             otherPlatformsPopover.open = false
                                                                         }
