@@ -28,6 +28,7 @@
 
 enum Platform {
     Platform_ALL,
+    Platform_p11,
     Platform_p10,
     Platform_p9,
     Platform_p8,
