@@ -38,6 +38,7 @@ const QList<Platform> platform_all = []() {
 QStringList platform_strings(const Platform platform) {
     switch (platform) {
         case Platform_ALL: return QStringList();
+        case Platform_p11: return {"p11"};
         case Platform_p10: return {"p10"};
         case Platform_p9: return {"p9"};
         case Platform_p8: return {"p8"};
@@ -50,6 +51,7 @@ QStringList platform_strings(const Platform platform) {
 QString platform_name(const Platform platform) {
     switch (platform) {
         case Platform_ALL: return QObject::tr("All");
+        case Platform_p11: return QObject::tr("P11");
         case Platform_p10: return QObject::tr("P10");
         case Platform_p9: return QObject::tr("P9");
         case Platform_p8: return QObject::tr("P8");
