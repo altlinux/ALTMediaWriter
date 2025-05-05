@@ -42,7 +42,6 @@ Item {
     property var openPopovers: []
 
     function toMainScreen() {
-        otherPlatformsPopover.open = false
         canGoBack = false
         contentList.currentIndex--
     }
@@ -56,6 +55,19 @@ Item {
 
         onClicked: {
             closeAllPopovers();
+
+            const btnBack = mapToItem(backButton, mouse.x, mouse.y);
+            if (backButton.contains(btnBack)) {
+                backButton.clicked();
+                return;
+            }
+
+            const btnCreate = mapToItem(createButton, mouse.x, mouse.y);
+            if (createButton.contains(btnCreate)) {
+                createButton.clicked();
+                return;
+            }
+
             mouse.accepted = false;
         }
 
@@ -99,12 +111,15 @@ Item {
                     Layout.fillWidth: true
                     BackButton {
                         id: backButton
-                        onClicked: toMainScreen()
+                        onClicked: {
+                            toMainScreen();
+                        }
                     }
                     Item {
                         Layout.fillWidth: true
                     }
                     AdwaitaButton {
+                        id: createButton
                         text: qsTr("Create Live USB…")
                         color: "#628fcf"
                         textColor: "white"
@@ -113,11 +128,10 @@ Item {
                                 return
                             }
                             deviceNotification.open = false
-                            otherPlatformsPopover.open = false
                             dlDialog.visible = true
                             releases.selected.variant.download()
                         }
-                        enabled: !releases.selected.isCustom || (releases.selected.variant.status === Variant.READY_FOR_WRITING)
+                       enabled: !releases.selected.isCustom || (releases.selected.variant.status === Variant.READY_FOR_WRITING)
                     }
                 }
 
