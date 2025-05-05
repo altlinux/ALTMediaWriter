@@ -43,8 +43,10 @@ FocusScope {
         y: -mainWindow.height
         width: 2 * mainWindow.width
         height: 8 * mainWindow.height
+
+        propagateComposedEvents: true
         onClicked: {
-            popover.open = false
+            mouse.accepted = false;
         }
     }
 

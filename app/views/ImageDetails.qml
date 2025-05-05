@@ -39,6 +39,8 @@ Item {
     property bool focused: contentList.currentIndex === 1
     enabled: focused
 
+    property var openPopovers: []
+
     function toMainScreen() {
         otherPlatformsPopover.open = false
         canGoBack = false
@@ -49,11 +51,28 @@ Item {
 
     MouseArea {
         anchors.fill: parent
-        acceptedButtons: Qt.BackButton
-        onClicked:
-            if (mouse.button == Qt.BackButton) {
-                toMainScreen()
+        acceptedButtons: Qt.AllButtons
+        propagateComposedEvents: true
+
+        onClicked: {
+            closeAllPopovers();
+            mouse.accepted = false;
+        }
+
+        onPressed: (mouse) => {
+            closeAllPopovers();
+            mouse.accepted = false;
+        }
+    }
+
+    function closeAllPopovers() {
+        for (var i = openPopovers.length - 1; i >= 0; i--) {
+            var popover = openPopovers[i];
+            if (popover && popover.hasOwnProperty("open")) {
+                popover.open = false;
             }
+        }
+        openPopovers = [];
     }
 
     ScrollView {
@@ -169,7 +188,8 @@ Item {
                                         hoverEnabled: true
                                         cursorShape: enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                                         function action() {
-                                            otherPlatformsPopover.open = !otherPlatformsPopover.open
+                                            closeAllPopovers();
+                                            otherPlatformsPopover.open = !otherPlatformsPopover.open;
                                         }
                                         Keys.onSpacePressed: action()
                                         onClicked: {
@@ -200,6 +220,26 @@ Item {
                                             verticalCenter: parent.verticalCenter
                                             left: parent.right
                                             rightMargin: 8 + opacity * 24
+                                        }
+
+                                        onOpenChanged: {
+                                            if (open) {
+                                                if (root.openPopovers.indexOf(this) === -1) {
+                                                    root.openPopovers.push(this);
+                                                }
+                                            } else {
+                                                var index = root.openPopovers.indexOf(this);
+                                                if (index !== -1) {
+                                                    root.openPopovers.splice(index, 1);
+                                                }
+                                            }
+                                        }
+
+                                        Component.onDestruction: {
+                                            var index = root.openPopovers.indexOf(this);
+                                            if (index !== -1) {
+                                                root.openPopovers.splice(index, 1);
+                                            }
                                         }
 
                                         ColumnLayout {
@@ -270,6 +310,26 @@ Item {
                                                             leftMargin: 8 + opacity * 24
                                                         }
 
+                                                        onOpenChanged: {
+                                                            if (open) {
+                                                                if (root.openPopovers.indexOf(this) === -1) {
+                                                                    root.openPopovers.push(this);
+                                                                }
+                                                            } else {
+                                                                var index = root.openPopovers.indexOf(this);
+                                                                if (index !== -1) {
+                                                                    root.openPopovers.splice(index, 1);
+                                                                }
+                                                            }
+                                                        }
+
+                                                        Component.onDestruction: {
+                                                            var index = root.openPopovers.indexOf(this);
+                                                            if (index !== -1) {
+                                                                root.openPopovers.splice(index, 1);
+                                                            }
+                                                        }
+
                                                         ColumnLayout {
                                                             spacing: 9
                                                             ExclusiveGroup {
@@ -285,8 +345,7 @@ Item {
                                                                     onCheckedChanged: {
                                                                         if (checked && index + releases.selected.countAddIndex != releases.selected.variantIndex) {
                                                                             releases.selected.variantIndex = index + releases.selected.countAddIndex
-                                                                            otherArchsPopover.open = false
-                                                                            otherPlatformsPopover.open = false
+                                                                            closeAllPopovers();
                                                                         }
                                                                     }
                                                                 }
