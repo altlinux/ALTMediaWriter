@@ -3,7 +3,8 @@
         <file alias="custom">assets/i/logo/custom.png</file>
         <file alias="alt-edu">assets/i/logo/alt-edu.png</file>
         <file alias="arm">assets/i/logo/alt-server.png</file>
-        <file alias="alt-server-v">assets/i/logo/alt-server-v.png</file>
+        <file alias="alt-virtualization">assets/i/logo/alt-server-v.png</file>
+        <file alias="alt-server">assets/i/logo/alt-server.png</file>
         <file alias="simply">assets/i/logo/simply.png</file>
         <file alias="alt-workstation">assets/i/logo/alt-workstation.png</file>
         <file alias="alt-kworkstation">assets/i/logo/alt-kworkstation.png</file>
