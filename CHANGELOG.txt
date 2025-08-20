@@ -2,6 +2,19 @@ altmediawriter
 CHANGELOG
 
 -----------------------------------------------------------------------
+ VERSION 1.0.10
+-----------------------------------------------------------------------
+- Releases: Fix support for ALT Server and ALT Virtualization
+- Misc: Fix deprecation warnings with Qt 5.15
+
+-----------------------------------------------------------------------
+ VERSION 1.0.9
+-----------------------------------------------------------------------
+- Display: Fix closing all Popover when clicking on UI elements
+- Display: Fix handling of pressing Back and New buttons when Popover 
+  is open
+
+-----------------------------------------------------------------------
  VERSION 1.0.8
 -----------------------------------------------------------------------
 - Releases: Add support for p11 platform and fix the iso selection
