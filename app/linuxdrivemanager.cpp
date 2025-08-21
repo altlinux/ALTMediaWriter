@@ -115,10 +115,8 @@ void LinuxDriveProvider::init(QDBusPendingCallWatcher *watcher) {
     qDebug() << this->metaObject()->className() << "Got a reply to GetManagedObjects, parsing";
 
     QDBusPendingReply<DBusIntrospection> reply = *watcher;
-    //QSet<QDBusObjectPath> oldPaths = m_drives.keys().toSet();
-    QSet<QDBusObjectPath> oldPaths = m_drives.keys().isEmpty() ?
-                QSet<QDBusObjectPath>() :
-                QSet<QDBusObjectPath>(m_drives.keys().begin(), m_drives.keys().end());
+    const QList<QDBusObjectPath> paths = m_drives.keys();
+    QSet<QDBusObjectPath> oldPaths(paths.begin(), paths.end());
     QSet<QDBusObjectPath> newPaths;
 
     if (reply.isError()) {
@@ -173,16 +171,12 @@ void LinuxDriveProvider::onInterfacesRemoved(const QDBusObjectPath &object_path,
 void LinuxDriveProvider::onPropertiesChanged(const QString &interface_name, const QVariantMap &changed_properties, const QStringList &invalidated_properties) {
     Q_UNUSED(interface_name)
     const QSet<QString> watchedProperties = {"MediaAvailable", "Size"};
+    const QList<QString> changedPropertyKeys = changed_properties.keys();
 
+    QSet<QString> changedPropertiesSet(changedPropertyKeys.begin(), changedPropertyKeys.end());
+    QSet<QString> invalidatedPropertiesSet(invalidated_properties.begin(), invalidated_properties.end());
     // not ideal but it works alright without a huge lot of code
-    QSet<QString> cProp = changed_properties.keys().isEmpty() ?
-                QSet<QString>() :
-                QSet<QString>(changed_properties.keys().begin(), changed_properties.keys().end());
-    QSet<QString> iProp = invalidated_properties.isEmpty() ?
-                QSet<QString>() :
-                QSet<QString>(invalidated_properties.begin(), invalidated_properties.end());
-    if (!cProp.intersect(watchedProperties).isEmpty() ||
-        !iProp.intersect(watchedProperties).isEmpty()) {
+    if (!changedPropertiesSet.intersect(watchedProperties).isEmpty() || !invalidatedPropertiesSet.intersect(watchedProperties).isEmpty()) {
         QDBusPendingCall pcall = m_objManager->asyncCall("GetManagedObjects");
         QDBusPendingCallWatcher *w = new QDBusPendingCallWatcher(pcall, this);
 
