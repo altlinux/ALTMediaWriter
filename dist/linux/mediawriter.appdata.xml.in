@@ -23,10 +23,10 @@
         <keyword>creator</keyword>
         <keyword>media</keyword>
     </keywords>
-	<url type="homepage">https://github.com/altlinux/MediaWriter</url>
+	<url type="homepage">https://altlinux.space/ALTLinux/ALTMediaWriter</url>
 	<screenshots>
-		<screenshot type="default">https://github.com/altlinux/MediaWriter/raw/master/dist/screenshots/expanded.png</screenshot>
-		<screenshot>https://github.com/altlinux/MediaWriter/raw/master/dist/screenshots/details.png</screenshot>
+		<screenshot type="default">https://altlinux.space/ALTLinux/ALTMediaWriter/raw/branch/master/dist/screenshots/screenshot1.png</screenshot>
+		<screenshot>https://altlinux.space/ALTLinux/ALTMediaWriter/raw/branch/master/dist/screenshots/screenshot2.png</screenshot>
 	</screenshots>
 	<update_contact>sin@altlinux.org</update_contact>
 </application>

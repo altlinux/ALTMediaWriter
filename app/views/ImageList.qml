@@ -330,7 +330,7 @@ FocusScope {
                         Text {
                             width: parent.width
                             wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-                            text: qsTr("Please report bugs or your suggestions on %1").arg("<a href=\"https://github.com/altlinux/MediaWriter/issues\">https://github.com/altlinux/MediaWriter/</a>")
+                            text: qsTr("Please report bugs or your suggestions on %1").arg("<a href=\"https://altlinux.space/ALTLinux/ALTMediaWriter/issues\">https://altlinux.space/ALTLinux/ALTMediaWriter/</a>")
                             textFormat: Text.RichText
                             font.pointSize: 9
                             onLinkActivated: Qt.openUrlExternally(link)

@@ -12,7 +12,7 @@ This overwrites the drive's partition layout though so it also provides a way to
 
 ## Troubleshooting
 
-If you experience any problems with the application, like crashes or errors when writing to your drives, please open an issue here on Github.
+If you experience any problems with the application, like crashes or errors when writing to your drives, please open an issue here on altlinux.space.
 
 ## MD5 checksum
 
