@@ -72,14 +72,11 @@ linux {
     HEADERS += linuxdrivemanager.h
     SOURCES += linuxdrivemanager.cpp
 
-    icon.path = "$$DATADIR/icons/hicolor"
-    icon.files = assets/icon/16x16 \
-                 assets/icon/22x22 \
-                 assets/icon/24x24 \
-                 assets/icon/32x32 \
-                 assets/icon/48x48 \
-                 assets/icon/256x256 \
-                 assets/icon/512x512
+    app_icon.path = "$$DATADIR/icons/hicolor/scalable/apps/"
+    app_icon.files = assets/icon/apps/mediawriter.svg
+
+    symbolic_icons.path = "$$DATADIR/icons/hicolor/symbolic/apps/"
+    symbolic_icons.files = assets/icon/apps/*-symbolic.svg
 
     desktopfile.path = "$$DATADIR/applications/"
     desktopfile.files = "$$top_srcdir/dist/linux/mediawriter.desktop"
@@ -87,7 +84,7 @@ linux {
     appdatafile.path = "$$DATADIR/appdata/"
     appdatafile.files = "$$top_srcdir/dist/linux/mediawriter.appdata.xml"
 
-    INSTALLS += icon desktopfile appdatafile
+    INSTALLS += app_icon symbolic_icons desktopfile appdatafile
 }
 win32 {
     HEADERS += windrivemanager.h

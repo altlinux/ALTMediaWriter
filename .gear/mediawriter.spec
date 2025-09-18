@@ -38,8 +38,9 @@ like flash drives or memory cards.
 %install
 make install INSTALL_ROOT=%buildroot
 if [ "%name" != "%sname" ]; then
-    for i in %buildroot%_datadir/icons/hicolor/*/apps/%sname.png; do
-        mv "$i" "$(dirname $i)/%name.png"
+    for i in %buildroot%_datadir/icons/hicolor/*/apps/%{sname}*.svg; do
+        new_name=$(basename "$i" | sed "s/^%sname/%name/")
+        mv "$i" "$(dirname $i)/$new_name"
     done
     mv %buildroot%_datadir/applications/%sname.desktop %buildroot%_datadir/applications/%appId.desktop
     mv %buildroot%_datadir/appdata/%sname.appdata.xml %buildroot%_datadir/appdata/%name.appdata.xml
@@ -55,7 +56,7 @@ appstream-util validate-relax --nonet %buildroot/%_datadir/appdata/%name.appdata
 %_libexecdir/%name/
 %_datadir/appdata/%name.appdata.xml
 %_datadir/applications/%appId.desktop
-%_datadir/icons/hicolor/*/apps/%name.png
+%_iconsdir/hicolor/*/*/*.svg
 
 
 %changelog
