@@ -3,7 +3,7 @@
 %define appId ru.basealt.altmediawriter
 
 Name:           altmediawriter
-Version:        1.0.10
+Version:        1.0.11
 Release:        alt1
 Summary:        ALT Media Writer
 Group:          System/Configuration/Other
@@ -60,6 +60,9 @@ appstream-util validate-relax --nonet %buildroot/%_datadir/appdata/%name.appdata
 
 
 %changelog
+* Fri Sep 19 2025 Maria Alexeeva <alxvmr@altlinux.org> 1.0.11-alt1
+- New app icon
+
 * Tue Jul 08 2025 Maria Alexeeva <alxvmr@altlinux.org> 1.0.10-alt1
 - Add ALT Server and ALT Virtualization Server displays
 - Rename desktop file (for correct display of icon in GNOME)
