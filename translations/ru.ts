@@ -380,7 +380,7 @@
     </message>
     <message>
         <source>Unknown Status</source>
-        <translation>Unknown Status</translation>
+        <translation>Неизвестный статус</translation>
     </message>
     <message>
         <source>Checking the written data</source>
@@ -446,7 +446,7 @@
     </message>
     <message>
         <source>Couldn&apos;t remove the drive %1:</source>
-        <translation>Couldn&apos;t remove the drive %1:</translation>
+        <translation>Не удалось извлечь диск %1:</translation>
     </message>
     <message>
         <source>Couldn&apos;t unlock the drive</source>
