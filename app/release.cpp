@@ -163,8 +163,8 @@ QVariantList Release::filteredVariantsPlatform() const {
     return filtered;
 }
 
-Platform Release::selectedPlatform () const {
-    return m_selectedPlatform;
+QString Release::selectedPlatform () const {
+    return platform_name(m_selectedPlatform);
 }
 
 void Release::setSelectedPlatform (const QString &platform_name) {

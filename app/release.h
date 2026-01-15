@@ -111,7 +111,7 @@ public:
     QVariantList filteredVariantsPlatform () const;
     int countAddIndex() const;
 
-    Platform selectedPlatform() const;
+    QString selectedPlatform() const;
     void setSelectedPlatform (const QString &platform_name);
 
 signals:
