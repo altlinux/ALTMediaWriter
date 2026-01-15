@@ -83,7 +83,6 @@ void NetworkReplyGroup::on_reply_finished() {
 
 QNetworkReply *makeNetworkRequest(const QString &url, const int time_out_millis) {
     QNetworkRequest request(url);
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
 
     QNetworkReply *reply = network_access_manager->get(request);
 

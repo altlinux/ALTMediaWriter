@@ -37,11 +37,10 @@
 #include <QtPlugin>
 
 #ifdef __linux
-#include <QX11Info>
 #endif
 
-#if QT_VERSION < 0x050300
-#error "Minimum supported Qt version is 5.3.0"
+#if QT_VERSION < QT_VERSION_CHECK(6, 6, 0)
+#error "Minimum supported Qt version is 6.6.0"
 #endif
 
 #ifdef QT_STATIC
@@ -64,7 +63,7 @@ void myMessageOutput(QtMsgType, const QMessageLogContext &, const QString &msg) 
 
 int main(int argc, char **argv) {
 #ifdef __linux
-    if (QX11Info::isPlatformX11()) {
+    if (auto *x11App = qApp->nativeInterface<QNativeInterface::QX11Application>()) {
         if (qEnvironmentVariableIsEmpty("QSG_RENDER_LOOP"))
             qputenv("QSG_RENDER_LOOP", "threaded");
         qputenv("GDK_BACKEND", "x11");
@@ -91,7 +90,7 @@ int main(int argc, char **argv) {
 
 #ifdef __linux
     // qt x11 scaling is broken
-    if (QX11Info::isPlatformX11()) {
+    if (auto *x11App = qApp->nativeInterface<QNativeInterface::QX11Application>()) {
         QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     }
 #else

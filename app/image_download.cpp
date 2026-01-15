@@ -198,7 +198,6 @@ void ImageDownload::startImageDownload() {
     startingImageDownload = true;
 
     QNetworkRequest request;
-    request.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
     request.setUrl(url);
     request.setRawHeader("Range", QString("bytes=%1-").arg(file->size()).toLocal8Bit());
 

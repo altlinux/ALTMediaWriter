@@ -6,7 +6,7 @@ QT += core network
 
 LIBS += -lisomd5 -llzma
 
-CONFIG += c++11
+CONFIG += c++17
 CONFIG += console
 
 TARGET = helper

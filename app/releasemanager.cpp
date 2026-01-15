@@ -450,7 +450,7 @@ void ReleaseManager::onMD5SUMDownloaded() {
             // MD5SUM is of the form "sum image \n sum
             // image \n ..."
             for (const QString &line : line_list) {
-                const QList<QString> elements = line.split(QRegExp("\\s+"));
+                const QList<QString> elements = line.split(QRegularExpression("\\s+"));
 
                 if (elements.size() != 2) {
                     continue;

@@ -4,7 +4,7 @@ include($$top_srcdir/deployment.pri)
 
 TARGET = $$MEDIAWRITER_NAME
 
-QT += qml quick widgets network
+QT += qml quick quickcontrols2 widgets network
 
 LIBS += -lisomd5
 linux {
@@ -15,7 +15,7 @@ windows {
     LIBS += -l:libyaml-cpp.a
 }
 
-CONFIG += c++11
+CONFIG += c++17
 
 HEADERS += \
     drivemanager.h \
@@ -67,7 +67,7 @@ target.path = $$BINDIR
 INSTALLS += target
 
 linux {
-    QT += dbus x11extras
+    QT += dbus
 
     HEADERS += linuxdrivemanager.h
     SOURCES += linuxdrivemanager.cpp

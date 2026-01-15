@@ -7,7 +7,7 @@ PKGCONFIG += liblzma
 
 LIBS += -lisomd5
 
-CONFIG += c++11
+CONFIG += c++17
 CONFIG += console
 
 TARGET = helper
