@@ -47,6 +47,7 @@
 #include "architecture.h"
 #include "platform.h"
 #include "file_type.h"
+#include "variant.h"
 
 #include <QQmlListProperty>
 #include <QUrl>

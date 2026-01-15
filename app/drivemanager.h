@@ -26,6 +26,9 @@
 #include <QAbstractListModel>
 #include <QDebug>
 
+#include "progress.h"
+#include "variant.h"
+
 class DriveManager;
 class DriveProvider;
 class Drive;

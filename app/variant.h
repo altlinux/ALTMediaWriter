@@ -51,6 +51,8 @@
 #include <QObject>
 #include <QString>
 
+#include "progress.h"
+
 class Progress;
 
 class Variant final : public QObject {

@@ -28,6 +28,10 @@
  * the qml portion of the app.
  */
 
+#include "release.h"
+#include "release_model.h"
+#include "network.h"
+
 #include <QObject>
 #include <QHash>
 
