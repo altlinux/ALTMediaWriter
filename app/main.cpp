@@ -105,7 +105,7 @@ int main(int argc, char **argv) {
 
     qDebug() << "Application constructed";
 
-    app.setWindowIcon(QIcon(":/mediawriter.ico"));
+    app.setWindowIcon(QIcon(":/mediawriter.svg"));
 
     QTranslator translator;
     translator.load(QLocale(QLocale().language(), QLocale().country()), QString(), QString(), ":/translations");
