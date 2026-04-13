@@ -1,247 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
 <svg
-   height="16px"
-   viewBox="0 0 16 16"
-   width="16px"
+   width="16"
+   height="15.999999"
+   viewBox="0 0 4.2333332 4.233333"
    version="1.1"
-   id="svg30"
-   sodipodi:docname="ALT Media Writer-symbolic2.svg"
-   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   id="svg1"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
-     id="defs30" />
-  <sodipodi:namedview
-     id="namedview30"
-     pagecolor="#505050"
-     bordercolor="#eeeeee"
-     borderopacity="1"
-     inkscape:showpageshadow="0"
-     inkscape:pageopacity="0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#505050"
-     inkscape:zoom="5.7890625"
-     inkscape:cx="12.350877"
-     inkscape:cy="45.775978"
-     inkscape:window-width="1920"
-     inkscape:window-height="1128"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg30" />
-  <filter
-     id="a"
-     height="1"
-     width="1"
-     x="0"
-     y="0">
-    <feColorMatrix
-       color-interpolation-filters="sRGB"
-       values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0"
-       id="feColorMatrix1" />
-  </filter>
-  <mask
-     id="b">
-    <g
-       filter="url(#a)"
-       id="g1">
-      <rect
-         fill-opacity="0.214565"
-         height="19.2"
-         width="19.2"
-         x="-1.6"
-         y="-1.6"
-         id="rect1" />
-    </g>
-  </mask>
-  <linearGradient
-     id="c"
-     gradientTransform="matrix(0.971861 0.971861 0 1.374419 -41.569344 -44.170006)"
-     gradientUnits="userSpaceOnUse"
-     x1="75.252029"
-     x2="115.86676"
-     y1="93.905556"
-     y2="111.871269">
-    <stop
-       offset="0"
-       stop-color="#af1e1e"
-       stop-opacity="0"
-       id="stop1" />
-    <stop
-       offset="0.655634"
-       stop-color="#a62e45"
-       stop-opacity="0.811179"
-       id="stop2" />
-    <stop
-       offset="1"
-       stop-color="#a92549"
-       id="stop3" />
-  </linearGradient>
-  <clipPath
-     id="d">
-    <rect
-       height="152"
-       width="192"
-       id="rect3" />
-  </clipPath>
-  <mask
-     id="e">
-    <g
-       filter="url(#a)"
-       id="g4">
-      <rect
-         fill-opacity="0.358391"
-         height="19.2"
-         width="19.2"
-         x="-1.6"
-         y="-1.6"
-         id="rect4" />
-    </g>
-  </mask>
-  <clipPath
-     id="f">
-    <rect
-       height="152"
-       width="192"
-       id="rect5" />
-  </clipPath>
-  <mask
-     id="g">
-    <g
-       filter="url(#a)"
-       id="g6">
-      <rect
-         fill-opacity="0.749401"
-         height="19.2"
-         width="19.2"
-         x="-1.6"
-         y="-1.6"
-         id="rect6" />
-    </g>
-  </mask>
-  <clipPath
-     id="h">
-    <rect
-       height="152"
-       width="192"
-       id="rect7" />
-  </clipPath>
-  <mask
-     id="i">
-    <g
-       filter="url(#a)"
-       id="g8">
-      <rect
-         fill-opacity="0.749401"
-         height="19.2"
-         width="19.2"
-         x="-1.6"
-         y="-1.6"
-         id="rect8" />
-    </g>
-  </mask>
-  <clipPath
-     id="j">
-    <rect
-       height="152"
-       width="192"
-       id="rect9" />
-  </clipPath>
-  <mask
-     id="k">
-    <g
-       filter="url(#a)"
-       id="g10">
-      <rect
-         fill-opacity="0.676006"
-         height="19.2"
-         width="19.2"
-         x="-1.6"
-         y="-1.6"
-         id="rect10" />
-    </g>
-  </mask>
-  <linearGradient
-     id="l"
-     gradientTransform="matrix(-1.688479 0 0 -1.688479 195.548462 227.635437)"
-     gradientUnits="userSpaceOnUse"
-     x1="73.171463"
-     x2="73.171463"
-     y1="77.316895"
-     y2="73.597321">
-    <stop
-       offset="0"
-       stop-color="#767676"
-       id="stop10" />
-    <stop
-       offset="1"
-       stop-color="#a1a1a1"
-       id="stop11" />
-  </linearGradient>
-  <clipPath
-     id="m">
-    <rect
-       height="152"
-       width="192"
-       id="rect11" />
-  </clipPath>
-  <mask
-     id="n">
-    <g
-       filter="url(#a)"
-       id="g12">
-      <rect
-         fill-opacity="0.865273"
-         height="19.2"
-         width="19.2"
-         x="-1.6"
-         y="-1.6"
-         id="rect12" />
-    </g>
-  </mask>
-  <clipPath
-     id="o">
-    <rect
-       height="152"
-       width="192"
-       id="rect13" />
-  </clipPath>
-  <mask
-     id="p">
-    <g
-       filter="url(#a)"
-       id="g14">
-      <rect
-         fill-opacity="0.865273"
-         height="19.2"
-         width="19.2"
-         x="-1.6"
-         y="-1.6"
-         id="rect14" />
-    </g>
-  </mask>
-  <clipPath
-     id="q">
-    <rect
-       height="152"
-       width="192"
-       id="rect15" />
-  </clipPath>
+     id="defs1" />
   <path
-     d="m 5.679688 4 h 4.640624 v 5.351562 h -4.640624 z m 0 0"
+     d="M 1.5027271,1.0583109 H 2.7305588 V 2.474245 H 1.5027271 Z m 0,0"
      fill-rule="evenodd"
-     id="path28" />
+     id="path28"
+     style="stroke-width:0.264583" />
   <path
-     d="m 9.5 12 v -2 h -3 v 2 z m -0.5 -0.5 h -0.5 v -0.5 h 0.5 z m -1.5 0 h -0.5 v -0.5 h 0.5 z m 0 0"
-     id="path29" />
+     d="M 2.5135179,3.1749776 V 2.6458109 h -0.79375 V 3.1749776 Z M 2.3812263,3.0426859 H 2.2489346 V 2.9103942 h 0.1322917 z m -0.396875,0 H 1.8520596 V 2.9103942 h 0.1322917 z m 0,0"
+     id="path29"
+     style="stroke-width:0.264583" />
   <path
-     d="m 192.003856 -30.916401 l 12.224767 7.057973 l 0.004919 14.127678 l -12.237388 7.059579 l -12.224767 -7.057972 l -0.004919 -14.127678 z m 0 0"
+     d="M 2.6447965,0.14779213 4.0855346,1.5885328 3.5584447,3.5584426 1.5885369,4.0855412 0.14779878,2.6448006 0.67488868,0.67489083 Z m 0,0"
      fill="none"
      stroke="#000000"
      stroke-linecap="square"
-     stroke-width="1.83304"
-     transform="matrix(0.526953 0.141197 -0.141197 0.526953 -95.546143 -10.260208)"
+     stroke-width="0.264583"
      id="path30" />
 </svg>
