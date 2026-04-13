@@ -22,8 +22,7 @@
 
 import QtQuick 2.3
 import QtQuick.Controls 2.12
-import QtQuick.Controls.Styles 1.2
-import QtQuick.Dialogs 1.2
+import QtQuick.Dialogs 6.6
 import QtQuick.Layouts 1.1
 import QtQuick.Window 2.0
 
@@ -37,11 +36,15 @@ Dialog {
     title: qsTr("Write %1").arg(releases.selected.displayName)
 
     height: layout.height + 36
-    standardButtons: StandardButton.NoButton
+    standardButtons: DialogButtonBox.NoButton
 
-    width: 640
+    implicitWidth: 640
 
-    function reset() {
+    anchors.centerIn: parent
+    modal: true
+    popupType: Dialog.Window
+
+    function resetDialog() {
         writeArrow.color = palette.text
     }
 
@@ -54,7 +57,7 @@ Dialog {
             releases.selected.variant.cancelDownload()
         }
         releases.selected.variant.resetStatus()
-        reset()
+        resetDialog()
     }
 
     contentItem: Rectangle {
@@ -276,7 +279,7 @@ Dialog {
             ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
             activeFocusOnTab: false
 
-            contentItem: Item {
+            contentItem: Flickable {
                 width: contentScrollView.width - 18
                 height: layout.height + 18
                 ColumnLayout {
@@ -347,7 +350,7 @@ Dialog {
                                 duration: 1000
                             }
                         }
-                        
+
                         Text {
                             visible: true
                             Layout.fillWidth: true

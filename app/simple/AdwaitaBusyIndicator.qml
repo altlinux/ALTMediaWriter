@@ -21,8 +21,7 @@
  */
 
 import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls 6.6
 
 BusyIndicator {
     id: root
@@ -93,12 +92,6 @@ BusyIndicator {
                     to: 1
                 }
             }
-        }
-    }
-
-    // this style is completely useless, let's just implement it outside
-    style: BusyIndicatorStyle {
-        indicator: Item {
         }
     }
 }

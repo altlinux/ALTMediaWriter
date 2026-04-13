@@ -27,6 +27,7 @@ Item {
     implicitHeight: 36
     implicitWidth: 36
 
+    property QtObject control: parent
     property bool flat: false
     property alias radius: rect.radius
     property color color: palette.button

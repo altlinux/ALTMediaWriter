@@ -21,8 +21,7 @@
  */
 
 import QtQuick 2.4
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls 6.6
 import QtQuick.Layouts 1.1
 
 import "../simple"
@@ -30,7 +29,7 @@ import "../complex"
 
 FocusScope {
     id: imageList
-    
+
     readonly property int searchBarHeight: 36
     property alias currentIndex: listView.currentIndex
     property int lastIndex: -1
@@ -183,7 +182,7 @@ FocusScope {
             Rectangle {
                 id: frontFooter
 
-                
+
                 clip: true
                 activeFocusOnTab: true
                 radius: 3
@@ -350,7 +349,7 @@ FocusScope {
             }
         }
     }
-            
+
     ScrollView {
         id: scrollView
         anchors.fill: parent
@@ -360,10 +359,15 @@ FocusScope {
             clip: true
             focus: true
             anchors {
+                top: parent.top
+                bottom: parent.bottom
+                left: parent.left
+                right: parent.right
                 topMargin: mainWindow.margin
                 leftMargin: mainWindow.margin
                 // NOTE: when leaving front page and scrollView gets a scrollbar, the width is reduced, so recalculate right margin so that the right side of listView doesn't move due to that
-                rightMargin: anchors.leftMargin - (scrollView.width - scrollView.viewport.width)
+                rightMargin: scrollView.viewport ? (anchors.leftMargin - (scrollView.width - scrollView.viewport.width)) : anchors.leftMargin
+                bottomMargin: 0
             }
 
             model: releases.filter
@@ -409,30 +413,7 @@ FocusScope {
             }
         }
 
-        style: ScrollViewStyle {
-            incrementControl: Item {}
-            decrementControl: Item {}
-            corner: Item {
-                implicitWidth: 11
-                implicitHeight: 11
-            }
-            scrollBarBackground: Rectangle {
-                color: Qt.darker(palette.window, 1.2)
-                implicitWidth: 11
-                implicitHeight: 11
-            }
-            handle: Rectangle {
-                color: mixColors(palette.window, palette.windowText, 0.5)
-                x: 3
-                y: 3
-                implicitWidth: 6
-                implicitHeight: 7
-                radius: 4
-            }
-            transientScrollBars: false
-            handleOverlap: -2
-            minimumHandleLength: 10
-        }
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
     }
 
     Row {
@@ -449,8 +430,10 @@ FocusScope {
         Behavior on opacity { NumberAnimation { } }
 
         BusyIndicator {
+            id: busyIndicator
+
             anchors.verticalCenter: parent.verticalCenter
-            height: downloadingNotification.height * 0.8
+            height: 26
             width: height
         }
         Text {
@@ -458,6 +441,8 @@ FocusScope {
             text: qsTr("Downloading releases info")
             font.pointSize: 9
             color: "#7a7a7a"
+
+            anchors.verticalCenter: busyIndicator.verticalCenter
         }
     }
 }

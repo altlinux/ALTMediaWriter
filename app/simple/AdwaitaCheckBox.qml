@@ -21,42 +21,41 @@
  */
 
 import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls 6.6
 
 CheckBox {
-    style: CheckBoxStyle {
-        indicator: AdwaitaRectangle {
-            implicitWidth: 15
-            implicitHeight: 15
-            Item {
-                visible: control.checked
-                rotation: -45
-                anchors.fill: parent
-                Rectangle {
-                    color: palette.text
-                    x: 5
-                    y: 4
-                    width: 3
-                    height: 6
-                    radius: 4
-                }
-                Rectangle {
-                    color: palette.text
-                    x: 5
-                    y: 8
-                    width: 12
-                    height: 3
-                    radius: 4
-                }
+    id: root
+
+    indicator: AdwaitaRectangle {
+        implicitWidth: 15
+        implicitHeight: 15
+        Item {
+            visible: root.checked
+            rotation: -45
+            anchors.fill: parent
+            Rectangle {
+                color: palette.text
+                x: 5
+                y: 4
+                width: 3
+                height: 6
+                radius: 4
+            }
+            Rectangle {
+                color: palette.text
+                x: 5
+                y: 8
+                width: 12
+                height: 3
+                radius: 4
             }
         }
-        label: Text {
-            font.pointSize: 9
-            text: control.text
-            color: control.enabled ? palette.windowText : disabledPalette.windowText
-        }
-        spacing: 8
     }
+    contentItem: Text {
+        font.pointSize: 9
+        text: root.text
+        color: root.enabled ? palette.windowText : disabledPalette.windowText
+    }
+    spacing: 8
 }
 

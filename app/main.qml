@@ -20,11 +20,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+import QtCore
 import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls 6.6
 import QtQuick.Window 2.0
-import QtQuick.Dialogs 1.2
+import QtQuick.Dialogs 6.6
 import QtQuick.Layouts 1.1
 
 import "dialogs"
@@ -161,7 +161,7 @@ ApplicationWindow {
 
     FileDialog {
         id: fileDialog
-        folder: shortcuts.home
+        currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         nameFilters: releases.fileTypeFilters
         onAccepted: {
             releases.selected.setLocalFile(fileUrl)

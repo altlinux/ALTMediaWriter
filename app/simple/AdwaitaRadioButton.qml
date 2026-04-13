@@ -21,32 +21,44 @@
  */
 
 import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls 6.6
 
 RadioButton {
     id: root
-    style: RadioButtonStyle {
-        indicator: AdwaitaRectangle {
-            implicitWidth: root.height
-            implicitHeight: root.height
-            radius: width / 2 + 1
-            Rectangle {
-                anchors.centerIn: parent
-                width: parent.width / 3
-                height: parent.width / 3
-                radius: parent.radius / 3
-                color: palette.text
-                visible: control.checked
-            }
+
+    implicitWidth: Math.max(indicator.implicitWidth + spacing + contentItem.implicitWidth, 0)
+    implicitHeight: Math.max(indicator.implicitHeight, contentItem.implicitHeight)
+
+    focusPolicy: Qt.NoFocus
+
+    indicator: AdwaitaRectangle {
+        implicitWidth: 16
+        implicitHeight: 16
+        radius: width / 2 + 1
+
+        Rectangle {
+            anchors.centerIn: parent
+            width: parent.width / 3
+            height: parent.width / 3
+            radius: parent.radius / 3
+            color: palette.text
+            visible: root.checked
         }
-        label: Text {
-            id: text
-            font.pointSize: 9
-            text: control.text
-            color: palette.windowText
-        }
-        spacing: 6
     }
+
+    contentItem: Text {
+        id: text
+        font.pointSize: 9
+        text: root.text
+        color: palette.windowText
+        verticalAlignment: Text.AlignVCenter
+
+        anchors {
+            left: root.indicator.right
+            leftMargin: root.spacing
+            verticalCenter: root.indicator.verticalCenter
+        }
+    }
+    spacing: 6
 }
 

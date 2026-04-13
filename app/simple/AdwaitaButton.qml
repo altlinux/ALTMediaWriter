@@ -20,35 +20,26 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick
+import QtQuick.Controls
 
 Button {
     id: root
-    property bool flat: false
     property color color: palette.button
     property color textColor: palette.text
 
-    style: ButtonStyle {
-        background: AdwaitaRectangle {
-            color: root.color
-            flat: root.flat
-        }
-        label: Item {
-            clip: true
-            implicitWidth: labelText.width + 16
-            Text {
-                anchors.horizontalCenter: parent.horizontalCenter
-                font.pointSize: 9
-                id: labelText
-                color: root.enabled ? root.textColor : disabledPalette.buttonText
-                text: control.text
-                height: parent.height
-                horizontalAlignment: Text.AlignHCenter
-                verticalAlignment: Text.AlignVCenter
-            }
-        }
+    background: AdwaitaRectangle {
+        color: root.color
+        flat: false
+    }
+
+    contentItem: Text {
+        text: root.text
+        color: root.enabled ? root.textColor : "#808080"
+        font.pointSize: 9
+        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        leftPadding: 8
+        rightPadding: 8
     }
 }
-

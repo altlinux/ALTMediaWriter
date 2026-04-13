@@ -21,10 +21,9 @@
  */
 
 import QtQuick 2.3
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls 6.6
 import QtQuick.Layouts 1.1
-import QtQuick.Dialogs 1.2
+import QtQuick.Dialogs 6.6
 import QtQuick.Window 2.0
 
 import MediaWriter 1.0
@@ -92,16 +91,15 @@ Item {
         focus: true
         anchors {
             fill: parent
-            leftMargin: anchors.rightMargin
+            leftMargin: mainWindow.margin
+            rightMargin: mainWindow.margin
         }
-        horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
-        flickableItem.flickableDirection: Flickable.VerticalFlick
-        contentItem: Item {
-            x: mainWindow.margin
-            width: root.width - 2 * mainWindow.margin
-            height: childrenRect.height + 64 + 32
+        ScrollBar.horizontal.policy: ScrollBar.AlwaysOff
+        contentItem: Flickable {
+            contentHeight: columnLayout.implicitHeight
 
             ColumnLayout {
+                id: columnLayout
                 y: 18
                 width: parent.width
                 spacing: 24
@@ -258,8 +256,9 @@ Item {
 
                                         ColumnLayout {
                                             spacing: 9
-                                            ExclusiveGroup {
+                                            ButtonGroup {
                                                 id: otherPlatformsExclusiveGroup
+                                                exclusive: true
                                             }
                                             property Item openPopover: null;
 
@@ -345,16 +344,17 @@ Item {
                                                         }
 
                                                         ColumnLayout {
-                                                            spacing: 9
-                                                            ExclusiveGroup {
+                                                            spacing: 6
+                                                            ButtonGroup {
                                                                 id: otherArchsExclusiveGroup
+                                                                exclusive: true
                                                             }
                                                             Repeater {
                                                                 model: releases.selected.filteredVariantsPlatform
                                                                 AdwaitaRadioButton {
                                                                     text: modelData.name
                                                                     Layout.alignment: Qt.AlignVCenter
-                                                                    exclusiveGroup: otherArchsExclusiveGroup
+                                                                    ButtonGroup.group: otherArchsExclusiveGroup
                                                                     checked: index + releases.selected.countAddIndex == releases.selected.variantIndex
                                                                     onCheckedChanged: {
                                                                         if (checked && index + releases.selected.countAddIndex != releases.selected.variantIndex) {
@@ -401,29 +401,7 @@ Item {
                 }
             }
         }
-        style: ScrollViewStyle {
-            incrementControl: Item {}
-            decrementControl: Item {}
-            corner: Item {
-                implicitWidth: 11
-                implicitHeight: 11
-            }
-            scrollBarBackground: Rectangle {
-                color: Qt.darker(palette.window, 1.2)
-                implicitWidth: 11
-                implicitHeight: 11
-            }
-            handle: Rectangle {
-                color: mixColors(palette.window, palette.windowText, 0.5)
-                x: 3
-                y: 3
-                implicitWidth: 6
-                implicitHeight: 7
-                radius: 4
-            }
-            transientScrollBars: false
-            handleOverlap: 1
-            minimumHandleLength: 10
-        }
+
+        ScrollBar.vertical.policy: ScrollBar.AsNeeded
     }
 }
