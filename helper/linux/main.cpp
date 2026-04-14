@@ -23,6 +23,7 @@
 #include <QCoreApplication>
 #include <QTextStream>
 #include <QTranslator>
+#include <QLocale>
 
 #include "restorejob.h"
 #include "writejob.h"
