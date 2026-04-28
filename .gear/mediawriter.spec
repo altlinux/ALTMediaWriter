@@ -15,12 +15,14 @@ Source:         %oname-%version.tar
 
 BuildRequires:  liblzma-devel
 BuildRequires:  libyaml-cpp-devel
-BuildRequires:  qt5-declarative-devel
-BuildRequires:  qt5-x11extras-devel
+BuildRequires:  qt6-declarative-devel
 BuildRequires:  libappstream-glib
 
-Requires:       qt5-quickcontrols
-Requires:       qt5-quickcontrols2
+Requires:       libqt6-quickcontrols2
+Requires:       libqt6-qmlcore
+Requires:       libqt6-quicklayouts
+Requires:       libqt6-quickdialogs2
+Requires:       libqt6-quickcontrols2basic
 Requires:       polkit
 Requires:       udisks2
 
@@ -32,7 +34,7 @@ like flash drives or memory cards.
 %setup -n %oname-%version
 
 %build
-%qmake_qt5 PREFIX=%_prefix LIBEXECDIR=%_libexecdir/%name MEDIAWRITER_NAME=%name MEDIAWRITER_VERSION=%version-%release
+%qmake_qt6 PREFIX=%_prefix LIBEXECDIR=%_libexecdir/%name MEDIAWRITER_NAME=%name MEDIAWRITER_VERSION=%version-%release
 %make_build
 
 %install
