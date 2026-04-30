@@ -90,8 +90,10 @@ win32 {
     HEADERS += windrivemanager.h
     SOURCES += windrivemanager.cpp
     RESOURCES += windowsicon.qrc
+    DEFINES += QT_STATIC
 
     LIBS += -ldbghelp
+    QMAKE_LIBS += -lfreetype -lharfbuzz -lgraphite2 -lbz2 -lrpcrt4 -lpng16 -lz -lglib-2.0
 
     # Until I find out how (or if it's even possible at all) to run a privileged process from an unprivileged one, the main binary will be privileged too
     DISTFILES += windows.manifest

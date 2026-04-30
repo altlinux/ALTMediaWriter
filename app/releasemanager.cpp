@@ -29,6 +29,9 @@
 #include "release_model.h"
 #include "variant.h"
 
+#if WIN32
+    #define YAML_CPP_STATIC_DEFINE
+#endif
 #include <yaml-cpp/yaml.h>
 
 #include <QAbstractEventDispatcher>

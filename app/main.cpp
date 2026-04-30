@@ -47,13 +47,12 @@
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin);
 
 Q_IMPORT_PLUGIN(QtQuick2Plugin);
-Q_IMPORT_PLUGIN(QtQuick2WindowPlugin);
-Q_IMPORT_PLUGIN(QtQuick2DialogsPlugin);
-Q_IMPORT_PLUGIN(QtQuick2DialogsPrivatePlugin);
-Q_IMPORT_PLUGIN(QtQuickControls1Plugin);
+Q_IMPORT_PLUGIN(QtQuick_WindowPlugin);
+Q_IMPORT_PLUGIN(QtQuickDialogsPlugin);
+Q_IMPORT_PLUGIN(QtQuickDialogs2QuickImplPlugin);
+Q_IMPORT_PLUGIN(QtQuickControls2Plugin);
 Q_IMPORT_PLUGIN(QtQuickLayoutsPlugin);
 Q_IMPORT_PLUGIN(QmlFolderListModelPlugin);
-Q_IMPORT_PLUGIN(QmlSettingsPlugin);
 #endif
 
 void myMessageOutput(QtMsgType, const QMessageLogContext &, const QString &msg) {
