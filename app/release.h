@@ -78,6 +78,8 @@ class Release : public QObject {
     Q_PROPERTY(QString selectedPlatform READ selectedPlatform WRITE setSelectedPlatform NOTIFY selectedPlatformChanged)
     Q_PROPERTY(int countAddIndex READ countAddIndex CONSTANT)
 
+    Q_PROPERTY(int selectedArchitecture WRITE setSelectedArchitecture)
+
     Q_PROPERTY(QStringList platformsList READ platformsList CONSTANT)
     Q_PROPERTY(QVariantList filteredVariantsPlatform READ filteredVariantsPlatform NOTIFY selectedPlatformChanged)
 public:
@@ -103,6 +105,8 @@ public:
     int selectedVariantIndex() const;
     void setSelectedVariantIndex(const int index);
 
+    void setSelectedArchitecture(int arch);
+
     QStringList platformsList() const;
     QVariantList filteredVariantsPlatform () const;
     int countAddIndex() const;
@@ -125,10 +129,13 @@ private:
     QList<Variant *> m_variants;
     Platform m_selectedPlatform;
     int m_selectedVariant;
+    Architecture m_selectedArchitecture;
     bool m_isCustom;
 
     static bool customSort (const QString &a, const QString &b);
     std::map<QString, int, str_num_compare> platform_members_count;
+
+    int findBestVariantForArchitecture (Architecture arch) const;
 };
 
 #endif // RELEASE_H

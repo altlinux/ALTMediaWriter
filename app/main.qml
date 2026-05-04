@@ -134,9 +134,17 @@ ApplicationWindow {
                 Connections {
                     target: contentLoader.item
                     function onStepForward(index) {
+                        releases.selectedIndex = index
+                        var imageListComponent = contentLoader.item
+
+                        if (imageListComponent.lastArch >= 0) {
+                            if (releases.selected) {
+                                releases.selected.selectedArchitecture = imageListComponent.lastArch
+                            }
+                        }
                         contentList.currentIndex++
                         canGoBack = true
-                        releases.selectedIndex = index
+
                     }
                 }
             }

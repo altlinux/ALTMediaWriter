@@ -37,6 +37,7 @@ Release::Release(const QString &name, const QString &display_name, const QString
     m_screenshots = screenshots;
     m_isCustom = false;
     m_selectedVariant = 0;
+    m_selectedArchitecture = Architecture_ALL;
 }
 
 Release *Release::custom(QObject *parent) {
@@ -186,6 +187,22 @@ int Release::countAddIndex() const {
     return add_index;
 }
 
+void Release::setSelectedArchitecture(int arch) {
+    if (arch < 0 || arch >= Architecture_COUNT) {
+        qWarning() << "Invalid architecture value:" << arch;
+        return;
+    }
+
+    Architecture selectedArch = static_cast<Architecture>(arch);
+    m_selectedArchitecture = selectedArch;
+
+    // If filtered by architecture, we try to automatically select the appropriate variant
+    int newIndex = findBestVariantForArchitecture(selectedArch);
+    if (newIndex != -1 && newIndex != m_selectedVariant) {
+        setSelectedVariantIndex(newIndex);
+    }
+}
+
 void Release::setSelectedVariantIndex(const int index) {
 
     if (m_selectedVariant == index) {
@@ -204,4 +221,24 @@ QQmlListProperty<Variant> Release::variants() {
 
 QList<Variant *> Release::variantList() const {
     return m_variants;
+}
+
+int Release::findBestVariantForArchitecture(Architecture arch) const {
+    if (m_variants.isEmpty()) {
+        return -1;
+    }
+
+    if (arch == Architecture::Architecture_ALL) {
+        return 0;
+    }
+
+    for (int i = 0; i < m_variants.size(); i++) {
+        Variant *variant = m_variants[i];
+
+        if (variant->arch() == arch) {
+            return i;
+        }
+    }
+
+    return -1;
 }

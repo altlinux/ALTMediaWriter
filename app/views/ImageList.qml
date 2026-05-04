@@ -34,10 +34,14 @@ FocusScope {
     readonly property int searchBarHeight: 36
     property alias currentIndex: listView.currentIndex
     property int lastIndex: -1
+    property int lastArch: -1
 
     property bool focused: contentList.currentIndex === 0
     signal stepForward(int index)
-    onStepForward: lastIndex = index
+    onStepForward: function(index) {
+        lastIndex = index
+        lastArch = archSelect.currentIndex
+    }
     enabled: focused
 
     anchors.fill: parent
