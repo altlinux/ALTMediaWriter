@@ -32,6 +32,12 @@ Item {
     height: 84
     activeFocusOnTab: true
 
+    property bool isCustom: modelData && modelData.isCustom === true
+    property bool isInteractive: isCustom || !releases.downloadingMetadata
+
+    enabled: isInteractive
+    opacity: isInteractive ? 1.0 : 0.6
+
     // NOTE: "release" var is obtained from the item data's
     // UserRole which is named as "release" in
     // ReleaseModel::roleNames()

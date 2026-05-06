@@ -29,8 +29,6 @@
 class QNetworkAccessManager;
 class QNetworkReply;
 
-extern QNetworkAccessManager *network_access_manager;
-
 class NetworkReplyGroup final : public QObject {
     Q_OBJECT
 
@@ -49,6 +47,7 @@ private:
     void on_reply_finished();
 };
 
+QNetworkAccessManager* networkAccessManager();
 QNetworkReply *makeNetworkRequest(const QString &url, const int time_out_millis = 0);
 
 #endif // NETWORK_H

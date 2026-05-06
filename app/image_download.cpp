@@ -201,7 +201,7 @@ void ImageDownload::startImageDownload() {
     request.setUrl(url);
     request.setRawHeader("Range", QString("bytes=%1-").arg(file->size()).toLocal8Bit());
 
-    QNetworkReply *reply = network_access_manager->get(request);
+    QNetworkReply *reply = networkAccessManager()->get(request);
     // NOTE: 64MB buffer in case the user is on a very fast network
     reply->setReadBufferSize(64L * 1024L * 1024L);
 

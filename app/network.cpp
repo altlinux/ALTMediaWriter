@@ -26,7 +26,13 @@
 #include <QNetworkReply>
 #include <QTimer>
 
-QNetworkAccessManager *network_access_manager = new QNetworkAccessManager();
+QNetworkAccessManager* networkAccessManager() {
+    static QNetworkAccessManager* instance = nullptr;
+    if (!instance) {
+        instance = new QNetworkAccessManager();
+    }
+    return instance;
+}
 
 NetworkReplyGroup::NetworkReplyGroup(const QList<QString> &url_list, QObject *parent)
 : QObject(parent) {
@@ -84,7 +90,7 @@ void NetworkReplyGroup::on_reply_finished() {
 QNetworkReply *makeNetworkRequest(const QString &url, const int time_out_millis) {
     QNetworkRequest request(url);
 
-    QNetworkReply *reply = network_access_manager->get(request);
+    QNetworkReply *reply = networkAccessManager()->get(request);
 
     // TODO: Qt 5.15 added QNetworkRequest::setTransferTimeout()
     // Abort download if it takes more than 5s
