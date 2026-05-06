@@ -137,10 +137,21 @@ AdwaitaRectangle {
         footer: Item { height: 6; width: 1 }
 
         // an item contains mouse - used to determine if the currently selected item should be highlighted
-        property bool itemContainsMouse: false
+        property int hoveredIndex: -1
 
         delegate: Rectangle {
-            color: (ListView.isCurrentItem && !options.itemContainsMouse) || itemMouse.containsMouse ? palette.highlight : "transparent"
+            color: {
+                if (options.hoveredIndex === index) {
+                    return palette.highlight
+                }
+
+                if (ListView.isCurrentItem && options.hoveredIndex === -1) {
+                    return palette.highlight
+                }
+
+                return "transparent"
+            }
+
             property string text: label.text
             height: control.height
             width: control.width
@@ -168,9 +179,9 @@ AdwaitaRectangle {
                 }
                 onContainsMouseChanged: {
                     if (containsMouse) {
-                        options.itemContainsMouse = true
-                    } else {
-                        options.itemContainsMouse = false
+                        options.hoveredIndex = index
+                    } else if (options.hoveredIndex === index) {
+                        options.hoveredIndex = -1
                     }
                 }
             }
