@@ -52,7 +52,7 @@ Item {
         acceptedButtons: Qt.AllButtons
         propagateComposedEvents: true
 
-        onClicked: {
+        onClicked: function(mouse) {
             closeAllPopovers();
 
             const btnBack = mapToItem(backButton, mouse.x, mouse.y);

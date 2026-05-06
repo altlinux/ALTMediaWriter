@@ -44,7 +44,7 @@ FocusScope {
         height: 8 * mainWindow.height
 
         propagateComposedEvents: true
-        onClicked: {
+        onClicked: function(mouse) {
             mouse.accepted = false;
         }
     }
