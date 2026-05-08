@@ -27,10 +27,11 @@ Button {
     id: root
     property color color: palette.button
     property color textColor: palette.text
+    property bool isFlat: false
 
     background: AdwaitaRectangle {
         color: root.color
-        flat: false
+        flat: root.isFlat
     }
 
     contentItem: Text {

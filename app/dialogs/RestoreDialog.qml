@@ -34,6 +34,11 @@ Dialog {
     id: root
     title: drives.lastRestoreable ? qsTr("Restore %1?").arg(drives.lastRestoreable.name) : ""
 
+    standardButtons: DialogButtonBox.NoButton
+    anchors.centerIn: parent
+    modal: true
+    popupType: Dialog.Window
+
     Connections {
         target: drives
         function onLastRestoreableChanged() {

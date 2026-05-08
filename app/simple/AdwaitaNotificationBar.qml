@@ -92,7 +92,7 @@ Rectangle {
 
         AdwaitaButton {
             id: buttonCancel
-            flat: true
+            isFlat: true
             color: "transparent"
             implicitWidth: 20
             implicitHeight: 20
