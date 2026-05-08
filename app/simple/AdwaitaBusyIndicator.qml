@@ -25,10 +25,12 @@ import QtQuick.Controls 6.6
 
 BusyIndicator {
     id: root
-    width: 148
+    implicitWidth: 148
     height: 6
     property color progressColor: "#54aada"
     property color backgroundColor: Qt.darker(palette.button, 1.2)
+
+    contentItem: Item { }
 
     onRunningChanged: {
         if (running) {
