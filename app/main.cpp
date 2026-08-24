@@ -96,8 +96,8 @@ int main(int argc, char **argv) {
     app.setWindowIcon(QIcon(":/mediawriter.svg"));
 
     QTranslator translator;
-    translator.load(QLocale(QLocale().language(), QLocale().country()), QString(), QString(), ":/translations");
-    app.installTranslator(&translator);
+    if (translator.load(QLocale(), QString(), QString(), QStringLiteral(":/translations")))
+        app.installTranslator(&translator);
 
     qDebug() << "Injecting QML context properties";
     QQmlApplicationEngine engine;
