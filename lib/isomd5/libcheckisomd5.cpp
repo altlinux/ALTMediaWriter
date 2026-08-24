@@ -33,6 +33,7 @@
 #include <inttypes.h>
 
 #include <QCryptographicHash>
+#include <QByteArrayView>
 
 #include "libcheckisomd5.h"
 
@@ -84,7 +85,9 @@ static int checkmd5sum(int fd, const char *mediasum, checkCallback cb, void *cbd
             lseek64(fd, offset + nread, SEEK_SET);
         }
 
-        hash.addData((const char *) buf, nread);
+        hash.addData(QByteArrayView(
+            reinterpret_cast<const char *>(buf),
+            static_cast<qsizetype>(nread)));
 
         offset = offset + nread;
         if (cb && offset / nread % 256 == 0) {
