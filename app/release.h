@@ -79,7 +79,7 @@ class Release : public QObject {
     Q_PROPERTY(QString selectedPlatform READ selectedPlatform WRITE setSelectedPlatform NOTIFY selectedPlatformChanged)
     Q_PROPERTY(int countAddIndex READ countAddIndex CONSTANT)
 
-    Q_PROPERTY(int selectedArchitecture WRITE setSelectedArchitecture)
+    Q_PROPERTY(int selectedArchitecture READ selectedArchitecture WRITE setSelectedArchitecture)
 
     Q_PROPERTY(QStringList platformsList READ platformsList CONSTANT)
     Q_PROPERTY(QVariantList filteredVariantsPlatform READ filteredVariantsPlatform NOTIFY selectedPlatformChanged)
@@ -114,6 +114,8 @@ public:
 
     QString selectedPlatform() const;
     void setSelectedPlatform (const QString &platform_name);
+
+    int selectedArchitecture() const;
 
 signals:
     void variantsChanged();

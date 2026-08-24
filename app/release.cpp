@@ -187,6 +187,11 @@ int Release::countAddIndex() const {
     return add_index;
 }
 
+int Release::selectedArchitecture() const
+{
+    return static_cast<int>(m_selectedArchitecture);
+}
+
 void Release::setSelectedArchitecture(int arch) {
     if (arch < 0 || arch >= Architecture_COUNT) {
         qWarning() << "Invalid architecture value:" << arch;
