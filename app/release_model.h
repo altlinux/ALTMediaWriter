@@ -68,6 +68,8 @@ signals:
     void frontPageChanged();
 
 private:
+    void beginFilterUpdate();
+    void endFilterUpdate();
     ReleaseModel *model;
     bool frontPage;
     QString filterText;

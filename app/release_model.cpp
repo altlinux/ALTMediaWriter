@@ -110,26 +110,44 @@ bool ReleaseFilterModel::getFrontPage() const {
     return frontPage;
 }
 
-void ReleaseFilterModel::leaveFrontPage() {
-    frontPage = false;
+void ReleaseFilterModel::beginFilterUpdate()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    beginFilterChange();
+#endif
+}
 
+void ReleaseFilterModel::endFilterUpdate()
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 10, 0)
+    endFilterChange(QSortFilterProxyModel::Direction::Rows);
+#else
     invalidateFilter();
+#endif
+}
+
+void ReleaseFilterModel::leaveFrontPage() {
+    beginFilterUpdate();
+    frontPage = false;
+    endFilterUpdate();
 
     emit frontPageChanged();
 }
 
 void ReleaseFilterModel::setFilterText(const QString &text) {
+    beginFilterUpdate();
     filterText = text;
-
-    invalidateFilter();
+    endFilterUpdate();
 }
 
 void ReleaseFilterModel::setFilterArch(const int index) {
-    filterArch = (Architecture) index;
-    invalidateFilter();
+    beginFilterUpdate();
+    filterArch = static_cast<Architecture>(index);
+    endFilterUpdate();
 }
 
 void ReleaseFilterModel::invalidateCustom() {
     // NOTE: need this because public invalidate() doesn't work completely for some reason
-    invalidateFilter();
+    beginFilterUpdate();
+    endFilterUpdate();
 }
