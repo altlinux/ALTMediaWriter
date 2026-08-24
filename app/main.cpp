@@ -39,8 +39,8 @@
 #ifdef __linux
 #endif
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 6, 0)
-#error "Minimum supported Qt version is 6.6.0"
+#if QT_VERSION < QT_VERSION_CHECK(6, 8, 0)
+#error "Minimum supported Qt version is 6.8.0"
 #endif
 
 #ifdef QT_STATIC

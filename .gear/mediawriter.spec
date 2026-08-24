@@ -15,14 +15,14 @@ Source:         %oname-%version.tar
 
 BuildRequires:  liblzma-devel
 BuildRequires:  libyaml-cpp-devel
-BuildRequires:  qt6-declarative-devel
+BuildRequires:  qt6-declarative-devel >= 6.8
 BuildRequires:  libappstream-glib
 
-Requires:       libqt6-quickcontrols2
-Requires:       libqt6-qmlcore
-Requires:       libqt6-quicklayouts
-Requires:       libqt6-quickdialogs2
-Requires:       libqt6-quickcontrols2basic
+Requires:       libqt6-quickcontrols2 >= 6.8
+Requires:       libqt6-qmlcore >= 6.8
+Requires:       libqt6-quicklayouts >= 6.8
+Requires:       libqt6-quickdialogs2 >= 6.8
+Requires:       libqt6-quickcontrols2basic >= 6.8
 Requires:       polkit
 Requires:       udisks2
 

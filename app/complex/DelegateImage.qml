@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import QtQuick 2.3
-import QtQuick.Layouts 1.0
+import QtQuick
+import QtQuick.Layouts
 import MediaWriter 1.0
 
 import "../simple"
@@ -44,7 +44,7 @@ Item {
 
     readonly property bool isTop: (index == 0)
 
-    property color color: delegateMouse.containsPress ? Qt.darker(palette.button, 1.2) : delegateMouse.containsMouse ? palette.button : palette.background
+    property color color: delegateMouse.containsPress ? Qt.darker(palette.button, 1.2) : delegateMouse.containsMouse ? palette.button : palette.window
     Behavior on color { ColorAnimation { duration: 120 } }
 
     readonly property real animationDuration: 1000

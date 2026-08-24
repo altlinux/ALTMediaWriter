@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick
 
 // TODO use a BorderImage or something else to draw a dashed rectangle, this is ugly
 BorderImage {

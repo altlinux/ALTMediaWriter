@@ -20,9 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import QtQuick 2.4
-import QtQuick.Controls 6.6
-import QtQuick.Layouts 1.1
+import QtQuick
+import QtQuick.Controls
 
 import "../simple"
 import "../complex"
@@ -97,7 +96,7 @@ FocusScope {
                 width: 1
             }
             radius: 5
-            color: palette.background
+            color: palette.window
             z: 1
 
             Item {
@@ -121,7 +120,7 @@ FocusScope {
                         antialiasing: true
                         width: height
                         radius: height / 2
-                        color: palette.background
+                        color: palette.window
                         anchors.centerIn: parent
                     }
                     Rectangle {
@@ -203,11 +202,11 @@ FocusScope {
                 Rectangle {
                     anchors.fill: parent
                     anchors.topMargin: -10
-                    color: threeDotMouse.containsPress ? Qt.darker(palette.window, 1.2) : threeDotMouse.containsMouse ? palette.window : palette.background
+                    color: threeDotMouse.containsPress ? Qt.darker(palette.window, 1.2) : threeDotMouse.containsMouse ? palette.window : palette.window
                     Behavior on color { ColorAnimation { duration: 120 } }
                     radius: 5
                     border {
-                        color: Qt.darker(palette.background, 1.3)
+                        color: Qt.darker(palette.window, 1.3)
                         width: 1
                     }
                 }
@@ -307,9 +306,9 @@ FocusScope {
                 Rectangle {
                     width: parent.width
                     radius: 5
-                    color: palette.background
+                    color: palette.window
                     border {
-                        color: Qt.darker(palette.background, 1.3)
+                        color: Qt.darker(palette.window, 1.3)
                         width: 1
                     }
                     height: childrenRect.height + 24

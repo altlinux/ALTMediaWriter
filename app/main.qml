@@ -21,15 +21,13 @@
  */
 
 import QtCore
-import QtQuick 2.3
-import QtQuick.Controls 6.6
-import QtQuick.Window 2.0
-import QtQuick.Dialogs 6.6
-import QtQuick.Layouts 1.1
+import QtQuick
+import QtQuick.Controls
+import QtQuick.Dialogs
+import QtQuick.Layouts
 
 import "dialogs"
 import "simple"
-import "complex"
 import "views"
 
 ApplicationWindow {

@@ -20,8 +20,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import QtQuick 2.3
-import QtQuick.Controls 6.6
+import QtQuick
+import QtQuick.Controls
 
 BusyIndicator {
     id: root
