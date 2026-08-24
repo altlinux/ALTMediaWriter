@@ -61,13 +61,6 @@ void myMessageOutput(QtMsgType, const QMessageLogContext &, const QString &msg) 
 }
 
 int main(int argc, char **argv) {
-#ifdef __linux
-    if (auto *x11App = qApp->nativeInterface<QNativeInterface::QX11Application>()) {
-        if (qEnvironmentVariableIsEmpty("QSG_RENDER_LOOP"))
-            qputenv("QSG_RENDER_LOOP", "threaded");
-        qputenv("GDK_BACKEND", "x11");
-    }
-#endif
 
 // Use software rendering on Windows because hardware
 // rendering makes fuzzy unreadable fonts on Windows 7. Note
@@ -87,19 +80,16 @@ int main(int argc, char **argv) {
     // display name is set, then window is named "ALT
     // Media Writer - ALTMediaWriter" - no good.
 
-#ifdef __linux
-    // qt x11 scaling is broken
-    if (auto *x11App = qApp->nativeInterface<QNativeInterface::QX11Application>()) {
-        QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    }
-#else
-    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-
     qInstallMessageHandler(myMessageOutput);
-
-    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     QApplication app(argc, argv);
+
+#ifdef __linux
+    if (QGuiApplication::platformName() == QStringLiteral("xcb"))
+    {
+        if (qEnvironmentVariableIsEmpty("QSG_RENDER_LOOP"))
+            qputenv("QSG_RENDER_LOOP", "threaded");
+    }
+#endif
 
     qDebug() << "Application constructed";
 
