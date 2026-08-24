@@ -364,8 +364,7 @@ FocusScope {
                 right: parent.right
                 topMargin: mainWindow.margin
                 leftMargin: mainWindow.margin
-                // NOTE: when leaving front page and scrollView gets a scrollbar, the width is reduced, so recalculate right margin so that the right side of listView doesn't move due to that
-                rightMargin: anchors.leftMargin - scrollView.effectiveScrollBarWidth
+                rightMargin: mainWindow.margin
                 bottomMargin: 0
             }
 
