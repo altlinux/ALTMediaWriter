@@ -162,7 +162,15 @@ ApplicationWindow {
         currentFolder: StandardPaths.standardLocations(StandardPaths.HomeLocation)[0]
         nameFilters: releases.fileTypeFilters
         onAccepted: {
-            releases.selected.setLocalFile(fileUrl)
+            releases.selected.setLocalFile(fileDialog.selectedFile)
+            dlDialog.visible = true
+        }
+    }
+
+    Connections {
+        target: portalFileDialog
+        function onFileSelected(fileName) {
+            releases.selected.setLocalFile(fileName)
             dlDialog.visible = true
         }
     }

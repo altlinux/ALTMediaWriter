@@ -29,6 +29,7 @@ HEADERS += \
     platform.h \
     release.h \
     release_model.h \
+    portalfiledialog.h \
     units.h \
     variant.h
 
@@ -44,6 +45,7 @@ SOURCES += main.cpp \
     platform.cpp \
     release.cpp \
     release_model.cpp \
+    portalfiledialog.cpp \
     units.cpp \
     variant.cpp
 

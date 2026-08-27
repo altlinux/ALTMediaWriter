@@ -161,7 +161,10 @@ Item {
         function action() {
             if (release.isCustom) {
                 releases.selectedIndex = index
-                fileDialog.visible = true
+                if (portalFileDialog.isAvailable)
+                    portalFileDialog.open()
+                else
+                    fileDialog.open()
             } else {
                 imageList.currentIndex = index
                 imageList.stepForward(index)

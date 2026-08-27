@@ -22,6 +22,7 @@
 
 #include "drivemanager.h"
 #include "progress.h"
+#include "portalfiledialog.h"
 #include "release.h"
 #include "release_model.h"
 #include "releasemanager.h"
@@ -102,6 +103,7 @@ int main(int argc, char **argv) {
     qDebug() << "Injecting QML context properties";
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("drives", DriveManager::instance());
+    engine.rootContext()->setContextProperty("portalFileDialog", new PortalFileDialog(&app));
     engine.rootContext()->setContextProperty("releases", new ReleaseManager());
     engine.rootContext()->setContextProperty("mediawriterVersion", MEDIAWRITER_VERSION);
     engine.rootContext()->setContextProperty("units", Units::instance());
