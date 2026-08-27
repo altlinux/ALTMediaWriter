@@ -1,5 +1,7 @@
 /*
  * ALT Media Writer
+ * Copyright (C) 2022 Jan Grulich <jgrulich@redhat.com>
+ * Copyright (C) 2011-2022 Pete Batard <pete@akeo.ie>
  * Copyright (C) 2016-2019 Martin Bříza <mbriza@redhat.com>
  * Copyright (C) 2020-2022 Dmitry Degtyarev <kevl@basealt.ru>
  *
@@ -26,12 +28,28 @@
 #include "variant.h"
 
 #include <QDebug>
-#include <QTimer>
 #include <QFile>
+#include <QTimer>
+#include <QVector>
 
 #include <windows.h>
+#define INITGUID
+#include <guiddef.h>
 
 #include <cmath>
+#include <cstring>
+
+DEFINE_GUID(PARTITION_MICROSOFT_DATA, 0xEBD0A0A2, 0xB9E5, 0x4433, 0x87, 0xC0, 0x68, 0xB6, 0xB7, 0x26, 0x99, 0xC7);
+
+static QString getPhysicalName(const int driveNumber) {
+    return QString("\\\\.\\PhysicalDrive%0").arg(driveNumber);
+}
+
+static HANDLE getPhysicalHandle(const int driveNumber) {
+    const QString physicalPath = getPhysicalName(driveNumber);
+    return CreateFileA(physicalPath.toStdString().c_str(), GENERIC_READ, FILE_SHARE_WRITE,
+        NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+}
 
 WinDriveProvider::WinDriveProvider(DriveManager *parent)
 : DriveProvider(parent) {
@@ -41,24 +59,12 @@ WinDriveProvider::WinDriveProvider(DriveManager *parent)
 
 void WinDriveProvider::checkDrives() {
     static bool firstRun = true;
-    QSet<int> drivesWithLetters;
     if (firstRun) {
         qDebug() << this->metaObject()->className() << "Looking for the drives for the first time";
     }
 
-    DWORD drives = ::GetLogicalDrives();
-    for (char i = 0; i < 26; i++) {
-        if (drives & (1 << i)) {
-            drivesWithLetters.unite(findPhysicalDrive('A' + i));
-        }
-    }
-
-    if (firstRun) {
-        qDebug() << this->metaObject()->className() << "Finished looking at drive letters";
-    }
-
     for (int i = 0; i < 64; i++) {
-        bool present = describeDrive(i, drivesWithLetters.contains(i), firstRun);
+        bool present = describeDrive(i, firstRun);
         if (!present && m_drives.contains(i)) {
             emit driveRemoved(m_drives[i]);
             m_drives[i]->deleteLater();
@@ -73,52 +79,77 @@ void WinDriveProvider::checkDrives() {
     QTimer::singleShot(2500, this, &WinDriveProvider::checkDrives);
 }
 
-QSet<int> WinDriveProvider::findPhysicalDrive(const char driveLetter) {
-    static QMap<char, char> warningMap;
-    QSet<int> ret;
+bool WinDriveProvider::isMountable(const int driveNumber) {
+    qDebug() << this->metaObject()->className() << "Checking whether" << getPhysicalName(driveNumber) << "is mountable";
 
-    QString drivePath = QString("\\\\.\\%1:").arg(driveLetter);
-
-    HANDLE hDevice = ::CreateFile(drivePath.toStdWString().c_str(), 0, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
-    if (hDevice == INVALID_HANDLE_VALUE) {
-        return ret;
+    HANDLE physicalHandle = getPhysicalHandle(driveNumber);
+    if (physicalHandle == INVALID_HANDLE_VALUE) {
+        qDebug() << this->metaObject()->className() << "Could not get physical handle for drive" << getPhysicalName(driveNumber);
+        return false;
     }
 
-    DWORD bytesReturned;
-    VOLUME_DISK_EXTENTS vde; // TODO FIXME: handle ERROR_MORE_DATA (this is an extending structure)
-    BOOL bResult = DeviceIoControl(hDevice, IOCTL_VOLUME_GET_VOLUME_DISK_EXTENTS, NULL, 0, &vde, sizeof(vde), &bytesReturned, NULL);
+    DWORD size = 0;
+    BYTE geometry[256];
+    bool result = DeviceIoControl(physicalHandle, IOCTL_DISK_GET_DRIVE_GEOMETRY_EX,
+        NULL, 0, geometry, sizeof(geometry), &size, NULL);
+    if (!result || size == 0) {
+        qDebug() << this->metaObject()->className() << "Could not get geometry for drive" << getPhysicalName(driveNumber);
+        CloseHandle(physicalHandle);
+        return false;
+    }
 
-    if (!bResult) {
-        // warn just three times, it spams the log
-        if (warningMap[driveLetter] <= 3) {
-            warningMap[driveLetter]++;
-            qDebug() << "Could not get disk extents for" << drivePath;
+    BYTE layout[4096] = {0};
+    result = DeviceIoControl(physicalHandle, IOCTL_DISK_GET_DRIVE_LAYOUT_EX,
+        NULL, 0, layout, sizeof(layout), &size, NULL);
+    if (!result || size == 0) {
+        qDebug() << this->metaObject()->className() << "Could not get layout for drive" << getPhysicalName(driveNumber);
+        CloseHandle(physicalHandle);
+        return false;
+    }
+
+    PDRIVE_LAYOUT_INFORMATION_EX driveLayout = reinterpret_cast<PDRIVE_LAYOUT_INFORMATION_EX>(layout);
+
+    switch (driveLayout->PartitionStyle) {
+        case PARTITION_STYLE_MBR: {
+            qDebug() << this->metaObject()->className() << "MBR partition style";
+            const QVector<BYTE> mountablePartitionTypes = {0x01, 0x04, 0x06, 0x07, 0x0b, 0x0c, 0x0e};
+            for (DWORD i = 0; i < driveLayout->PartitionCount; ++i) {
+                const BYTE partitionType = driveLayout->PartitionEntry[i].Mbr.PartitionType;
+                if (partitionType == PARTITION_ENTRY_UNUSED) {
+                    continue;
+                }
+
+                qDebug() << this->metaObject()->className() << "Partition type:" << partitionType;
+                if (!mountablePartitionTypes.contains(partitionType)) {
+                    CloseHandle(physicalHandle);
+                    qDebug() << this->metaObject()->className() << getPhysicalName(driveNumber) << "is not mountable";
+                    return false;
+                }
+            }
+            break;
         }
-        ::CloseHandle(hDevice);
-        return ret;
-    } else {
-        warningMap[driveLetter] = 0;
+        case PARTITION_STYLE_GPT:
+            qDebug() << this->metaObject()->className() << "GPT partition style";
+            for (DWORD i = 0; i < driveLayout->PartitionCount; ++i) {
+                if (std::memcmp(&driveLayout->PartitionEntry[i].Gpt.PartitionType,
+                        &PARTITION_MICROSOFT_DATA, sizeof(GUID)) != 0) {
+                    CloseHandle(physicalHandle);
+                    qDebug() << this->metaObject()->className() << getPhysicalName(driveNumber) << "is not mountable";
+                    return false;
+                }
+            }
+            break;
+        default:
+            qDebug() << this->metaObject()->className() << "Partition type: RAW";
+            break;
     }
 
-    for (uint i = 0; i < vde.NumberOfDiskExtents; i++) {
-        /*
-         * FIXME?
-         * This is a bit more complicated matter.
-         * Windows doesn't seem to provide the complete information about the drive (not just in this API).
-         * That's the reason I chose to detect it by looking at the partition's size.
-         * An even better approach would be to compare it to the size of the drive itself but for now this will have to suffice.
-         */
-        // only partitions bigger than 100MB
-        if (vde.Extents[i].ExtentLength.QuadPart > 100 * 1024 * 1024) {
-            ret.insert(vde.Extents[i].DiskNumber);
-        }
-    }
-
-    ::CloseHandle(hDevice);
-    return ret;
+    qDebug() << this->metaObject()->className() << getPhysicalName(driveNumber) << "is mountable";
+    CloseHandle(physicalHandle);
+    return true;
 }
 
-bool WinDriveProvider::describeDrive(const int nDriveNumber, const bool hasLetter, const bool verbose) {
+bool WinDriveProvider::describeDrive(const int nDriveNumber, const bool verbose) {
     BOOL removable;
     QString productVendor;
     QString productId;
@@ -130,7 +161,7 @@ bool WinDriveProvider::describeDrive(const int nDriveNumber, const bool hasLette
     //DWORD dwRet = NO_ERROR;
 
     // Format physical drive path (may be '\\.\PhysicalDrive0', '\\.\PhysicalDrive1' and so on).
-    QString strDrivePath = QString("\\\\.\\PhysicalDrive%0").arg(nDriveNumber);
+    QString strDrivePath = getPhysicalName(nDriveNumber);
 
     // Get a handle to physical drive
     HANDLE hDevice = ::CreateFile(strDrivePath.toStdWString().c_str(), 0, FILE_SHARE_READ | FILE_SHARE_WRITE,
@@ -235,7 +266,7 @@ bool WinDriveProvider::describeDrive(const int nDriveNumber, const bool hasLette
     delete[] pOutBuffer;
     ::CloseHandle(hDevice);
 
-    WinDrive *currentDrive = new WinDrive(this, productVendor + " " + productId, deviceBytes, !hasLetter, nDriveNumber, serialNumber);
+    WinDrive *currentDrive = new WinDrive(this, productVendor + " " + productId, deviceBytes, !isMountable(nDriveNumber), nDriveNumber, serialNumber);
     if (m_drives.contains(nDriveNumber) && *m_drives[nDriveNumber] == *currentDrive) {
         currentDrive->deleteLater();
         return true;
