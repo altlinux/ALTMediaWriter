@@ -3,7 +3,7 @@
 %define appId ru.basealt.altmediawriter
 
 Name:           altmediawriter
-Version:        1.0.11
+Version:        1.1.0
 Release:        alt1
 Summary:        ALT Media Writer
 Group:          System/Configuration/Other
@@ -62,6 +62,14 @@ appstream-util validate-relax --nonet %buildroot/%_datadir/appdata/%name.appdata
 
 
 %changelog
+* Thu Aug 27 2026 Maria Alexeeva <alxvmr@altlinux.org> 1.1.0-alt1
+- Port to Qt 6.
+- Automatically select the image variant matching the architecture
+  filter (closes: 58983).
+- Disable online image selection while metadata is loading,
+  keeping local image selection available.
+- Update translations and application icons.
+
 * Fri Sep 19 2025 Maria Alexeeva <alxvmr@altlinux.org> 1.0.11-alt1
 - New app icon
 

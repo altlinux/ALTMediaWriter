@@ -2,6 +2,17 @@ altmediawriter
 CHANGELOG
 
 -----------------------------------------------------------------------
+ VERSION 1.1.0
+-----------------------------------------------------------------------
+- Build: Port to Qt 6.
+- Image selection: Automatically select the image variant matching
+  the architecture filter.
+- Image selection: Disable online image selection while metadata is
+  loading, while keeping local image selection available.
+- UI: Update translations and application icons.
+- Restore: Detect live USB media by partition layout on Windows.
+
+-----------------------------------------------------------------------
  VERSION 1.0.10
 -----------------------------------------------------------------------
 - Releases: Fix support for ALT Server and ALT Virtualization
